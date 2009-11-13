@@ -1,5 +1,4 @@
-{include file="header.tpl" title=Mainpage}
-<body>
+{include file="header.tpl" title=Mainpage }
 {if $messages}
 <div id="messagebox" style="width: 200px; background-color: red;">
 <ul>
@@ -13,5 +12,5 @@
 </div>
 {/if}
 {$test}
-</body>
-</html>
+
+{include file="footer.tpl"}

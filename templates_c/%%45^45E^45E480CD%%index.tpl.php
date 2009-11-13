@@ -1,11 +1,10 @@
-<?php /* Smarty version 2.6.26, created on 2009-11-13 14:11:12
+<?php /* Smarty version 2.6.26, created on 2009-11-13 14:59:26
          compiled from index.tpl */ ?>
 <?php $_smarty_tpl_vars = $this->_tpl_vars;
 $this->_smarty_include(array('smarty_include_tpl_file' => "header.tpl", 'smarty_include_vars' => array('title' => 'Mainpage')));
 $this->_tpl_vars = $_smarty_tpl_vars;
 unset($_smarty_tpl_vars);
  ?>
-<body>
 <?php if ($this->_tpl_vars['messages']): ?>
 <div id="messagebox" style="width: 200px; background-color: red;">
 <ul>
@@ -44,5 +43,9 @@ $this->_sections['message']['last']       = ($this->_sections['message']['iterat
 <?php endif; ?>
 <?php echo $this->_tpl_vars['test']; ?>
 
-</body>
-</html>
+
+<?php $_smarty_tpl_vars = $this->_tpl_vars;
+$this->_smarty_include(array('smarty_include_tpl_file' => "footer.tpl", 'smarty_include_vars' => array()));
+$this->_tpl_vars = $_smarty_tpl_vars;
+unset($_smarty_tpl_vars);
+ ?>

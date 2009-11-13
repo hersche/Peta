@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.26, created on 2009-11-13 13:38:48
+<?php /* Smarty version 2.6.26, created on 2009-11-13 14:45:58
          compiled from header.tpl */ ?>
 <html>
 <head><title>LearningCards::<?php echo $this->_tpl_vars['title']; ?>
@@ -31,3 +31,5 @@ $this->_sections['js']['last']       = ($this->_sections['js']['iteration'] == $
 " djConfig="parseOnLoad:true"></script>
 <?php endfor; endif; ?>
 </head>
+<body <?php echo $this->_tpl_vars['bodyargs']; ?>
+>

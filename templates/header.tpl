@@ -4,3 +4,4 @@
 <script type="text/javascript" src="{$jsscripts[js]}" djConfig="parseOnLoad:true"></script>
 {/section}
 </head>
+<body {$bodyargs}>
