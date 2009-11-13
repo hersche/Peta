@@ -1,11 +1,6 @@
-<html>
-<head><title>Test!</title>
-{section name=js loop=$jsscripts}
-<script type="text/javascript" src="{$jsscripts[js]}" djConfig="parseOnLoad:true"></script>
-{/section}
-</head>
+{include file="header.tpl" title=Mainpage}
 <body>
-
+{if $messages}
 <div id="messagebox" style="width: 200px; background-color: red;">
 <ul>
 {section name=message loop=$messages}
@@ -16,6 +11,7 @@
     Close
 </button>
 </div>
+{/if}
 {$test}
 </body>
 </html>
