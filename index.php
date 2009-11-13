@@ -4,6 +4,7 @@ require_once 'class/smarty/Smarty.class.php';
 $smarty = new Smarty;
 $smarty->assign("test", "hallo welt!");
 $smarty->assign("jsscripts", array("dojo/dojo/dojo.js", "js/extras.js"));
+$smarty->assign("messages", array("Dies ist ein Test!", "das auch", "und der soowieso!"));
 //$html = new htmlFunctions();
 //$html->setIncludeHTML(true);
 //$html->setTitle("Title");
