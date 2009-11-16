@@ -1,10 +1,8 @@
 <?php
-require_once 'class/core.php';
-require_once 'class/smarty/Smarty.class.php';
-$smarty = new Smarty;
-$smarty->assign("test", "hallo welt!");
-$smarty->assign("jsscripts", array("dojo/dojo/dojo.js", "js/extras.js"));
-$smarty->assign("messages", array("Dies ist ein Test!", "das auch", "und der soowieso!"));
+require_once 'class/default.php';
+$template->assign("messages", $messages);
+$template->assign("test", "hallo welt!");
+
 //$html = new htmlFunctions();
 //$html->setIncludeHTML(true);
 //$html->setTitle("Title");
@@ -14,5 +12,5 @@ $smarty->assign("messages", array("Dies ist ein Test!", "das auch", "und der soo
 //
 //$html->getFooter();
 //echo phpinfo();
-$smarty->display('index.tpl')
+$template->display('index.tpl')
 ?>
