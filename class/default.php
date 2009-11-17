@@ -7,10 +7,10 @@ require_once 'class/smarty/Smarty.class.php';
 $template = new Smarty();
 $template->assign("jsscripts", array("dojo/dojo/dojo.js", "js/extras.js"));
 $messages = array();
+$objDb;
 		try
 		{
 			$objDb = new PDO($GLOBALS["db_type"].':dbname='.$GLOBALS["db_dbname"].';host='.$GLOBALS["db_host"].'', $GLOBALS["db_loginname"], $GLOBALS["db_loginpassword"]);
-			return $objDb;
 		}
 		catch (PDOException $e)
 		{
