@@ -1,5 +1,5 @@
 {if $messages}
-<div id="messagebox" style="width: 200px; background-color: red;">
+<div id="messagebox" style=" background-color: red;">
 <ul>
 {section name=message loop=$messages}
 <li>{$messages[message]}</li>

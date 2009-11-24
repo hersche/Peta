@@ -1,7 +1,7 @@
-<?php /* Smarty version 2.6.26, created on 2009-11-16 16:58:25
+<?php /* Smarty version 2.6.26, created on 2009-11-24 11:25:58
          compiled from messagebox.tpl */ ?>
 <?php if ($this->_tpl_vars['messages']): ?>
-<div id="messagebox" style="width: 200px; background-color: red;">
+<div id="messagebox" style=" background-color: red;">
 <ul>
 <?php unset($this->_sections['message']);
 $this->_sections['message']['name'] = 'message';

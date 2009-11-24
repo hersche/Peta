@@ -1,10 +1,34 @@
 <?php
 require_once 'class/default.php';
-require_once 'class/user.php';
-if($user = new user($_POST['username'], $_POST['password'], $connection)){
-	array_push($messages, "login!!!!");
+if((isset($_SESSION['user']))&&($_SESSION['user']->isValid())){
+	header("Location: index.php");
 }
-$messages = array_merge($messages, $user->getMessages());
-$template->assign("messages", $messages);
-$template->display('login.tpl');
+switch($_GET['action']) {
+	case "register":
+		if((!empty($_POST['name']))&&(!empty($_POST['username']))&&(!empty($_POST['password']))&&(!empty($_POST['password2']))){
+			if($_POST["password"]==$_POST["password2"]){
+				register::registerUser($_POST["name"], $_POST["username"], $_POST["password"], "NORMAL", $connection);
+			}
+			else{
+				array_push($messages, "Passwords doesn't match");
+			}
+		}
+		$template->assign("messages", $messages);
+		$template->display('register.tpl');
+		break;
+	case "logout":
+		$_SESSION["user"]->logout();
+		header("Location: login.php");
+		break;
+	default:
+		if((!empty($_POST['username']))&&(!empty($_POST['password']))){
+			$user = new user($_POST['username'], $_POST['password'], $connection);
+			if((isset($_SESSION["user"]))&&($user->isValid())){
+				header("Location: index.php");
+			}
+		}
+		$template->assign("messages", $messages);
+		$template->display('login.tpl');
+}
+
 ?>

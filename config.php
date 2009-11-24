@@ -12,5 +12,8 @@ $GLOBALS["db_loginpassword"] = "";
  * @var unknown_type
  */
 $GLOBALS["password_hash"] = "whirlpool";
+
+$GLOBALS["min_password_length"] = 6;
+$GLOBALS["password_need_specialchars"] = true;
 $GLOBALS["showSecurityWarnings"] = true;
 ?>

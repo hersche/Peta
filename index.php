@@ -1,9 +1,13 @@
 <?php
 require_once 'class/default.php';
-$template->assign("messages", $messages);
+if(isset($_SESSION["user"])){
 $user = $_SESSION["user"];
-echo $user->getUsername();
+array_push($messages, "Wilkommen ".$user->getUsername());
+}
+else{
+	echo "Go to loginpage! (Redirect!)";
+}
 $template->assign("test", "hallo welt!");
-
+$template->assign("messages", $messages);
 $template->display('index.tpl');
 ?>
