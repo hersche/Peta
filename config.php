@@ -5,5 +5,12 @@ $GLOBALS["db_dbname"] = "learncards";
 $GLOBALS["db_loginname"] = "learncards";
 $GLOBALS["db_loginpassword"] = "";
 
+/**
+ * password_hash defines the hash-algorithm for the sessions and also for the saved passwords. set it just to the beginn, otherwhise you've got errors!
+ * Possible values are:
+ * whirlpool
+ * @var unknown_type
+ */
+$GLOBALS["password_hash"] = "whirlpool";
 $GLOBALS["showSecurityWarnings"] = true;
 ?>

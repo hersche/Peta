@@ -1,1 +1,1 @@
-SELECT * FROM users INNER JOIN (userrole, role) ON (users.id = userrole.userid AND userrole.roleid = role.roleid)
+CREATE VIEW fullUser AS SELECT * FROM users INNER JOIN (userrole, role) ON (users.id = userrole.buserid AND userrole.broleid = role.roleid)
