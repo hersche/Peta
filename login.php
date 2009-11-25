@@ -7,7 +7,7 @@ switch($_GET['action']) {
 	case "register":
 		if((!empty($_POST['name']))&&(!empty($_POST['username']))&&(!empty($_POST['password']))&&(!empty($_POST['password2']))){
 			if($_POST["password"]==$_POST["password2"]){
-				register::registerUser($_POST["name"], $_POST["username"], $_POST["password"], "NORMAL", $connection);
+				array_push($messages, register::registerUser($_POST["name"], $_POST["username"], $_POST["password"], "NORMAL", $connection));
 			}
 			else{
 				array_push($messages, "Passwords doesn't match");
