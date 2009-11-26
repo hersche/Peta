@@ -4,13 +4,18 @@
  */
 require_once 'config.php';
 require_once 'class/user.php';
+require_once 'class/smarty/Smarty.class.php';
+$template = new Smarty();
 session_start();
 if((!isset($_SESSION["user"]))&&(basename($_SERVER['PHP_SELF'])!="login.php")){
 	header("Location: login.php");
 }
-require_once 'class/smarty/Smarty.class.php';
+else{
+	if((isset($_SESSION["user"]))&&(usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"]->getRoles()))){
+		$template->assign("admin", true);
+	}
+}
 
-$template = new Smarty();
 $template->assign("jsscripts", array("dojo/dojo/dojo.js", "js/extras.js"));
 $template->assign("allcss", array("css/default.css"));
 $messages = array();

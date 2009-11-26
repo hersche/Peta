@@ -10,6 +10,7 @@ class user{
 	private $welcome = true;
 	private $messages = array();
 	private $roles = array();
+	private $password;
 	// private $connection;
 
 	public function __construct($username, $password, $connection){
@@ -19,44 +20,38 @@ class user{
 			$password = hash($GLOBALS["password_hash"], $password);
 			try{
 				foreach($connection->query('SELECT * FROM fullUser WHERE username="'.$username.'" AND password="'.$password.'";') as $userrow){
-						if($firstRound){
-							$this->id = $userrow['id'];
-							$this->name = $userrow['name'];
-							$this->username = $userrow['username'];
-							$this->currentip = getenv('REMOTE_ADDR');
-							$this->lastip = $userrow['lastip'];
-							$this->lastlogin = $userrow['lastlogin'];
-							array_push($this->roles, $userrow["role"]);
-							$datetime = new DateTime();
-							$this->currentlogin = $datetime->format("Y-m-d");
-							$connection->exec('UPDATE users SET lastlogin="'.$this->currentlogin.'", lastip="'.$this->currentip.'" WHERE username="'.$this->username.' AND password="'.$this->password.'";');
-							$_SESSION["user"] = $this;
-							$firstRound = false;
-						}
-						else{
-							array_push($this->roles, $userrow["role"]);
-						}
-					
+					if($firstRound){
+						$this->id = $userrow['id'];
+						$this->name = $userrow['name'];
+						$this->username = $userrow['username'];
+						$this->currentip = getenv('REMOTE_ADDR');
+						$this->lastip = $userrow['lastip'];
+						$this->lastlogin = $userrow['lastlogin'];
+						$this->password = $password;
+						array_push($this->roles, $userrow["role"]);
+						$datetime = new DateTime();
+						$this->currentlogin = $datetime->format("Y-m-d");
+						$connection->exec('UPDATE users SET lastlogin="'.$this->currentlogin.'", lastip="'.$this->currentip.'" WHERE username="'.$this->username.' AND password="'.$this->password.'";');
+						$_SESSION["user"] = $this;
+						$firstRound = false;
+					}
+					else{
+						array_push($this->roles, $userrow["role"]);
+					}
+
 				}
 			}
 			catch (Exception $e){
 				echo "Error: ".$e->getMessage();
 			}
-
-			//			return "Password wrong or user not found!";
 		}
 		else{
-			// unset($_SESSION["user"]);
 			echo "Fill the fields!";
 		}
 	}
 
-	public function setPassword($password){
-
-		if(usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
-					$password = hash($GLOBALS["password_hash"], $password);
-		$this->connection->exec('UPDATE users SET password="'.$this->currentlogin.'" WHERE username="'.$this->username.' AND password="'.$this->password.'";');
-		}
+	public function setPassword($newPassword, $connection){
+		usertools::setPassword($this->username, $newPassword, $this->password, $connection);
 	}
 
 	public function disableWelcome(){
@@ -69,6 +64,9 @@ class user{
 		return $this->messages;
 	}
 
+	public function getRoles(){
+		return $this->roles;
+	}
 
 	public function getUsername(){
 		return $this->username;
@@ -136,6 +134,24 @@ class usertools{
 			return true;
 		}
 		return false;
+	}
+
+	static public function containRoles($roles, $userRoles){
+		foreach($roles as $role){
+			foreach($userRoles as $userRole){
+				if($role==$userRole){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	static public function setPassword($username, $password, $oldPassword, $conneticon){
+		if(usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
+			$password = hash($GLOBALS["password_hash"], $password);
+			$this->connection->exec('UPDATE users SET password="'.$password.'" WHERE username="'.$username.' AND password="'.$oldPassword.'";');
+		}
 	}
 }
 ?>
