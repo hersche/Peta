@@ -27,7 +27,7 @@ class user{
 						$this->currentip = getenv('REMOTE_ADDR');
 						$this->lastip = $userrow['lastip'];
 						$this->lastlogin = $userrow['lastlogin'];
-						$this->password = $password;
+						$this->password = $userrow['password'];
 						array_push($this->roles, $userrow["role"]);
 						$datetime = new DateTime();
 						$this->currentlogin = $datetime->format("Y-m-d");
@@ -50,8 +50,10 @@ class user{
 		}
 	}
 
-	public function setPassword($newPassword, $connection){
-		usertools::setPassword($this->username, $newPassword, $this->password, $connection);
+	public function setPassword($newPassword,$oldPassword, $connection){
+		if(hash($GLOBALS["password_hash"], $oldPassword)==$this->password){
+			usertools::setPassword($this->username, $newPassword, $connection);
+		}
 	}
 
 	public function disableWelcome(){
@@ -146,11 +148,32 @@ class usertools{
 		}
 		return false;
 	}
+	
+	static public function editUser($oldUser,$editUser, $connection){
+		$changes = false;
+		$password = hash($GLOBALS["password_hash"], $editUser['password']);
+		$changeSQL = array();
+		if($oldUser['name']!=$editUser['name']){
+			array_push($changeSQL, ' name="'.$editUser['name'].'"');
+			$changes = true;
+		}
+		if($oldUser['password']!=$password){
+			usertools::setPassword($oldUser['username'], $editUser['password'], $connection);
+		}
+		if($changes){
+			$SQLUpdate = "UPDATE users_profile SET";
+			foreach($changeSQL as $singlechange){
+				$SQLUpdate .= $singlechange;
+			}
+			$SQLUpdate .= ' WHERE user_profile_id="'.$oldUser["id"].'";';
+			$connection->exec($SQLUpdate);
+		}
+	}
 
-	static public function setPassword($username, $password, $oldPassword, $conneticon){
+	static public function setPassword($username, $password, $connection){
 		if(usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
 			$password = hash($GLOBALS["password_hash"], $password);
-			$this->connection->exec('UPDATE users SET password="'.$password.'" WHERE username="'.$username.' AND password="'.$oldPassword.'";');
+			$connection->exec('UPDATE users SET password="'.$password.'" WHERE username="'.$username.'";');
 		}
 	}
 }
