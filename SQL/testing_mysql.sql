@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 24. November 2009 um 20:44
+-- Erstellungszeit: 27. November 2009 um 13:23
 -- Server Version: 5.1.41
 -- PHP-Version: 5.2.11-2
 
@@ -16,12 +16,35 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- --------------------------------------------------------
 
 --
+-- Stellvertreter-Struktur des Views `fullQuestionSet`
+--
+CREATE TABLE IF NOT EXISTS `fullQuestionSet` (
+`setid` int(11)
+,`ownerid` int(11)
+,`editcount` int(11)
+,`lasttimestamp` timestamp
+,`createtimestamp` timestamp
+,`firstowner` int(11)
+,`tagsid` int(11)
+,`answerid` int(11)
+,`answertext` varchar(100)
+,`questionid` int(11)
+,`set` int(11)
+,`question` varchar(100)
+,`answersid` int(11)
+,`mode` text
+,`tagid` int(11)
+,`tagname` varchar(50)
+);
+-- --------------------------------------------------------
+
+--
 -- Stellvertreter-Struktur des Views `fullUser`
 --
 CREATE TABLE IF NOT EXISTS `fullUser` (
 `id` int(11)
 ,`username` varchar(22)
-,`password` varchar(22)
+,`password` varchar(1026)
 ,`lastlogin` date
 ,`lastip` varchar(11)
 ,`buserid` int(11)
@@ -38,6 +61,50 @@ CREATE TABLE IF NOT EXISTS `fullUser` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `question_answer`
+--
+
+CREATE TABLE IF NOT EXISTS `question_answer` (
+  `answerid` int(11) NOT NULL AUTO_INCREMENT,
+  `answertext` varchar(100) NOT NULL,
+  PRIMARY KEY (`answerid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `question_question`
+--
+
+CREATE TABLE IF NOT EXISTS `question_question` (
+  `questionid` int(11) NOT NULL AUTO_INCREMENT,
+  `set` int(11) NOT NULL,
+  `question` varchar(100) NOT NULL,
+  `answersid` int(11) NOT NULL,
+  `mode` text NOT NULL,
+  PRIMARY KEY (`questionid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `question_set`
+--
+
+CREATE TABLE IF NOT EXISTS `question_set` (
+  `setid` int(11) NOT NULL AUTO_INCREMENT,
+  `ownerid` int(11) NOT NULL,
+  `editcount` int(11) NOT NULL,
+  `lasttimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `createtimestamp` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `firstowner` int(11) NOT NULL,
+  `tagsid` int(11) NOT NULL,
+  PRIMARY KEY (`setid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `role`
 --
 
@@ -45,14 +112,19 @@ CREATE TABLE IF NOT EXISTS `role` (
   `roleid` int(11) NOT NULL AUTO_INCREMENT,
   `role` varchar(22) NOT NULL,
   PRIMARY KEY (`roleid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+
+-- --------------------------------------------------------
 
 --
--- Daten für Tabelle `role`
+-- Tabellenstruktur für Tabelle `tags`
 --
 
-INSERT INTO `role` (`roleid`, `role`) VALUES
-(1, 'admin');
+CREATE TABLE IF NOT EXISTS `tags` (
+  `tagid` int(11) NOT NULL AUTO_INCREMENT,
+  `tagname` varchar(50) NOT NULL,
+  PRIMARY KEY (`tagid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -65,16 +137,6 @@ CREATE TABLE IF NOT EXISTS `userrole` (
   `broleid` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Daten für Tabelle `userrole`
---
-
-INSERT INTO `userrole` (`buserid`, `broleid`) VALUES
-(1, 1),
-(2, 1),
-(6, 1),
-(7, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -84,24 +146,11 @@ INSERT INTO `userrole` (`buserid`, `broleid`) VALUES
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(22) COLLATE utf8_unicode_ci NOT NULL,
-  `password` varchar(22) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(1026) COLLATE utf8_unicode_ci NOT NULL,
   `lastlogin` date NOT NULL,
   `lastip` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8 ;
-
---
--- Daten für Tabelle `users`
---
-
-INSERT INTO `users` (`id`, `username`, `password`, `lastlogin`, `lastip`) VALUES
-(1, 'test', 'test', '2009-11-24', '127.0.0.1'),
-(2, 'blubb', 'blubb', '2009-11-18', '33'),
-(3, 'test', 'testing', '2009-11-24', '127.0.0.1'),
-(4, 'test', '3619bfe523bfdd5ad2f0ac', '2009-11-24', '127.0.0.1'),
-(5, 'test', '3619bfe523bfdd5ad2f0ac', '2009-11-24', '127.0.0.1'),
-(6, 'test', '3619bfe523bfdd5ad2f0ac', '2009-11-24', '127.0.0.1'),
-(7, 'test', '3619bfe523bfdd5ad2f0ac', '2009-11-24', '127.0.0.1');
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
@@ -118,14 +167,14 @@ CREATE TABLE IF NOT EXISTS `users_profile` (
   `hobbys` int(100) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
---
--- Daten für Tabelle `users_profile`
---
+-- --------------------------------------------------------
 
-INSERT INTO `users_profile` (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES
-(2, 'blabla', 0, 0, 0, 0),
-(6, '', 0, 0, 0, 0),
-(7, 'test', 0, 0, 0, 0);
+--
+-- Struktur des Views `fullQuestionSet`
+--
+DROP TABLE IF EXISTS `fullQuestionSet`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fullQuestionSet` AS select `qs`.`setid` AS `setid`,`qs`.`ownerid` AS `ownerid`,`qs`.`editcount` AS `editcount`,`qs`.`lasttimestamp` AS `lasttimestamp`,`qs`.`createtimestamp` AS `createtimestamp`,`qs`.`firstowner` AS `firstowner`,`qs`.`tagsid` AS `tagsid`,`qa`.`answerid` AS `answerid`,`qa`.`answertext` AS `answertext`,`qq`.`questionid` AS `questionid`,`qq`.`set` AS `set`,`qq`.`question` AS `question`,`qq`.`answersid` AS `answersid`,`qq`.`mode` AS `mode`,`tags`.`tagid` AS `tagid`,`tags`.`tagname` AS `tagname` from (`question_set` `qs` left join ((`question_answer` `qa` join `question_question` `qq`) join `tags`) on(((`qs`.`tagsid` = `tags`.`tagid`) and (`qs`.`setid` = `qq`.`set`) and (`qq`.`answersid` = `qa`.`answerid`))));
 
 -- --------------------------------------------------------
 
