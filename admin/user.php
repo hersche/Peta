@@ -34,7 +34,7 @@ switch($_GET['action']){
 						$roleid = $role['roleid'];
 					}
 				}
-				$newUser = array("name"=>$_POST['name'], "password"=>hash($GLOBALS["password_hash"], $_POST['password']), "broleid" => $roleid);
+				$newUser = array("name"=>$_POST['name'], "password"=>$_POST['password'], "broleid" => $roleid);
 				usertools::editUser($_SESSION['editUser'], $newUser, $connection);
 				array_push($messages, "Changes where successfull for user ".$_SESSION['editUser']['username']);
 			}

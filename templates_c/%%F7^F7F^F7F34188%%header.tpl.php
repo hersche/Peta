@@ -1,7 +1,8 @@
-<?php /* Smarty version 2.6.26, created on 2009-11-26 17:58:02
+<?php /* Smarty version 2.6.26, created on 2009-11-27 13:00:02
          compiled from header.tpl */ ?>
 <html>
-<head><title>LearningCards::<?php echo $this->_tpl_vars['title']; ?>
+<head>
+<title>LearningCards::<?php echo $this->_tpl_vars['title']; ?>
 </title>
 <?php unset($this->_sections['js']);
 $this->_sections['js']['name'] = 'js';
@@ -28,9 +29,9 @@ $this->_sections['js']['first']      = ($this->_sections['js']['iteration'] == 1
 $this->_sections['js']['last']       = ($this->_sections['js']['iteration'] == $this->_sections['js']['total']);
 ?>
 <script type="text/javascript" src="<?php echo $this->_tpl_vars['jsscripts'][$this->_sections['js']['index']]; ?>
-" djConfig="parseOnLoad:true"></script>
-<?php endfor; endif; ?>
-<?php unset($this->_sections['css']);
+"
+	djConfig="parseOnLoad:true"></script>
+<?php endfor; endif; ?> <?php unset($this->_sections['css']);
 $this->_sections['css']['name'] = 'css';
 $this->_sections['css']['loop'] = is_array($_loop=$this->_tpl_vars['allcss']) ? count($_loop) : max(0, (int)$_loop); unset($_loop);
 $this->_sections['css']['show'] = true;
@@ -55,9 +56,10 @@ $this->_sections['css']['first']      = ($this->_sections['css']['iteration'] ==
 $this->_sections['css']['last']       = ($this->_sections['css']['iteration'] == $this->_sections['css']['total']);
 ?>
 <link title="<?php echo $this->_tpl_vars['allcss'][$this->_sections['css']['index']]; ?>
-" rel="stylesheet" type="text/css" href="<?php echo $this->_tpl_vars['allcss'][$this->_sections['css']['index']]; ?>
+" rel="stylesheet" type="text/css"
+	href="<?php echo $this->_tpl_vars['allcss'][$this->_sections['css']['index']]; ?>
 " />
 <?php endfor; endif; ?>
 </head>
-<body <?php echo $this->_tpl_vars['bodyargs']; ?>
+<body<?php echo $this->_tpl_vars['bodyargs']; ?>
 >
