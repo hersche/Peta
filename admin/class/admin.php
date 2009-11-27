@@ -11,7 +11,10 @@ class admin{
 			}
 		}
 	}
-	
+	public static function getRoles($connection){
+		$tmp = $connection->query("SELECT * FROM role;");
+		return $tmp->fetchAll();
+	}
 	public static function extractFromArray($array, $item){
 		$tmp = array();
 		foreach($array as $single){

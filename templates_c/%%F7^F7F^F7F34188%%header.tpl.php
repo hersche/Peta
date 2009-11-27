@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.26, created on 2009-11-24 14:13:15
+<?php /* Smarty version 2.6.26, created on 2009-11-26 17:58:02
          compiled from header.tpl */ ?>
 <html>
 <head><title>LearningCards::<?php echo $this->_tpl_vars['title']; ?>

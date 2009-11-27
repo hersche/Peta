@@ -7,7 +7,8 @@ switch($_GET['action']) {
 	case "register":
 		if((!empty($_POST['name']))&&(!empty($_POST['username']))&&(!empty($_POST['password']))&&(!empty($_POST['password2']))){
 			if($_POST["password"]==$_POST["password2"]){
-				array_push($messages, usertools::registerUser($_POST["name"], $_POST["username"], $_POST["password"], "NORMAL", $connection));
+				// FIXME use default-value from db for role!
+				array_push($messages, usertools::registerUser($_POST["name"], $_POST["username"], $_POST["password"], 1, $connection));
 			}
 			else{
 				array_push($messages, "Passwords doesn't match");

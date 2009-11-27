@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.26, created on 2009-11-26 17:15:18
+<?php /* Smarty version 2.6.26, created on 2009-11-26 19:25:45
          compiled from user.tpl */ ?>
 <?php $_smarty_tpl_vars = $this->_tpl_vars;
 $this->_smarty_include(array('smarty_include_tpl_file' => "header.tpl", 'smarty_include_vars' => array('title' => 'Usermanagement')));
@@ -15,6 +15,8 @@ $this->_smarty_include(array('smarty_include_tpl_file' => "messagebox.tpl", 'sma
 $this->_tpl_vars = $_smarty_tpl_vars;
 unset($_smarty_tpl_vars);
  ?>
+<h2><a href="user.php?action=createuser">Create User</a></h2>
+
 <h2>Edit a user</h2>
 <p>But please respect all the users which hasn't so much rights like you!</p>
 <form action="user.php?action=edituser" method="post">

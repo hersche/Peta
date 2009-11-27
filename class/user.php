@@ -18,7 +18,6 @@ class user{
 			$firstRound = true;
 			// $this->connection = $connection;
 			$password = hash($GLOBALS["password_hash"], $password);
-			try{
 				foreach($connection->query('SELECT * FROM fullUser WHERE username="'.$username.'" AND password="'.$password.'";') as $userrow){
 					if($firstRound){
 						$this->id = $userrow['id'];
@@ -38,15 +37,7 @@ class user{
 					else{
 						array_push($this->roles, $userrow["role"]);
 					}
-
-				}
-			}
-			catch (Exception $e){
-				echo "Error: ".$e->getMessage();
-			}
-		}
-		else{
-			echo "Fill the fields!";
+				}	
 		}
 	}
 
@@ -110,7 +101,7 @@ class usertools{
 					$connection->exec("INSERT INTO users (`username`, `password`, `lastlogin`, `lastip`) VALUES ('".$username."', '".$password."', '".$datetime->format('Y-m-d')."', '".getenv('REMOTE_ADDR')."');");
 					$userid = $connection->lastInsertId();
 					$connection->exec("INSERT INTO users_profile (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES ('".$userid."', '".$name."', '', '', '', '');");
-					$connection->exec("INSERT INTO userrole (`buserid`, `broleid`) VALUES ('".$userid."', '1');");
+					$connection->exec("INSERT INTO userrole (`buserid`, `broleid`) VALUES ('".$userid."', '".$role."');");
 					return "User ".$username." was created successfull!";
 				}
 				catch (Exception $e){
@@ -160,6 +151,9 @@ class usertools{
 		if($oldUser['password']!=$password){
 			usertools::setPassword($oldUser['username'], $editUser['password'], $connection);
 		}
+		if($oldUser['broleid']!=$editUser['broleid']){
+			usertools::setRole($oldUser['id'], $oldUser['broleid'], $editUser['broleid'], $connection);
+		}
 		if($changes){
 			$SQLUpdate = "UPDATE users_profile SET";
 			foreach($changeSQL as $singlechange){
@@ -170,6 +164,11 @@ class usertools{
 		}
 	}
 
+	static public function setRole($userid, $oldRole, $newRole, $connection){
+		echo 'UPDATE userrole SET broleid="'.$newRole.'" WHERE buserid="'.$userid.' AND broleid="'.$oldRole.'";';
+		$connection->exec('UPDATE userrole SET broleid="'.$newRole.'" WHERE buserid="'.$userid.'" AND broleid="'.$oldRole.'";');
+	}
+	
 	static public function setPassword($username, $password, $connection){
 		if(usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
 			$password = hash($GLOBALS["password_hash"], $password);
