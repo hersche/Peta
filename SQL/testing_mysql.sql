@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 27. November 2009 um 13:23
+-- Erstellungszeit: 27. November 2009 um 15:51
 -- Server Version: 5.1.41
 -- PHP-Version: 5.2.11-2
 
@@ -20,6 +20,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 --
 CREATE TABLE IF NOT EXISTS `fullQuestionSet` (
 `setid` int(11)
+,`setname` varchar(11)
 ,`ownerid` int(11)
 ,`editcount` int(11)
 ,`lasttimestamp` timestamp
@@ -27,11 +28,11 @@ CREATE TABLE IF NOT EXISTS `fullQuestionSet` (
 ,`firstowner` int(11)
 ,`tagsid` int(11)
 ,`answerid` int(11)
+,`ownerquestion` int(11)
 ,`answertext` varchar(100)
 ,`questionid` int(11)
 ,`set` int(11)
 ,`question` varchar(100)
-,`answersid` int(11)
 ,`mode` text
 ,`tagid` int(11)
 ,`tagname` varchar(50)
@@ -66,6 +67,7 @@ CREATE TABLE IF NOT EXISTS `fullUser` (
 
 CREATE TABLE IF NOT EXISTS `question_answer` (
   `answerid` int(11) NOT NULL AUTO_INCREMENT,
+  `ownerquestion` int(11) NOT NULL,
   `answertext` varchar(100) NOT NULL,
   PRIMARY KEY (`answerid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -80,7 +82,6 @@ CREATE TABLE IF NOT EXISTS `question_question` (
   `questionid` int(11) NOT NULL AUTO_INCREMENT,
   `set` int(11) NOT NULL,
   `question` varchar(100) NOT NULL,
-  `answersid` int(11) NOT NULL,
   `mode` text NOT NULL,
   PRIMARY KEY (`questionid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
@@ -93,6 +94,7 @@ CREATE TABLE IF NOT EXISTS `question_question` (
 
 CREATE TABLE IF NOT EXISTS `question_set` (
   `setid` int(11) NOT NULL AUTO_INCREMENT,
+  `setname` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
   `ownerid` int(11) NOT NULL,
   `editcount` int(11) NOT NULL,
   `lasttimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -174,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `users_profile` (
 --
 DROP TABLE IF EXISTS `fullQuestionSet`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fullQuestionSet` AS select `qs`.`setid` AS `setid`,`qs`.`ownerid` AS `ownerid`,`qs`.`editcount` AS `editcount`,`qs`.`lasttimestamp` AS `lasttimestamp`,`qs`.`createtimestamp` AS `createtimestamp`,`qs`.`firstowner` AS `firstowner`,`qs`.`tagsid` AS `tagsid`,`qa`.`answerid` AS `answerid`,`qa`.`answertext` AS `answertext`,`qq`.`questionid` AS `questionid`,`qq`.`set` AS `set`,`qq`.`question` AS `question`,`qq`.`answersid` AS `answersid`,`qq`.`mode` AS `mode`,`tags`.`tagid` AS `tagid`,`tags`.`tagname` AS `tagname` from (`question_set` `qs` left join ((`question_answer` `qa` join `question_question` `qq`) join `tags`) on(((`qs`.`tagsid` = `tags`.`tagid`) and (`qs`.`setid` = `qq`.`set`) and (`qq`.`answersid` = `qa`.`answerid`))));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fullQuestionSet` AS select `qs`.`setid` AS `setid`,`qs`.`setname` AS `setname`,`qs`.`ownerid` AS `ownerid`,`qs`.`editcount` AS `editcount`,`qs`.`lasttimestamp` AS `lasttimestamp`,`qs`.`createtimestamp` AS `createtimestamp`,`qs`.`firstowner` AS `firstowner`,`qs`.`tagsid` AS `tagsid`,`qa`.`answerid` AS `answerid`,`qa`.`ownerquestion` AS `ownerquestion`,`qa`.`answertext` AS `answertext`,`qq`.`questionid` AS `questionid`,`qq`.`set` AS `set`,`qq`.`question` AS `question`,`qq`.`mode` AS `mode`,`tags`.`tagid` AS `tagid`,`tags`.`tagname` AS `tagname` from (`question_set` `qs` left join ((`question_answer` `qa` join `question_question` `qq`) join `tags`) on(((`qs`.`tagsid` = `tags`.`tagid`) and (`qs`.`setid` = `qq`.`set`) and (`qq`.`questionid` = `qa`.`ownerquestion`))));
 
 -- --------------------------------------------------------
 
