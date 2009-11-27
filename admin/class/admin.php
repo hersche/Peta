@@ -1,11 +1,11 @@
 <?php
 class admin{
-	public static function getUsers($connection){		
+	public static function getUsers($connection){
 		$tmp = $connection->query("SELECT * FROM fullUser;");
 		return $tmp->fetchAll();
 	}
 	public static function getUser($username, $users){
-			foreach($users as $single){
+		foreach($users as $single){
 			if($single["username"]==$username){
 				return $single;
 			}
@@ -22,7 +22,7 @@ class admin{
 		}
 		return $tmp;
 	}
-	
-	
+
+
 }
 ?>

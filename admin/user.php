@@ -11,6 +11,7 @@ switch($_GET['action']){
 		}
 		$template->assign("name", $_SESSION['editUser']["name"]);
 		$template->assign("roles", admin::extractFromArray(admin::getRoles($connection), "role"));
+		$template->assign("selectRole", $_SESSION['editUser']["role"]);
 		$template->assign("username", $_SESSION['editUser']["username"]);
 		$template->assign("messages", $messages);
 		$template->display('users_edituser.tpl');

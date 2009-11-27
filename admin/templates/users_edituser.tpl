@@ -19,11 +19,13 @@ file="menu.tpl"} {include file="messagebox.tpl"}
 		<td>Password validation:</td>
 		<td><input TYPE="password" SIZE="40" NAME="password2" /></td>
 	</tr>
-	<td>Userrole:</td>
+	<td>Userrole: </td>
 	<td><select name="role" size="1">
-		{section name=role loop=$roles}
+		{section name=role loop=$roles} {if $selectRole eq $roles[role]}
+		<option selected>{$roles[role]}</option>
+		{else}
 		<option>{$roles[role]}</option>
-		{/section}
+		{/if} {/section}
 	</select>
 
 	</tr>
