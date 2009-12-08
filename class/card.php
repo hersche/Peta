@@ -25,12 +25,17 @@ class allCardSets{
 				if($questionid!=null){
 					$set->addQuestion($question);
 				}
-				$question = new question($row['questionid'], $row['question'],$row['mode']);
+				$question = new question();
+				$question->setId($row['questionid']);
+				$question->setQuestion($row['question']);
+				$question->setMode($row['mode']);
 				$questionid = $row['questionid'];
 				$set->addQuestion($question);
 			}
 			if($answerid!=$row['answerid']){
-				$answerobj = new answer($row['answerid'], $row['answertext']);
+				$answerobj = new answer();
+				$answerobj->setAnswer($row['answertext']);
+				$answerobj->setAnswerId($row['answerid']);
 				$answerid = $row['answerid'];
 				$question->addAnswer($answerobj);
 			}
@@ -39,7 +44,7 @@ class allCardSets{
 		if($set!=null){
 			if($questionid!=null){
 				if($answerid!=null){
-					$question->addAnswer($answerobj);	
+					$question->addAnswer($answerobj);
 				}
 				$set->addQuestion($question);
 			}
@@ -50,11 +55,18 @@ class allCardSets{
 		return $this->sets;
 	}
 
-	public function newSet($set, $connection){
-		//		TODO add db-insert-method, use lastinsert-id to set this at the end
-		//		$connection->exec("insert")
-		//$set->setSetId($connection->lastidding)
+	public function newSet($set, $userid, $connection){
+		$connection->exec("INSERT INTO question_set (`setname`, `ownerid`,  `editcount`, `createtimestamp`, `firstowner`) VALUES ('".$set->getSetName()."', ".$userid.", 1, '2009-00-00 00:00:00', ".$userid.");");
+		echo $connection->lastInsertId();
+		$set->setSetId($connection->lastInsertId());
 		array_push($this->sets, $set);
+	}
+	public function getSetBySetId($setId){
+		foreach ($this->sets as $set){
+			if($set->getSetId==$setId){
+				return $set;
+			}
+		}
 	}
 }
 /**
@@ -94,25 +106,20 @@ class cardSet{
 		return $this->tags;
 	}
 	public function newQuestion($question, $connection){
-		//		TODO add db-insert-method, use lastinsert-id to set this at the end
-		//		$connection->exec("insert")
-		//$card->setSetId($connection->lastidding)
+		echo "INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (".$this->setid.", '".$question->getQuestion()."', '".$question->getMode()."')";
+		$connection->exec("INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (".$this->setid.", '".$question->getQuestion()."', '".$question->getMode()."')");
+		$question->setId($connection->lastInsertId());
 		array_push($this->questions, $question);
 	}
 }
 
 class question{
-	private $questionid;
+	private $questionId;
 	private $question;
 	private $answers = array();
 	private $mode;
 	private static $TEXTMODE = 1;
 	private static $SELECTMODE = 2;
-	public function __construct($questionid, $question, $mode){
-		$this->questionid = $questionid;
-		$this->question = $question;
-		$this->mode = $mode;
-	}
 
 	public function addAnswer($answer){
 		array_push($this->answers, $answer);
@@ -120,29 +127,37 @@ class question{
 	public function setMode($mode){
 		$this->mode = $mode;
 	}
+	public function setId($questionId){
+		$this->questionId = $questionId;
+	}
+	public function setQuestion($question){
+		$this->question = $question;
+	}
 	public function getMode(){
 		return $this->mode;
 	}
-	
+
 	public function getAnswers(){
 		return $this->answers;
 	}
-	
+
 	public function getQuestion(){
 		return $this->question;
 	}
 	public function getQuestionId(){
 		return $this->questionid;
 	}
+
+	public function newAnswer($answer, $connection){
+		$connection->exec("INSERT INTO `question_answer` (`ownerquestion`, `answertext`) VALUES (".$this->questionId.", '".$answer->getAnswer()."')");
+		$answer->setAnswerId($connection->lastInsertId());
+		array_push($this->answers, $answer);
+	}
 }
 
 class answer{
 	private $answerid;
 	private $answer;
-
-	public function __construct($answerid, $answer){
-		$this->answer = $answer;
-	}
 
 	public function getAnswerId(){
 		return $this->answerid;
