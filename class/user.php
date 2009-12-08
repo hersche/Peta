@@ -53,6 +53,10 @@ class user{
 	public function getWelcome(){
 		return $this->welcome;
 	}
+	
+	public function getId() {
+		return $this->id;
+	}
 	public function getMessages(){
 		return $this->messages;
 	}

@@ -1,30 +1,49 @@
 <?php
-
+/**
+ * The complete set of cardsets for a specified user!
+ * @author skamster
+ *
+ */
 class allCardSets{
 	private $sets = array();
 	public function __construct($userid, $connection){
 		$currentSetName;
 		$set = null;
 		$questionid = null;
-		foreach ($connection->exec('SELECT * FROM fullQuestionSet WHERE ownerid="'.$userid.'"') as $row){
+		$answerid = null;
+		foreach ($connection->query('SELECT * FROM fullQuestionSet WHERE ownerid="'.$userid.'"') as $row){
 			if($row['setname']!=$currentSetName){
 				if($set != null){
 					array_push($this->sets, $set);
 				}
-				$set = new cardSet();
 				$currentSetName=$row['setname'];
+				$set = new cardSet();
 				$set->setSetId($row['setid']);
 				$set->setSetName($row['setname']);
 			}
 			if($questionid!=$row['questionid']){
+				if($questionid!=null){
+					$set->addQuestion($question);
+				}
+				$question = new question($row['questionid'], $row['question'],$row['mode']);
 				$questionid = $row['questionid'];
-				
+				$set->addQuestion($question);
 			}
-			$answerobj = new answer();
-			$answerobj->setAnswerId($row['answerid']);
-			$answerobj->setAnswer($row['answertext']);
-			$set->addQuestion($row['questionid'], $row['question'], $answerobj);
-			$set->addTag($row['tagid'], $row['tagname']);
+			if($answerid!=$row['answerid']){
+				$answerobj = new answer($row['answerid'], $row['answertext']);
+				$answerid = $row['answerid'];
+				$question->addAnswer($answerobj);
+			}
+
+		}
+		if($set!=null){
+			if($questionid!=null){
+				if($answerid!=null){
+					$question->addAnswer($answerobj);	
+				}
+				$set->addQuestion($question);
+			}
+			array_push($this->sets, $set);
 		}
 	}
 	public function getSets(){
@@ -48,23 +67,16 @@ class cardSet{
 	private $setname;
 	private $questions = array();
 	private $tags = array();
-	//	public function __construct($setname, $cards, $tags){
-	//		$this->setname=$setname;
-	//		$this->cards=$cards;
-	//		$this->tags=$tags;
-	//	}
 
 	public function setSetId($setid){
 		$this->setid = $setid;
 	}
 
-	public function setSetName($setName){
+	public function setSetName($setname){
 		$this->setname=$setname;
 	}
-	public function addQuestion($questionid, $question, $answer){
-		$questionObj = new question($questionid, $question);
-		$questionObj->addAnswer($answer);
-		array_push($this->questions, new question($question));
+	public function addQuestion($question){
+		array_push($this->questions, $question);
 	}
 	public function addTag($tagid, $tag){
 		array_push($this->tags, new tag($tagid, $tag));
@@ -90,14 +102,15 @@ class cardSet{
 }
 
 class question{
+	private $questionid;
 	private $question;
 	private $answers = array();
 	private $mode;
 	private static $TEXTMODE = 1;
 	private static $SELECTMODE = 2;
-	public function __construct($questionid, $question,$answerid, $answers, $mode){
+	public function __construct($questionid, $question, $mode){
+		$this->questionid = $questionid;
 		$this->question = $question;
-		$this->answers = $answers;
 		$this->mode = $mode;
 	}
 
@@ -110,15 +123,25 @@ class question{
 	public function getMode(){
 		return $this->mode;
 	}
+	
+	public function getAnswers(){
+		return $this->answers;
+	}
+	
+	public function getQuestion(){
+		return $this->question;
+	}
+	public function getQuestionId(){
+		return $this->questionid;
+	}
 }
 
 class answer{
 	private $answerid;
 	private $answer;
 
-	public function __construct($answerid, $answer, $mode){
+	public function __construct($answerid, $answer){
 		$this->answer = $answer;
-		$this->mode = $mode;
 	}
 
 	public function getAnswerId(){
