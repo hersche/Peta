@@ -5,7 +5,7 @@
 {if $cardsets}
 <ul>
 {section name=set loop=$cardsets}
-<li><a href="cards.php?setId={$cardsets[set]->getSetId()}" >{$cardsets[set]->getSetName()}</a></li>
+<li><a href="cards.php?action=singlecardset&setid={$cardsets[set]->getSetId()}" >{$cardsets[set]->getSetName()}</a></li>
 {/section}
 </ul>
 {/if}

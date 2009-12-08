@@ -5,8 +5,12 @@
 <form action="cards.php?action=mkcreate" method="post">
 <table>
 	<tr>
-		<td>Cardset Name:</td>
+		<td>Cardset name:</td>
 		<td><input TYPE="text" SIZE="40" NAME="cardsetname" value="" /></td>
+	</tr>
+	<tr>
+		<td>Cardset description:</td>
+		<td><textarea NAME="cardsetdescription" value="" ></textarea></td>
 	</tr>
 	<tr>
 		<td>Question1</td>

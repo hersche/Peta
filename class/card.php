@@ -7,7 +7,7 @@
 class allCardSets{
 	private $sets = array();
 	public function __construct($userid, $connection){
-		$currentSetName;
+		$currentSetName = null;
 		$set = null;
 		$questionid = null;
 		$answerid = null;
@@ -20,6 +20,7 @@ class allCardSets{
 				$set = new cardSet();
 				$set->setSetId($row['setid']);
 				$set->setSetName($row['setname']);
+				$set->setSetDescription($row['setdescription']);
 			}
 			if($questionid!=$row['questionid']){
 				if($questionid!=null){
@@ -56,14 +57,14 @@ class allCardSets{
 	}
 
 	public function newSet($set, $userid, $connection){
-		$connection->exec("INSERT INTO question_set (`setname`, `ownerid`,  `editcount`, `createtimestamp`, `firstowner`) VALUES ('".$set->getSetName()."', ".$userid.", 1, '2009-00-00 00:00:00', ".$userid.");");
+		$connection->exec("INSERT INTO question_set (`setname`,`setdescription`, `ownerid`,  `editcount`, `createtimestamp`, `firstowner`) VALUES ('".$set->getSetName()."', '".$set->getSetDescription()."', ".$userid.", 1, '2009-00-00 00:00:00', ".$userid.");");
 		echo $connection->lastInsertId();
 		$set->setSetId($connection->lastInsertId());
 		array_push($this->sets, $set);
 	}
 	public function getSetBySetId($setId){
 		foreach ($this->sets as $set){
-			if($set->getSetId==$setId){
+			if($set->getSetId()==$setId){
 				return $set;
 			}
 		}
@@ -77,6 +78,7 @@ class allCardSets{
 class cardSet{
 	private $setid;
 	private $setname;
+	private $setdescription;
 	private $questions = array();
 	private $tags = array();
 
@@ -87,6 +89,9 @@ class cardSet{
 	public function setSetName($setname){
 		$this->setname=$setname;
 	}
+	public function setSetDescription($description){
+		$this->setdescription = $description;
+	}
 	public function addQuestion($question){
 		array_push($this->questions, $question);
 	}
@@ -95,6 +100,9 @@ class cardSet{
 	}
 	public function getSetId(){
 		return $this->setid;
+	}
+	public function getSetDescription(){
+		return $this->setdescription;
 	}
 	public function getSetName(){
 		return $this->setname;
@@ -111,6 +119,7 @@ class cardSet{
 		$question->setId($connection->lastInsertId());
 		array_push($this->questions, $question);
 	}
+	
 }
 
 class question{
