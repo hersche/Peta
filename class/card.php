@@ -11,6 +11,7 @@ class allCardSets{
 		$set = null;
 		$questionid = null;
 		$answerid = null;
+		$answerobj = null;
 		foreach ($connection->query('SELECT * FROM fullQuestionSet WHERE ownerid="'.$userid.'"') as $row){
 			if($row['setname']!=$currentSetName){
 				if($set != null){
@@ -22,6 +23,7 @@ class allCardSets{
 				$set->setSetName($row['setname']);
 				$set->setSetDescription($row['setdescription']);
 			}
+
 			if($questionid!=$row['questionid']){
 				if($questionid!=null){
 					$set->addQuestion($question);
@@ -31,15 +33,18 @@ class allCardSets{
 				$question->setQuestion($row['question']);
 				$question->setMode($row['mode']);
 				$questionid = $row['questionid'];
-				$set->addQuestion($question);
 			}
 			if($answerid!=$row['answerid']){
+
+				if($answerobj!=null){
+					$question->addAnswer($answerobj);
+				}
 				$answerobj = new answer();
 				$answerobj->setAnswer($row['answertext']);
 				$answerobj->setAnswerId($row['answerid']);
 				$answerid = $row['answerid'];
-				$question->addAnswer($answerobj);
 			}
+
 
 		}
 		if($set!=null){
@@ -119,7 +124,7 @@ class cardSet{
 		$question->setId($connection->lastInsertId());
 		array_push($this->questions, $question);
 	}
-	
+
 }
 
 class question{
@@ -155,6 +160,16 @@ class question{
 	}
 	public function getQuestionId(){
 		return $this->questionid;
+	}
+
+	public function checkRightAnswer($answertext){
+		foreach($this->answers as $answer){
+			// TODO build in option for diffrent answers!
+			if($answer->getAnswer()==$answertext){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function newAnswer($answer, $connection){

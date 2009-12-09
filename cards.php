@@ -38,7 +38,11 @@ switch($_GET["action"]){
 			$template->assign("cardsettitle", $set->getSetName());
 			$template->assign("cardsetdescription", $set->getSetDescription());
 			$questions = $set->getQuestions();
+			foreach ($questions as $question){
+				echo $question->getQuestion()."<br />";
+			}
 			if(!empty($_GET['nextquestion'])){
+				// TODO count arrays the right way!
 				if(count($questions)>$_GET['nextquestion']){
 					$template->assign("question",$questions[$_GET['nextquestion']]->getQuestion());
 					$template->assign("nextquestion",$_GET['nextquestion']+1);
@@ -47,11 +51,20 @@ switch($_GET["action"]){
 					$template->assign("question",$questions[0]->getQuestion());
 					$template->assign("nextquestion",1);
 				}
+				if(!empty($_POST['answer'])){
+					if($questions[$_GET['nextquestion']]->checkRightAnswer($_POST['answer1'])){
+						array_push($messages, "Answer was right! :)");
+					}
+					else{
+						array_push($messages, "Answer was wrong! :(");
+					}
+				}
 			}
 			else{
 				$template->assign("question",$questions[0]->getQuestion());
 				$template->assign("nextquestion",1);
 			}
+			$template->assign("messages", $messages);
 			$template->display('cards_singlecardset.tpl');
 			break;
 		}
