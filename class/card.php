@@ -7,55 +7,90 @@
 class allCardSets{
 	private $sets = array();
 	public function __construct($userid, $connection){
-		$currentSetName = null;
 		$set = null;
-		$questionid = null;
-		$answerid = null;
-		$answerobj = null;
+		$setid = -1;
+		$questionid = -1;
+		$answerid = -1;
 		foreach ($connection->query('SELECT * FROM fullQuestionSet WHERE ownerid="'.$userid.'"') as $row){
-			if($row['setname']!=$currentSetName){
-				if($set != null){
-					array_push($this->sets, $set);
-				}
-				$currentSetName=$row['setname'];
+			if($row['setid']!=$setid){
 				$set = new cardSet();
 				$set->setSetId($row['setid']);
 				$set->setSetName($row['setname']);
 				$set->setSetDescription($row['setdescription']);
 			}
-
-			if($questionid!=$row['questionid']){
-				if($questionid!=null){
-					$set->addQuestion($question);
-				}
+			if(($questionid!=$row['questionid'])&&($row['questionid']!=null)){
 				$question = new question();
 				$question->setId($row['questionid']);
 				$question->setQuestion($row['question']);
 				$question->setMode($row['mode']);
-				$questionid = $row['questionid'];
 			}
-			if($answerid!=$row['answerid']){
-
-				if($answerobj!=null){
-					$question->addAnswer($answerobj);
-				}
+			if(($answerid!=$row['answerid'])&&($row['answerid']!=null)){
 				$answerobj = new answer();
 				$answerobj->setAnswer($row['answertext']);
 				$answerobj->setAnswerId($row['answerid']);
+			}
+			if(($answerid!=$row['answerid'])&&($row['answerid']!=null)){
+				$question->addAnswer($answerobj);
 				$answerid = $row['answerid'];
 			}
-
-
-		}
-		if($set!=null){
-			if($questionid!=null){
-				if($answerid!=null){
-					$question->addAnswer($answerobj);
-				}
+			if(($questionid!=$row['questionid'])&&($row['questionid']!=null)){
 				$set->addQuestion($question);
+				$questionid = $row['questionid'];
 			}
-			array_push($this->sets, $set);
+			if(($set != null)&&($row['setid']!=$setid)){
+				$setid=$row['setid'];
+				array_push($this->sets, $set);
+			}
+			//			if($row['setid']!=$setid){
+			//				// 1. wenn set null nicht null ist, da 1. set existiert, wird es hinzugefügt
+			//				if($set != null){
+			//					array_push($this->sets, $set);
+			//				}
+			//				$setid=$row['setid'];
+			//				$set = new cardSet();
+			//				$set->setSetId($row['setid']);
+			//				$set->setSetName($row['setname']);
+			//				$set->setSetDescription($row['setdescription']);
+			//			}
+			//
+			//			if($questionid!=$row['questionid']){
+			//				if($row['set']==$row['setid']){
+			//					$question = new question();
+			//					$question->setId($row['questionid']);
+			//					$question->setQuestion($row['question']);
+			//					$question->setMode($row['mode']);
+			//					$set->addQuestion($question);
+			//				}
+			//				else{
+			//					echo "set ".$row['set']." :: setid". $row['setid']."<br />";
+			//					//$this->getSetBySetId($row['set'])->addQuestion($question);
+			//				}
+			//				// problem: die row ist zwar schon aktueller, das objekt ist aber während dem zeitpunkt des hinzufügens noch das alte..
+			//
+			//				$questionid = $row['questionid'];
+			//			}
+			//			if($answerid!=$row['answerid']){
+			//
+			//				if($answerobj!=null){
+			//					$question->addAnswer($answerobj);
+			//				}
+			//				$answerobj = new answer();
+			//				$answerobj->setAnswer($row['answertext']);
+			//				$answerobj->setAnswerId($row['answerid']);
+			//				$answerid = $row['answerid'];
+			//			}
+
+
 		}
+//		if($set!=null){
+//			if($questionid!=null){
+//				if($answerid!=null){
+//					$question->addAnswer($answerobj);
+//				}
+//				$set->addQuestion($question);
+//			}
+//			array_push($this->sets, $set);
+//		}
 	}
 	public function getSets(){
 		return $this->sets;
@@ -216,6 +251,23 @@ class tag{
 	}
 
 
+}
+
+class cardtools{
+	public static function oneBeforeInArray($array, $position){
+		if(count($array)>1){
+			$beforePosition = ($position -1);
+			if($beforePosition<0){
+				return (count($array)-1);
+			}
+			else{
+				return $beforePosition;
+			}
+		}
+		else{
+			return 0;
+		}
+	}
 }
 
 

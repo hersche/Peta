@@ -41,18 +41,19 @@ switch($_GET["action"]){
 			foreach ($questions as $question){
 				echo $question->getQuestion()."<br />";
 			}
-			if(!empty($_GET['nextquestion'])){
-				// TODO count arrays the right way!
+			if((!empty($_GET['nextquestion']))&&(count($questions)>1)){
 				if(count($questions)>$_GET['nextquestion']){
-					$template->assign("question",$questions[$_GET['nextquestion']]->getQuestion());
+					$template->assign("question",$questions[$_GET['nextquestion']-1]->getQuestion());
 					$template->assign("nextquestion",$_GET['nextquestion']+1);
 				}
-				else{
-					$template->assign("question",$questions[0]->getQuestion());
+				else if(count($questions)==$_GET['nextquestion']){
+					$template->assign("question",$questions[$_GET['nextquestion']-1]->getQuestion());
 					$template->assign("nextquestion",1);
 				}
 				if(!empty($_POST['answer'])){
-					if($questions[$_GET['nextquestion']]->checkRightAnswer($_POST['answer1'])){
+					$answer = $questions[$_GET['nextquestion']-1]->getAnswers();
+					echo "your answer: ".$_POST['answer']."<br /> the object-question: ".$questions[$_GET['nextquestion']-1]->getQuestion()." <br />the object-answer ".$answer[0]->getAnswer();
+					if($questions[$_GET['nextquestion']-1]->checkRightAnswer($_POST['answer1'])){
 						array_push($messages, "Answer was right! :)");
 					}
 					else{
@@ -62,7 +63,7 @@ switch($_GET["action"]){
 			}
 			else{
 				$template->assign("question",$questions[0]->getQuestion());
-				$template->assign("nextquestion",1);
+				$template->assign("nextquestion",2);
 			}
 			$template->assign("messages", $messages);
 			$template->display('cards_singlecardset.tpl');
