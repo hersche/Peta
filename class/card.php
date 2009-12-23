@@ -41,56 +41,7 @@ class allCardSets{
 				$setid=$row['setid'];
 				array_push($this->sets, $set);
 			}
-			//			if($row['setid']!=$setid){
-			//				// 1. wenn set null nicht null ist, da 1. set existiert, wird es hinzugefügt
-			//				if($set != null){
-			//					array_push($this->sets, $set);
-			//				}
-			//				$setid=$row['setid'];
-			//				$set = new cardSet();
-			//				$set->setSetId($row['setid']);
-			//				$set->setSetName($row['setname']);
-			//				$set->setSetDescription($row['setdescription']);
-			//			}
-			//
-			//			if($questionid!=$row['questionid']){
-			//				if($row['set']==$row['setid']){
-			//					$question = new question();
-			//					$question->setId($row['questionid']);
-			//					$question->setQuestion($row['question']);
-			//					$question->setMode($row['mode']);
-			//					$set->addQuestion($question);
-			//				}
-			//				else{
-			//					echo "set ".$row['set']." :: setid". $row['setid']."<br />";
-			//					//$this->getSetBySetId($row['set'])->addQuestion($question);
-			//				}
-			//				// problem: die row ist zwar schon aktueller, das objekt ist aber während dem zeitpunkt des hinzufügens noch das alte..
-			//
-			//				$questionid = $row['questionid'];
-			//			}
-			//			if($answerid!=$row['answerid']){
-			//
-			//				if($answerobj!=null){
-			//					$question->addAnswer($answerobj);
-			//				}
-			//				$answerobj = new answer();
-			//				$answerobj->setAnswer($row['answertext']);
-			//				$answerobj->setAnswerId($row['answerid']);
-			//				$answerid = $row['answerid'];
-			//			}
-
-
 		}
-//		if($set!=null){
-//			if($questionid!=null){
-//				if($answerid!=null){
-//					$question->addAnswer($answerobj);
-//				}
-//				$set->addQuestion($question);
-//			}
-//			array_push($this->sets, $set);
-//		}
 	}
 	public function getSets(){
 		return $this->sets;
@@ -154,7 +105,6 @@ class cardSet{
 		return $this->tags;
 	}
 	public function newQuestion($question, $connection){
-		echo "INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (".$this->setid.", '".$question->getQuestion()."', '".$question->getMode()."')";
 		$connection->exec("INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (".$this->setid.", '".$question->getQuestion()."', '".$question->getMode()."')");
 		$question->setId($connection->lastInsertId());
 		array_push($this->questions, $question);
@@ -208,7 +158,6 @@ class question{
 	}
 
 	public function newAnswer($answer, $connection){
-		$connection->exec("INSERT INTO `question_answer` (`ownerquestion`, `answertext`) VALUES (".$this->questionId.", '".$answer->getAnswer()."')");
 		$answer->setAnswerId($connection->lastInsertId());
 		array_push($this->answers, $answer);
 	}

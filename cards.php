@@ -38,22 +38,20 @@ switch($_GET["action"]){
 			$template->assign("cardsettitle", $set->getSetName());
 			$template->assign("cardsetdescription", $set->getSetDescription());
 			$questions = $set->getQuestions();
-			foreach ($questions as $question){
-				echo $question->getQuestion()."<br />";
-			}
 			if((!empty($_GET['nextquestion']))&&(count($questions)>1)){
+				$questionid = cardtools::oneBeforeInArray($questions, $_GET['nextquestion']);
 				if(count($questions)>$_GET['nextquestion']){
-					$template->assign("question",$questions[$_GET['nextquestion']-1]->getQuestion());
+					$template->assign("question",$questions[$questionid]->getQuestion());
 					$template->assign("nextquestion",$_GET['nextquestion']+1);
 				}
 				else if(count($questions)==$_GET['nextquestion']){
-					$template->assign("question",$questions[$_GET['nextquestion']-1]->getQuestion());
+					$template->assign("question",$questions[$questionid]->getQuestion());
 					$template->assign("nextquestion",1);
 				}
 				if(!empty($_POST['answer'])){
-					$answer = $questions[$_GET['nextquestion']-1]->getAnswers();
-					echo "your answer: ".$_POST['answer']."<br /> the object-question: ".$questions[$_GET['nextquestion']-1]->getQuestion()." <br />the object-answer ".$answer[0]->getAnswer();
-					if($questions[$_GET['nextquestion']-1]->checkRightAnswer($_POST['answer1'])){
+					$answer = $questions[$questionid]->getAnswers();
+					$lastQuestionId = cardtools::oneBeforeInArray($questions, $questionid);
+					if($questions[$lastQuestionId]->checkRightAnswer($_POST['answer'])){
 						array_push($messages, "Answer was right! :)");
 					}
 					else{
