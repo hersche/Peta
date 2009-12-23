@@ -23,6 +23,8 @@ class allCardSets{
 				$question->setId($row['questionid']);
 				$question->setQuestion($row['question']);
 				$question->setMode($row['mode']);
+				$question->setRightAnswered($row['rightAnswered']);
+				$question->setWrongAnswered($row['wrongAnswered']);
 			}
 			if(($answerid!=$row['answerid'])&&($row['answerid']!=null)){
 				$answerobj = new answer();
@@ -117,6 +119,8 @@ class question{
 	private $question;
 	private $answers = array();
 	private $mode;
+	private $rightAnswered;
+	private $wrongAnswered;
 	private static $TEXTMODE = 1;
 	private static $SELECTMODE = 2;
 
@@ -131,6 +135,18 @@ class question{
 	}
 	public function setQuestion($question){
 		$this->question = $question;
+	}
+	public function setRightAnswered($nr){
+		$this->rightAnswered = $nr;
+	}
+	public function setWrongAnswered($nr){
+		$this->wrongAnswered = $nr;
+	}
+	public function getRightAnswered(){
+		return $this->rightAnswered;
+	}
+	public function getWrongAnswered(){
+		return $this->wrongAnswered;
 	}
 	public function getMode(){
 		return $this->mode;
@@ -147,13 +163,17 @@ class question{
 		return $this->questionid;
 	}
 
-	public function checkRightAnswer($answertext){
+	public function checkRightAnswer($answertext, $connection){
 		foreach($this->answers as $answer){
 			// TODO build in option for diffrent answers!
 			if($answer->getAnswer()==$answertext){
+				$this->rightAnswered +=1;
+				$connection->exec("UPDATE `learncards`.`question_question` SET `rightAnswered` = '".$this->rightAnswered."' WHERE `question_question`.`questionid` =".$this->questionId." LIMIT 1 ;");
 				return true;
 			}
 		}
+		$this->wrongAnswered +=1;
+		$connection->exec("UPDATE `learncards`.`question_question` SET `wrongAnswered` = '".$this->wrongAnswered."' WHERE `question_question`.`questionid` =".$this->questionId." LIMIT 1 ;");
 		return false;
 	}
 

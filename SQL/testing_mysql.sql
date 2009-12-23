@@ -3,24 +3,25 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 08. Dezember 2009 um 12:13
--- Server Version: 5.1.41
--- PHP-Version: 5.2.11-2
+-- Generation Time: Dec 23, 2009 at 06:47 PM
+-- Server version: 5.1.41
+-- PHP Version: 5.2.11-2
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 --
--- Datenbank: `learncards`
+-- Database: `learncards`
 --
 
 -- --------------------------------------------------------
 
 --
--- Stellvertreter-Struktur des Views `fullQuestionSet`
+-- Stand-in structure for view `fullQuestionSet`
 --
 CREATE TABLE IF NOT EXISTS `fullQuestionSet` (
 `setid` int(11)
 ,`setname` varchar(11)
+,`setdescription` varchar(1000)
 ,`ownerid` int(11)
 ,`editcount` int(11)
 ,`lasttimestamp` timestamp
@@ -36,6 +37,8 @@ CREATE TABLE IF NOT EXISTS `fullQuestionSet` (
 ,`set` int(11)
 ,`question` varchar(100)
 ,`mode` text
+,`rightAnswered` int(11)
+,`wrongAnswered` int(11)
 ,`answerid` int(11)
 ,`ownerquestion` int(11)
 ,`answertext` varchar(100)
@@ -43,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `fullQuestionSet` (
 -- --------------------------------------------------------
 
 --
--- Stellvertreter-Struktur des Views `fullUser`
+-- Stand-in structure for view `fullUser`
 --
 CREATE TABLE IF NOT EXISTS `fullUser` (
 `id` int(11)
@@ -65,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `fullUser` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `question_answer`
+-- Table structure for table `question_answer`
 --
 
 CREATE TABLE IF NOT EXISTS `question_answer` (
@@ -73,19 +76,12 @@ CREATE TABLE IF NOT EXISTS `question_answer` (
   `ownerquestion` int(11) NOT NULL,
   `answertext` varchar(100) NOT NULL,
   PRIMARY KEY (`answerid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
---
--- Daten für Tabelle `question_answer`
---
-
-INSERT INTO `question_answer` (`answerid`, `ownerquestion`, `answertext`) VALUES
-(1, 1, 'genau so!');
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `question_question`
+-- Table structure for table `question_question`
 --
 
 CREATE TABLE IF NOT EXISTS `question_question` (
@@ -93,25 +89,21 @@ CREATE TABLE IF NOT EXISTS `question_question` (
   `set` int(11) NOT NULL,
   `question` varchar(100) NOT NULL,
   `mode` text NOT NULL,
+  `rightAnswered` int(11) NOT NULL DEFAULT '0',
+  `wrongAnswered` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`questionid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
---
--- Daten für Tabelle `question_question`
---
-
-INSERT INTO `question_question` (`questionid`, `set`, `question`, `mode`) VALUES
-(1, 1, 'wer was wie?', 'radio');
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=22 ;
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `question_set`
+-- Table structure for table `question_set`
 --
 
 CREATE TABLE IF NOT EXISTS `question_set` (
   `setid` int(11) NOT NULL AUTO_INCREMENT,
   `setname` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
+  `setdescription` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
   `ownerid` int(11) NOT NULL,
   `editcount` int(11) NOT NULL,
   `lasttimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -119,19 +111,12 @@ CREATE TABLE IF NOT EXISTS `question_set` (
   `firstowner` int(11) NOT NULL,
   `tagsid` int(11) NOT NULL,
   PRIMARY KEY (`setid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
-
---
--- Daten für Tabelle `question_set`
---
-
-INSERT INTO `question_set` (`setid`, `setname`, `ownerid`, `editcount`, `lasttimestamp`, `createtimestamp`, `firstowner`, `tagsid`) VALUES
-(1, 'test', 16, 1, '2009-12-01 13:41:03', '0000-00-00 00:00:00', 16, 1);
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=20 ;
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `role`
+-- Table structure for table `role`
 --
 
 CREATE TABLE IF NOT EXISTS `role` (
@@ -140,18 +125,10 @@ CREATE TABLE IF NOT EXISTS `role` (
   PRIMARY KEY (`roleid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
---
--- Daten für Tabelle `role`
---
-
-INSERT INTO `role` (`roleid`, `role`) VALUES
-(1, 'admin'),
-(2, 'normal');
-
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `tags`
+-- Table structure for table `tags`
 --
 
 CREATE TABLE IF NOT EXISTS `tags` (
@@ -160,15 +137,10 @@ CREATE TABLE IF NOT EXISTS `tags` (
   PRIMARY KEY (`tagid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
---
--- Daten für Tabelle `tags`
---
-
-
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `userrole`
+-- Table structure for table `userrole`
 --
 
 CREATE TABLE IF NOT EXISTS `userrole` (
@@ -176,17 +148,10 @@ CREATE TABLE IF NOT EXISTS `userrole` (
   `broleid` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Daten für Tabelle `userrole`
---
-
-INSERT INTO `userrole` (`buserid`, `broleid`) VALUES
-(16, 1);
-
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -198,17 +163,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=17 ;
 
---
--- Daten für Tabelle `users`
---
-
-INSERT INTO `users` (`id`, `username`, `password`, `lastlogin`, `lastip`) VALUES
-(16, 'test', 'fd9d94340dbd72c11b37ebb0d2a19b4d05e00fd78e4e2ce8923b9ea3a54e900df181cfb112a8a73228d1f3551680e2ad9701a4fcfb248fa7fa77b95180628bb2', '2009-11-27', '127.0.0.1');
-
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `users_profile`
+-- Table structure for table `users_profile`
 --
 
 CREATE TABLE IF NOT EXISTS `users_profile` (
@@ -220,26 +178,19 @@ CREATE TABLE IF NOT EXISTS `users_profile` (
   `hobbys` int(100) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
---
--- Daten für Tabelle `users_profile`
---
-
-INSERT INTO `users_profile` (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES
-(16, 'testgugus', 0, 0, 0, 0);
-
 -- --------------------------------------------------------
 
 --
--- Struktur des Views `fullQuestionSet`
+-- Structure for view `fullQuestionSet`
 --
 DROP TABLE IF EXISTS `fullQuestionSet`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fullQuestionSet` AS select `qs`.`setid` AS `setid`,`qs`.`setname` AS `setname`,`qs`.`ownerid` AS `ownerid`,`qs`.`editcount` AS `editcount`,`qs`.`lasttimestamp` AS `lasttimestamp`,`qs`.`createtimestamp` AS `createtimestamp`,`qs`.`firstowner` AS `firstowner`,`qs`.`tagsid` AS `tagsid`,`user`.`id` AS `id`,`user`.`username` AS `username`,`user`.`password` AS `password`,`user`.`lastlogin` AS `lastlogin`,`user`.`lastip` AS `lastip`,`qq`.`questionid` AS `questionid`,`qq`.`set` AS `set`,`qq`.`question` AS `question`,`qq`.`mode` AS `mode`,`qa`.`answerid` AS `answerid`,`qa`.`ownerquestion` AS `ownerquestion`,`qa`.`answertext` AS `answertext` from (`question_set` `qs` left join ((`users` `user` join `question_question` `qq`) join `question_answer` `qa`) on(((`user`.`id` = `qs`.`ownerid`) and (`qq`.`set` = `qs`.`setid`) and (`qq`.`questionid` = `qa`.`ownerquestion`))));
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fullQuestionSet` AS select `qs`.`setid` AS `setid`,`qs`.`setname` AS `setname`,`qs`.`setdescription` AS `setdescription`,`qs`.`ownerid` AS `ownerid`,`qs`.`editcount` AS `editcount`,`qs`.`lasttimestamp` AS `lasttimestamp`,`qs`.`createtimestamp` AS `createtimestamp`,`qs`.`firstowner` AS `firstowner`,`qs`.`tagsid` AS `tagsid`,`user`.`id` AS `id`,`user`.`username` AS `username`,`user`.`password` AS `password`,`user`.`lastlogin` AS `lastlogin`,`user`.`lastip` AS `lastip`,`qq`.`questionid` AS `questionid`,`qq`.`set` AS `set`,`qq`.`question` AS `question`,`qq`.`mode` AS `mode`,`qq`.`rightAnswered` AS `rightAnswered`,`qq`.`wrongAnswered` AS `wrongAnswered`,`qa`.`answerid` AS `answerid`,`qa`.`ownerquestion` AS `ownerquestion`,`qa`.`answertext` AS `answertext` from (`question_set` `qs` left join ((`users` `user` join `question_question` `qq`) join `question_answer` `qa`) on(((`user`.`id` = `qs`.`ownerid`) and (`qq`.`set` = `qs`.`setid`) and (`qq`.`questionid` = `qa`.`ownerquestion`))));
 
 -- --------------------------------------------------------
 
 --
--- Struktur des Views `fullUser`
+-- Structure for view `fullUser`
 --
 DROP TABLE IF EXISTS `fullUser`;
 

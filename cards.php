@@ -38,20 +38,26 @@ switch($_GET["action"]){
 			$template->assign("cardsettitle", $set->getSetName());
 			$template->assign("cardsetdescription", $set->getSetDescription());
 			$questions = $set->getQuestions();
+			// TODO move check if array is empty from bottom to here, but without _GET-nextquestion-test!
+			$questionid = cardtools::oneBeforeInArray($questions, $_GET['nextquestion']);
+			$question = $questions[$questionid];
+
+			$template->assign("right", $question->getRightAnswered());
+			$template->assign("wrong", $question->getWrongAnswered());
 			if((!empty($_GET['nextquestion']))&&(count($questions)>1)){
-				$questionid = cardtools::oneBeforeInArray($questions, $_GET['nextquestion']);
+
 				if(count($questions)>$_GET['nextquestion']){
-					$template->assign("question",$questions[$questionid]->getQuestion());
+					$template->assign("question",$question->getQuestion());
 					$template->assign("nextquestion",$_GET['nextquestion']+1);
 				}
 				else if(count($questions)==$_GET['nextquestion']){
-					$template->assign("question",$questions[$questionid]->getQuestion());
+					$template->assign("question",$question->getQuestion());
 					$template->assign("nextquestion",1);
 				}
 				if(!empty($_POST['answer'])){
-					$answer = $questions[$questionid]->getAnswers();
+					$answer = $question->getAnswers();
 					$lastQuestionId = cardtools::oneBeforeInArray($questions, $questionid);
-					if($questions[$lastQuestionId]->checkRightAnswer($_POST['answer'])){
+					if($questions[$lastQuestionId]->checkRightAnswer($_POST['answer'], $connection)){
 						array_push($messages, "Answer was right! :)");
 					}
 					else{
