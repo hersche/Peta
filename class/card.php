@@ -178,6 +178,7 @@ class question{
 	}
 
 	public function newAnswer($answer, $connection){
+		$connection->exec("INSERT INTO `learncards`.`question_answer` (`ownerquestion`, `answertext`) VALUES ('".$this->questionId."', '".$answer->getAnswer()."');");
 		$answer->setAnswerId($connection->lastInsertId());
 		array_push($this->answers, $answer);
 	}
