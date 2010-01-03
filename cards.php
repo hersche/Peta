@@ -82,6 +82,27 @@ switch($_GET["action"]){
 			$template->display('cards_singlecardset.tpl');
 			break;
 		}
+	case "deletecardset":
+		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
+		$template->assign("setid", $_GET['setid']);
+		$set = $allSets->getSetBySetId($_GET["setid"]);
+		if($set==false){
+			// TODO build a error-page
+			$template->assign("cardsetname", "There is no set with id ".$_GET["setid"]);
+		}
+		else{
+			$template->assign("cardsetname", $set->getSetName());
+
+			if(isset($_POST['sure'])){
+				if($_POST['sure']=="yes"){
+					$set->deleteSet($connection);
+						
+				}
+				header("Location: cards.php");
+			}
+		}
+		$template->display('cards_delete.tpl');
+		break;
 	case "addquestion":
 		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 		$template->assign("cardsets", $allSets->getSets());

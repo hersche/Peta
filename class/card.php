@@ -48,6 +48,10 @@ class allCardSets{
 	public function getSets(){
 		return $this->sets;
 	}
+	public function deleteSet($set, $connection){
+		//TODO remove from list!
+		$set->deleteSet($connection);
+	}
 
 	public function newSet($set, $userid, $connection){
 		$connection->exec("INSERT INTO question_set (`setname`,`setdescription`, `ownerid`,  `editcount`, `createtimestamp`, `firstowner`) VALUES ('".$set->getSetName()."', '".$set->getSetDescription()."', ".$userid.", 1, '2009-00-00 00:00:00', ".$userid.");");
@@ -61,6 +65,7 @@ class allCardSets{
 				return $set;
 			}
 		}
+		return false;
 	}
 }
 /**
@@ -110,6 +115,12 @@ class cardSet{
 		$connection->exec("INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (".$this->setid.", '".$question->getQuestion()."', '".$question->getMode()."')");
 		$question->setId($connection->lastInsertId());
 		array_push($this->questions, $question);
+	}
+	public function deleteSet($connection){
+		foreach($this->questions as $question){
+			$question->deleteQuestion($connection);
+		}
+		$connection->exec("DELETE FROM `learncards`.`question_set` WHERE `question_set`.`setid` = ".$this->setid);
 	}
 
 }
@@ -182,6 +193,12 @@ class question{
 		$answer->setAnswerId($connection->lastInsertId());
 		array_push($this->answers, $answer);
 	}
+	public function deleteQuestion($connection){
+		foreach($this->answers as $answer){
+			$answer->deleteAnswer($connection);
+		}
+		$connection->exec("DELETE FROM `learncards`.`question_question` WHERE `question_question`.`questionid` = ".$this->questionId);
+	}
 }
 
 class answer{
@@ -200,6 +217,10 @@ class answer{
 	}
 	public function setAnswer($answer){
 		$this->answer = $answer;
+	}
+	
+	public function deleteAnswer($connection){
+		$connection->exec("DELETE FROM `learncards`.`question_answer` WHERE `question_answer`.`answerid` = ".$this->answerid);
 	}
 
 }

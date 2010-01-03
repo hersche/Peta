@@ -1,6 +1,6 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
 {include file="menu.tpl"} {include file="cards_menu.tpl"}
-<h1>{$cardsettitle}</h1>
+<h1>{$cardsettitle}</h1><h2><a href="cards.php?action=editcardset&setid={$setid}">(edit)</a></h2><h2><a href="cards.php?action=deletecardset&setid={$setid}">(delete)</a></h2>
 <p>{$cardsetdescription}</p>
 <form
 	action="cards.php?action=singlecardset&setid={$setid}&nextquestion={$nextquestion}"
