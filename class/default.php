@@ -16,10 +16,9 @@ else{
 	}
 }
 
-$template->assign("jsscripts", array("dojo/dojo/dojo.js", "js/extras.js"));
+$template->assign("jsscripts", array("dojo/dojo/dojo.js"));
 $template->assign("allcss", array("css/default.css"));
 $messages = array();
-$objDb;
 try
 {
 	$connection = new PDO($GLOBALS["db_type"].':dbname='.$GLOBALS["db_dbname"].';host='.$GLOBALS["db_host"].'', $GLOBALS["db_loginname"], $GLOBALS["db_loginpassword"]);
