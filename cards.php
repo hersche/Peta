@@ -1,8 +1,6 @@
 <?php
 require_once 'class/default.php';
 require_once 'class/card.php';
-
-
 switch($_GET["action"]){
 	case "create":
 		$template->display('cards_create.tpl');
@@ -106,6 +104,43 @@ switch($_GET["action"]){
 		}
 		$template->display('cards_delete.tpl');
 		break;
+	case "editcardset":
+		$noCardset = true;
+		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
+		if((isset($_POST["setid"]))||(isset($_GET["setid"]))){
+			// TODO build a error-page
+			$set = $allSets->getSetBySetId($_POST["setid"]);
+			if($set!=false){
+				$template->assign("setid", $set->getSetId());
+				$noCardset = false;
+			}
+			else{
+				$set = $allSets->getSetBySetId($_GET["setid"]);
+				if($set!=false){
+					$template->assign("setid", $set->getSetId());
+					$noCardset = false;
+				}
+			}
+		}
+		if(!$noCardset){
+
+			$template->assign("cardsetname", $set->getSetName());
+			$template->assign("cardsetdescription", $set->getSetDescription());
+			if(isset($_POST['sure'])){
+				if($_POST['sure']=="on"){
+					$set->updateSetDescription($_POST['cardsetdescripton'], $connection);
+					$set->updateSetName($_POST['cardsetname'], $connection);
+				}
+				header("Location: cards.php");
+			}
+
+		}
+		if($noCardset){
+			$template->assign("cardsetname", "There is no set with id ".$_POST["setid"].$_GET["setid"]);
+		}
+		$template->display('cards_editcardset.tpl');
+		break;
+
 	case "deletequestion":
 		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 		$template->assign("setid", $_GET['setid']);
@@ -149,7 +184,7 @@ switch($_GET["action"]){
 			array_push($messages, "Add question successfull");
 		}
 		$template->assign("messages", $messages);
-		$template->display('cards_addquestion.tpl');
+		$template->display('cards_modify.tpl');
 		break;
 	default:
 		$carding = new allCardSets($_SESSION["user"]->getId(), $connection);

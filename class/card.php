@@ -108,9 +108,8 @@ class cardSet{
 	public function getQuestions(){
 		return $this->questions;
 	}
-	public function getTags(){
-		return $this->tags;
-	}
+
+	
 	public function newQuestion($question, $connection){
 		$connection->exec("INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (".$this->setid.", '".$question->getQuestion()."', '".$question->getMode()."')");
 		$question->setId($connection->lastInsertId());
@@ -129,6 +128,14 @@ class cardSet{
 			$question->deleteQuestion($connection);
 		}
 		$connection->exec("DELETE FROM `learncards`.`question_set` WHERE `question_set`.`setid` = ".$this->setid);
+	}
+	public function updateSetDescription($description, $connection){
+		$this->setdescription = $description;
+		$connection->exec("UPDATE `learncards`.`question_set` SET `setdescription` = '".$description."' WHERE `question_set`.`setid` =".$this->setid.";");
+	}
+	public function updateSetName($name, $connection){
+		$this->setname = $name;
+		$connection->exec("UPDATE `learncards`.`question_set` SET `setname` = '".$name."' WHERE `question_set`.`setid` =".$this->setid.";");
 	}
 
 }
