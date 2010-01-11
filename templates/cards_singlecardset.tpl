@@ -7,7 +7,7 @@
 	method="post">
 <table>
 	<tr>
-		<td>{$question}</td>
+		<td>{$question}<a href="cards.php?action=editquestion&setid={$setid}&questionid={$questionid}">(edit)</a><a href="cards.php?action=deletequestion&setid={$setid}&questionid={$questionid}">(delete)</a></td>
 		<td><input TYPE="text" SIZE="40" NAME="answer" value="" /></td>
 	</tr>
 	<tr>

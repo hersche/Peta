@@ -1,13 +1,28 @@
-{include file="header.tpl" title=Register}
-{include file="messagebox.tpl"}
-
-<form method="POST" action="login.php?action=register">
-Name: <input type="text" name="name" /><br />
-Username: <input type="text" name="username" /><br />
-Password: <input type="password" name="password" /><br />
-Confirm password: <input type="password" name="password2" /><br />
-<input type="submit" value="Register" />
-</form>
+{include file="header.tpl" title=Register} {include
+file="messagebox.tpl"}
+<table>
+	<form method="POST" action="login.php?action=register">
+	<tr>
+		<td>Name:</td>
+		<td><input type="text" name="name" /></td>
+	</tr>
+	<tr>
+		<td>Username:</td>
+		<td><input type="text" name="username" /></td>
+	</tr>
+	<tr>
+		<td>Password:</td>
+		<td><input type="password" name="password" /></td>
+	</tr>
+	<tr>
+		<td>Confirm password:</td>
+		<td><input type="password" name="password2" /></td>
+	</tr>
+	<tr>
+		<td><input type="submit" value="Register" /></td>
+	</tr>
+	</form>
+</table>
 <a href="login.php">Login</a>
 
 {include file="footer.tpl"}

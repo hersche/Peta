@@ -116,6 +116,14 @@ class cardSet{
 		$question->setId($connection->lastInsertId());
 		array_push($this->questions, $question);
 	}
+	public function getQuestionById($questionid){
+		foreach ($this->questions as $question){
+			if($question->getQuestionId()==$questionid){
+				return $question;
+			}
+		}
+		return false;
+	}
 	public function deleteSet($connection){
 		foreach($this->questions as $question){
 			$question->deleteQuestion($connection);
@@ -171,7 +179,7 @@ class question{
 		return $this->question;
 	}
 	public function getQuestionId(){
-		return $this->questionid;
+		return $this->questionId;
 	}
 
 	public function checkRightAnswer($answertext, $connection){
@@ -218,7 +226,7 @@ class answer{
 	public function setAnswer($answer){
 		$this->answer = $answer;
 	}
-	
+
 	public function deleteAnswer($connection){
 		$connection->exec("DELETE FROM `learncards`.`question_answer` WHERE `question_answer`.`answerid` = ".$this->answerid);
 	}

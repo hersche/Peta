@@ -39,13 +39,12 @@ switch($_GET["action"]){
 			$questions = $set->getQuestions();
 			// TODO may better use a empty()-method
 			if(count($questions)>0){
-				$questionid = cardtools::oneBeforeInArray($questions, $_GET['nextquestion']);
-				$question = $questions[$questionid];
-
-				$template->assign("right", $question->getRightAnswered());
-				$template->assign("wrong", $question->getWrongAnswered());
 				if(!empty($_GET['nextquestion'])){
-
+					$questionid = cardtools::oneBeforeInArray($questions, $_GET['nextquestion']);
+					$question = $questions[$questionid];
+					$template->assign("right", $question->getRightAnswered());
+					$template->assign("wrong", $question->getWrongAnswered());
+					$template->assign("questionid",$question->getQuestionId());
 					if(count($questions)>$_GET['nextquestion']){
 						$template->assign("question",$question->getQuestion());
 						$template->assign("nextquestion",$_GET['nextquestion']+1);
@@ -66,6 +65,9 @@ switch($_GET["action"]){
 					}
 				}
 				else{
+					$template->assign("right", $questions[0]->getRightAnswered());
+					$template->assign("wrong", $questions[0]->getWrongAnswered());
+					$template->assign("questionid",$questions[0]->getQuestionId());
 					$template->assign("question",$questions[0]->getQuestion());
 					if(count($questions)>1){
 						$template->assign("nextquestion",2);
@@ -91,14 +93,43 @@ switch($_GET["action"]){
 			$template->assign("cardsetname", "There is no set with id ".$_GET["setid"]);
 		}
 		else{
+			$template->assign("what", "cardset");
 			$template->assign("cardsetname", $set->getSetName());
 
 			if(isset($_POST['sure'])){
 				if($_POST['sure']=="yes"){
 					$set->deleteSet($connection);
-						
+
 				}
 				header("Location: cards.php");
+			}
+		}
+		$template->display('cards_delete.tpl');
+		break;
+	case "deletequestion":
+		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
+		$template->assign("setid", $_GET['setid']);
+		$set = $allSets->getSetBySetId($_GET["setid"]);
+		if($set==false){
+			// TODO build a error-page
+			$template->assign("cardsetname", "There is no set with id ".$_GET["setid"]);
+		}
+		else{
+
+			$question = $set->getQuestionById($_GET["questionid"]);
+			if($question == false){
+				$template->assign("cardsetname", "There is no question with id ".$_GET["questionid"]);
+			}
+			else{
+				$template->assign("questionid",$question->getQuestionId());
+				$template->assign("what", "question");
+				$template->assign("cardsetname", $question->getQuestion());
+				if(isset($_POST['sure'])){
+					if($_POST['sure']=="yes"){
+						$question->deleteQuestion($connection);
+					}
+					header("Location: cards.php");
+				}
 			}
 		}
 		$template->display('cards_delete.tpl');
