@@ -109,7 +109,7 @@ class cardSet{
 		return $this->questions;
 	}
 
-	
+
 	public function newQuestion($question, $connection){
 		$connection->exec("INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (".$this->setid.", '".$question->getQuestion()."', '".$question->getMode()."')");
 		$question->setId($connection->lastInsertId());
@@ -187,6 +187,11 @@ class question{
 	}
 	public function getQuestionId(){
 		return $this->questionId;
+	}
+
+	public function updateQuestion($question, $connection){
+		$this->question = $question;
+		$connection->exec("UPDATE `learncards`.`question_question` SET `question` = '".$question."' WHERE `question_question`.`questionid` =".$this->questionId.";");
 	}
 
 	public function checkRightAnswer($answertext, $connection){
