@@ -1,11 +1,12 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
 {include file="menu.tpl"} {include file="cards_menu.tpl"}
 <h1>{$cardsettitle}</h1>
+<a href="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random=yes" >Random start</a>
+<a href="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random=no" >Random stop</a>
 <h2><a href="cards.php?action=editcardset&setid={$setid}">(edit)</a></h2>
 <h2><a href="cards.php?action=deletecardset&setid={$setid}">(delete)</a></h2>
 <p>{$cardsetdescription}</p>
-<a href="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random=yes" >Random start</a>
-<a href="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random=no" >Random stop</a>
+
 <form
 	action="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random={$random}"
 	method="post">

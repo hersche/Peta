@@ -35,23 +35,27 @@ switch($_GET["action"]){
 			$template->assign("cardsetdescription", $set->getSetDescription());
 			$dojorequire = array("dojox.charting.widget.Chart2D", "dojox.charting.themes.PurpleRain");
 			$template->assign("dojorequire", $dojorequire);
-			$template->assign("bodyargs", 'class="tundra"');
-			$template->assign("allcss", array("dojo/dijit/themes/tundra/tundra.css"));
 			$questions = $set->getQuestions();
 			// TODO may better use a empty()-method
 			if(count($questions)>0){
 				$template->assign("random", $_GET['random']);
 				if($_GET['random']=="yes"){
+					if(isset($_SESSION['lastid'])){
+						$lastQuestionId = $_SESSION['lastid'];
+					}
+					
 					$questionid = cardtools::randomArrayPosition($questions);
 					$question = $questions[$questionid];
+					$_SESSION['lastid'] = $questionid;
 					$template->assign("nextquestion",1);
 				}
 				else if(!empty($_GET['nextquestion'])){
 					$questionid = cardtools::oneBeforeInArray($questions, $_GET['nextquestion']);
+					$lastQuestionId = cardtools::oneBeforeInArray($questions, $questionid);
 					$question = $questions[$questionid];
 					$template->assign("questionid",$question->getQuestionId());
 					if(count($questions)>$_GET['nextquestion']){
-						$template->assign("question",$question->getQuestion());
+						
 						$template->assign("nextquestion",$_GET['nextquestion']+1);
 					}
 					else if(count($questions)==$_GET['nextquestion']){
@@ -64,7 +68,6 @@ switch($_GET["action"]){
 					$question = $questions[0];
 					$questionid = $question->getQuestionId();
 					$template->assign("questionid",$question->getQuestionId());
-					$template->assign("question",$question->getQuestion());
 					if(count($questions)>1){
 						$template->assign("nextquestion",2);
 					}
@@ -72,9 +75,9 @@ switch($_GET["action"]){
 						$template->assign("nextquestion",1);
 					}
 				}
+				$template->assign("question",$question->getQuestion());
 				if(!empty($_POST['answer'])){
 					$answer = $question->getAnswers();
-					$lastQuestionId = cardtools::oneBeforeInArray($questions, $questionid);
 					if($questions[$lastQuestionId]->checkRightAnswer($_POST['answer'], $connection)){
 						array_push($messages, "Answer ".$_POST['answer']." was right! :) (Question was: ".$questions[$lastQuestionId]->getQuestion().")");
 					}
