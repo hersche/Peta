@@ -20,3 +20,4 @@
 
 </form>
 
+{include file="footer.tpl"}

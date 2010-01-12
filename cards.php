@@ -110,8 +110,9 @@ switch($_GET["action"]){
 		if((isset($_POST["setid"]))||(isset($_GET["setid"]))){
 			// TODO build a error-page
 			$set = $allSets->getSetBySetId($_POST["setid"]);
+				
 			if($set!=false){
-				$template->assign("setid", $set->getSetId());
+
 				$noCardset = false;
 			}
 			else{
@@ -122,9 +123,10 @@ switch($_GET["action"]){
 				}
 			}
 		}
-		
-		if(!$noCardset){
 
+		if(!$noCardset){
+			$template->assign("questions", $set->getQuestions());
+			$template->assign("setid", $set->getSetId());
 			$template->assign("cardsetname", $set->getSetName());
 			$template->assign("cardsetdescription", $set->getSetDescription());
 			if(isset($_POST['sure'])){
@@ -132,7 +134,7 @@ switch($_GET["action"]){
 					$set->updateSetDescription($_POST['cardsetdescripton'], $connection);
 					$set->updateSetName($_POST['cardsetname'], $connection);
 				}
-				header("Location: cards.php");
+				header("Location: cards.php?action=singlecardset&setid=".$set->getSetId());
 			}
 
 		}
@@ -161,7 +163,7 @@ switch($_GET["action"]){
 			$question = $set->getQuestionById($_GET['questionid']);
 			$template->assign("questionid", $question->getQuestionId());
 		}
-		
+
 		if(!$noCardset){
 
 			$template->assign("question", $question->getQuestion());
@@ -169,7 +171,7 @@ switch($_GET["action"]){
 				if($_POST['sure']=="on"){
 					$question->updateQuestion($_POST['question'], $connection);
 				}
-				header("Location: cards.php");
+				header("Location: cards.php?action=singlecardset&setid=".$_GET['setid']);
 			}
 
 		}

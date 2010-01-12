@@ -22,5 +22,14 @@
 </table>
 
 </form>
-	
+
+{if $questions}
+<h2>Edit questions of cardset {$cardsetname}</h2>
+<ul>
+{section name=question loop=$questions}
+<li><a href="cards.php?action=editquestion&setid={$setid}&questionid={$questions[question]->getQuestionId()}" >Edit {$questions[question]->getQuestion()}</a></li>
+{/section}
+</ul>
+{/if}
+{include file="footer.tpl"}	
 	
