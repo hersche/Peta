@@ -1,6 +1,6 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
 {include file="menu.tpl"} {include file="cards_menu.tpl"}
-<form action="cards.php?action=editquestion&setid={$setid}&questionid={$questionid}" method="post">
+<form action="cards.php?action=editquestion&amp;setid={$setid}&amp;questionid={$questionid}" method="post">
 <table>
 	<tr>
 		<td>Question:</td>

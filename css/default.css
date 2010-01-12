@@ -1,6 +1,6 @@
-#menu {
+.menu {
 background-color: yellow;
 }
-#menu a{
+.menu a{
 margin-left: 25px;
 }

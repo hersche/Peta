@@ -8,7 +8,6 @@ if(isset($_SESSION["user"])){
 	}
 }
 
-$template->assign("test", "hallo welt!");
 $template->assign("messages", $messages);
 $template->display('index.tpl');
 ?>

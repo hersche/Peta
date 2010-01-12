@@ -58,7 +58,8 @@ switch($_GET["action"]){
 							array_push($messages, "Answer was right! :)");
 						}
 						else{
-							array_push($messages, "Answer was wrong! :(");
+							$answer = $questions[$lastQuestionId]->getAnswers();
+							array_push($messages, "Answer was wrong! :( <br /> Question:".$questions[$lastQuestionId]->getQuestion()." and answer: ".$answer[0]->getAnswer());
 						}
 					}
 				}
