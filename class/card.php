@@ -279,6 +279,14 @@ class cardtools{
 			return 0;
 		}
 	}
+	public static function randomArrayPosition($array){
+		if(count($array)>1){
+			return rand(0, count($array)-1);
+		}
+		else{
+			return 0;
+		}
+	}
 }
 
 

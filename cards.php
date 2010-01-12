@@ -40,7 +40,13 @@ switch($_GET["action"]){
 			$questions = $set->getQuestions();
 			// TODO may better use a empty()-method
 			if(count($questions)>0){
-				if(!empty($_GET['nextquestion'])){
+				$template->assign("random", $_GET['random']);
+				if($_GET['random']=="yes"){
+					$questionid = cardtools::randomArrayPosition($questions);
+					$question = $questions[$questionid];
+					$template->assign("nextquestion",1);
+				}
+				else if(!empty($_GET['nextquestion'])){
 					$questionid = cardtools::oneBeforeInArray($questions, $_GET['nextquestion']);
 					$question = $questions[$questionid];
 					$template->assign("questionid",$question->getQuestionId());
@@ -52,27 +58,29 @@ switch($_GET["action"]){
 						$template->assign("question",$question->getQuestion());
 						$template->assign("nextquestion",1);
 					}
-					if(!empty($_POST['answer'])){
-						$answer = $question->getAnswers();
-						$lastQuestionId = cardtools::oneBeforeInArray($questions, $questionid);
-						if($questions[$lastQuestionId]->checkRightAnswer($_POST['answer'], $connection)){
-							array_push($messages, "Answer ".$_POST['answer']." was right! :) (Question was: ".$questions[$lastQuestionId]->getQuestion().")");
-						}
-						else{
-							$answer = $questions[$lastQuestionId]->getAnswers();
-							array_push($messages, "Answer was wrong! :( <br /> Question:".$questions[$lastQuestionId]->getQuestion()." and answer: ".$answer[0]->getAnswer());
-						}
-					}
+
 				}
 				else{
 					$question = $questions[0];
-					$template->assign("questionid",$questions[0]->getQuestionId());
-					$template->assign("question",$questions[0]->getQuestion());
+					$questionid = $question->getQuestionId();
+					$template->assign("questionid",$question->getQuestionId());
+					$template->assign("question",$question->getQuestion());
 					if(count($questions)>1){
 						$template->assign("nextquestion",2);
 					}
 					else{
 						$template->assign("nextquestion",1);
+					}
+				}
+				if(!empty($_POST['answer'])){
+					$answer = $question->getAnswers();
+					$lastQuestionId = cardtools::oneBeforeInArray($questions, $questionid);
+					if($questions[$lastQuestionId]->checkRightAnswer($_POST['answer'], $connection)){
+						array_push($messages, "Answer ".$_POST['answer']." was right! :) (Question was: ".$questions[$lastQuestionId]->getQuestion().")");
+					}
+					else{
+						$answer = $questions[$lastQuestionId]->getAnswers();
+						array_push($messages, "Answer was wrong! :( <br /> Question:".$questions[$lastQuestionId]->getQuestion()." and answer: ".$answer[0]->getAnswer());
 					}
 				}
 
