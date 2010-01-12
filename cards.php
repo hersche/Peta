@@ -10,7 +10,6 @@ switch($_GET["action"]){
 			$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 			$newCardSet = new cardSet();
 			$newCardSet->setSetName($_POST["cardsetname"]);
-			echo $_POST["cardsetdescription"];
 			$newCardSet->setSetDescription($_POST["cardsetdescription"]);
 			$question = new question();
 			$question->setQuestion($_POST['question1']);
@@ -34,7 +33,7 @@ switch($_GET["action"]){
 			$template->assign("setid", $_GET['setid']);
 			$template->assign("cardsettitle", $set->getSetName());
 			$template->assign("cardsetdescription", $set->getSetDescription());
-			$dojorequire = array("dojox.charting.Chart2D", "dojox.charting.plot2d.Pie", "dojox.charting.action2d.Highlight", "dojox.charting.action2d.MoveSlice", "dojox.charting.action2d.Tooltip", "dojox.charting.themes.MiamiNice", "dojox.charting.widget.Legend");
+			$dojorequire = array("dojox.charting.widget.Chart2D", "dojox.charting.themes.PurpleRain");
 			$template->assign("dojorequire", $dojorequire);
 			$template->assign("bodyargs", 'class="tundra"');
 			$template->assign("allcss", array("dojo/dijit/themes/tundra/tundra.css"));
@@ -78,47 +77,13 @@ switch($_GET["action"]){
 				}
 
 				if(($question->getRightAnswered()==0)&&($question->getWrongAnswered()==0)){
-					$dojoRightChart = 1;
-					$dojoWrongChart = 1;
-					$dojoRightChartText = "0 times right answered.";
-					$dojoWrongChartText = "0 times wrong answered.";
+					$template->assign("rightAnswered", "0.1");
+					$template->assign("wrongAnswered", "0.1");
 				}
 				else{
-					$dojoRightChart = $question->getRightAnswered();
-					$dojoWrongChart = $question->getWrongAnswered();
-					$dojoRightChartText = $dojoRightChart." times right answered.";
-					$dojoWrongChartText = $dojoWrongChart." times wrong answered.";
+					$template->assign("rightAnswered", $question->getRightAnswered());
+					$template->assign("wrongAnswered", $question->getWrongAnswered());
 				}
-
-				$dojoonload = '        var dc = dojox.charting;
-        		var wrongRightChart = new dc.Chart2D("wrongRightChart");
-        		wrongRightChart.setTheme(dc.themes.MiamiNice).addPlot("default", {
-           			 type: "Pie",
-            		font: "normal normal 11pt Tahoma",
-            		fontColor: "black",
-            		labelOffset: -30,
-            		radius: 80
-       				 }).addSeries("Wrong or right-chart", [  
-       				 		{
-            					y: '.$dojoRightChart.',
-            					text: "'.$dojoRightChartText.'",
-            					stroke: "black",
-            					tooltip: "Right"
-        					},
-        					{
-            					y: '.$dojoWrongChart.',
-            					text: "'.$dojoWrongChartText.'",
-            					stroke: "black",
-            					tooltip: "Wrong"
-        					}
-        			]
-        		);
-        		var anim_a = new dc.action2d.MoveSlice(wrongRightChart, "default");
-		        //	var anim_b = new dc.action2d.Highlight(wrongRightChart, "default");
-        		var anim_c = new dc.action2d.Tooltip(wrongRightChart, "default");
-        		wrongRightChart.render();
-        		';
-				$template->assign("dojoonloadcode", $dojoonload);
 			}
 			else{
 				$template->assign("question","There are no questions!");
@@ -155,15 +120,12 @@ switch($_GET["action"]){
 		if((isset($_POST["setid"]))||(isset($_GET["setid"]))){
 			// TODO build a error-page
 			$set = $allSets->getSetBySetId($_POST["setid"]);
-
 			if($set!=false){
-
 				$noCardset = false;
 			}
 			else{
 				$set = $allSets->getSetBySetId($_GET["setid"]);
 				if($set!=false){
-					$template->assign("setid", $set->getSetId());
 					$noCardset = false;
 				}
 			}

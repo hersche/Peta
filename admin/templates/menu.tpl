@@ -1,1 +1,1 @@
-<div id="menu"><a href="../index.php" >Back to main</a><a href="user.php">Usermanagement</a></div>
+<div class="menu"><a href="../index.php" >Back to main</a><a href="user.php">Usermanagement</a></div>
