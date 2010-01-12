@@ -34,14 +34,16 @@ switch($_GET["action"]){
 			$template->assign("setid", $_GET['setid']);
 			$template->assign("cardsettitle", $set->getSetName());
 			$template->assign("cardsetdescription", $set->getSetDescription());
+			$dojorequire = array("dojox.charting.Chart2D", "dojox.charting.plot2d.Pie", "dojox.charting.action2d.Highlight", "dojox.charting.action2d.MoveSlice", "dojox.charting.action2d.Tooltip", "dojox.charting.themes.MiamiNice", "dojox.charting.widget.Legend");
+			$template->assign("dojorequire", $dojorequire);
+			$template->assign("bodyargs", 'class="tundra"');
+			$template->assign("allcss", array("dojo/dijit/themes/tundra/tundra.css"));
 			$questions = $set->getQuestions();
 			// TODO may better use a empty()-method
 			if(count($questions)>0){
 				if(!empty($_GET['nextquestion'])){
 					$questionid = cardtools::oneBeforeInArray($questions, $_GET['nextquestion']);
 					$question = $questions[$questionid];
-					$template->assign("right", $question->getRightAnswered());
-					$template->assign("wrong", $question->getWrongAnswered());
 					$template->assign("questionid",$question->getQuestionId());
 					if(count($questions)>$_GET['nextquestion']){
 						$template->assign("question",$question->getQuestion());
@@ -55,7 +57,7 @@ switch($_GET["action"]){
 						$answer = $question->getAnswers();
 						$lastQuestionId = cardtools::oneBeforeInArray($questions, $questionid);
 						if($questions[$lastQuestionId]->checkRightAnswer($_POST['answer'], $connection)){
-							array_push($messages, "Answer was right! :)");
+							array_push($messages, "Answer ".$_POST['answer']." was right! :) (Question was: ".$questions[$lastQuestionId]->getQuestion().")");
 						}
 						else{
 							$answer = $questions[$lastQuestionId]->getAnswers();
@@ -64,8 +66,7 @@ switch($_GET["action"]){
 					}
 				}
 				else{
-					$template->assign("right", $questions[0]->getRightAnswered());
-					$template->assign("wrong", $questions[0]->getWrongAnswered());
+					$question = $questions[0];
 					$template->assign("questionid",$questions[0]->getQuestionId());
 					$template->assign("question",$questions[0]->getQuestion());
 					if(count($questions)>1){
@@ -75,6 +76,49 @@ switch($_GET["action"]){
 						$template->assign("nextquestion",1);
 					}
 				}
+
+				if(($question->getRightAnswered()==0)&&($question->getWrongAnswered()==0)){
+					$dojoRightChart = 1;
+					$dojoWrongChart = 1;
+					$dojoRightChartText = "0 times right answered.";
+					$dojoWrongChartText = "0 times wrong answered.";
+				}
+				else{
+					$dojoRightChart = $question->getRightAnswered();
+					$dojoWrongChart = $question->getWrongAnswered();
+					$dojoRightChartText = $dojoRightChart." times right answered.";
+					$dojoWrongChartText = $dojoWrongChart." times wrong answered.";
+				}
+
+				$dojoonload = '        var dc = dojox.charting;
+        		var wrongRightChart = new dc.Chart2D("wrongRightChart");
+        		wrongRightChart.setTheme(dc.themes.MiamiNice).addPlot("default", {
+           			 type: "Pie",
+            		font: "normal normal 11pt Tahoma",
+            		fontColor: "black",
+            		labelOffset: -30,
+            		radius: 80
+       				 }).addSeries("Wrong or right-chart", [  
+       				 		{
+            					y: '.$dojoRightChart.',
+            					text: "'.$dojoRightChartText.'",
+            					stroke: "black",
+            					tooltip: "Right"
+        					},
+        					{
+            					y: '.$dojoWrongChart.',
+            					text: "'.$dojoWrongChartText.'",
+            					stroke: "black",
+            					tooltip: "Wrong"
+        					}
+        			]
+        		);
+        		var anim_a = new dc.action2d.MoveSlice(wrongRightChart, "default");
+		        //	var anim_b = new dc.action2d.Highlight(wrongRightChart, "default");
+        		var anim_c = new dc.action2d.Tooltip(wrongRightChart, "default");
+        		wrongRightChart.render();
+        		';
+				$template->assign("dojoonloadcode", $dojoonload);
 			}
 			else{
 				$template->assign("question","There are no questions!");
@@ -111,7 +155,7 @@ switch($_GET["action"]){
 		if((isset($_POST["setid"]))||(isset($_GET["setid"]))){
 			// TODO build a error-page
 			$set = $allSets->getSetBySetId($_POST["setid"]);
-				
+
 			if($set!=false){
 
 				$noCardset = false;

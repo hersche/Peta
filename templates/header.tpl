@@ -14,7 +14,7 @@
 dojo.require("dojo.fx");
 dojo.require("dijit.form.Button");
 {section name=dojo loop=$dojorequire}
-dojo.require({$dojorequire[dojo]});
+dojo.require("{$dojorequire[dojo]}");
 {/section}
 	{literal} 
     function basicWipeinSetup() {
@@ -37,7 +37,8 @@ dojo.require({$dojorequire[dojo]});
     	    {literal} 
     }); {/literal}
 	</script>
-
+<link rel="stylesheet" type="text/css"
+	href="css/default.css" />
 {section name=css loop=$allcss}
 <link title="{$allcss[css]}" rel="stylesheet" type="text/css"
 	href="{$allcss[css]}" />
