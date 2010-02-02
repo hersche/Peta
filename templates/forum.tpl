@@ -3,5 +3,5 @@
 {include file="menu.tpl"}
 {include file="forum_menu.tpl"}
 <h1>Hallo Forum :)</h1>
-
+{$show}
 {include file="footer.tpl"}
