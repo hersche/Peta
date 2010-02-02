@@ -6,6 +6,8 @@
 
 <head>
 <title>LearningCards::{$title}</title>
+<script type="text/javascript" src="dojo/dojo/dojo.js"
+	djConfig="parseOnLoad:true"></script>
 {section name=js loop=$jsscripts}
 <script type="text/javascript" src="{$jsscripts[js]}"
 	djConfig="parseOnLoad:true"></script>

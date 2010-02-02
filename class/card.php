@@ -69,7 +69,8 @@ class allCardSets{
 	}
 }
 /**
- * Needs a valid user-object!
+ * A cardset is a stock of questions
+ * It's like you've some papers and, on the backside a answer, on the front the question. This is the stock of these.
  * @author skamster
  *
  */
@@ -80,28 +81,56 @@ class cardSet{
 	private $questions = array();
 	private $tags = array();
 
+	/**
+	 * set the id
+	 * @param int $setid
+	 * @return nothing
+	 */
 	public function setSetId($setid){
 		$this->setid = $setid;
 	}
-
+	/**
+	 * Set the name of the set
+	 * @param String $setname
+	 * @return nothing
+	 */
 	public function setSetName($setname){
 		$this->setname=$setname;
 	}
+	/**
+	 * Set the description of the set
+	 * @param String $description
+	 * @return nothing
+	 */
 	public function setSetDescription($description){
 		$this->setdescription = $description;
 	}
+	/**
+	 * Add a question to the set (but not to the database)
+	 * @param Question $question
+	 * @return nothing
+	 */
 	public function addQuestion($question){
 		array_push($this->questions, $question);
 	}
-	public function addTag($tagid, $tag){
-		array_push($this->tags, new tag($tagid, $tag));
-	}
+	/**
+	 * getter for the set-id
+	 * @return int id
+	 */
 	public function getSetId(){
 		return $this->setid;
 	}
+	/**
+	 * getter for the set-description
+	 * @return String description
+	 */
 	public function getSetDescription(){
 		return $this->setdescription;
 	}
+	/**
+	 * getter for the set-name
+	 * @return unknown_type
+	 */
 	public function getSetName(){
 		return $this->setname;
 	}

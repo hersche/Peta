@@ -2,6 +2,7 @@
 {include file="menu.tpl"}
 {include file="messagebox.tpl"}
 
-{$test}
+<h1>Adminpart</h1>
+<p>This is the adminpart - be carefull, you're mighty now! ;)</p>
 
 {include file="footer.tpl"}

@@ -16,8 +16,6 @@ else{
 	}
 }
 
-$template->assign("jsscripts", array("dojo/dojo/dojo.js"));
-$template->assign("allcss", array("css/default.css"));
 $messages = array();
 try
 {

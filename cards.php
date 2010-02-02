@@ -1,13 +1,13 @@
 <?php
 require_once 'class/default.php';
 require_once 'class/card.php';
+$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 switch($_GET["action"]){
 	case "create":
 		$template->display('cards_create.tpl');
 		break;
 	case "mkcreate":
 		if((!empty($_POST["cardsetname"]))&&(!empty($_POST['answer1']))&&(!empty($_POST['question1']))){
-			$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 			$newCardSet = new cardSet();
 			$newCardSet->setSetName($_POST["cardsetname"]);
 			$newCardSet->setSetDescription($_POST["cardsetdescription"]);
@@ -28,7 +28,6 @@ switch($_GET["action"]){
 		break;
 	case "singlecardset":
 		if(!empty($_GET["setid"])){
-			$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 			$set = $allSets->getSetBySetId($_GET["setid"]);
 			$template->assign("setid", $_GET['setid']);
 			$template->assign("cardsettitle", $set->getSetName());
@@ -43,7 +42,7 @@ switch($_GET["action"]){
 					if(isset($_SESSION['lastid'])){
 						$lastQuestionId = $_SESSION['lastid'];
 					}
-					
+
 					$questionid = cardtools::randomArrayPosition($questions);
 					$question = $questions[$questionid];
 					$_SESSION['lastid'] = $questionid;
@@ -55,7 +54,7 @@ switch($_GET["action"]){
 					$question = $questions[$questionid];
 					$template->assign("questionid",$question->getQuestionId());
 					if(count($questions)>$_GET['nextquestion']){
-						
+
 						$template->assign("nextquestion",$_GET['nextquestion']+1);
 					}
 					else if(count($questions)==$_GET['nextquestion']){
@@ -104,7 +103,6 @@ switch($_GET["action"]){
 			break;
 		}
 	case "deletecardset":
-		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 		$template->assign("setid", $_GET['setid']);
 		$set = $allSets->getSetBySetId($_GET["setid"]);
 		if($set==false){
@@ -127,7 +125,6 @@ switch($_GET["action"]){
 		break;
 	case "editcardset":
 		$noCardset = true;
-		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 		if((isset($_POST["setid"]))||(isset($_GET["setid"]))){
 			// TODO build a error-page
 			$set = $allSets->getSetBySetId($_POST["setid"]);
@@ -163,7 +160,6 @@ switch($_GET["action"]){
 		break;
 	case "editquestion":
 		$noCardset = true;
-		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 		if((isset($_POST["setid"]))||(isset($_GET["setid"]))){
 			// TODO build a error-page
 			$set = $allSets->getSetBySetId($_POST["setid"]);
@@ -199,7 +195,6 @@ switch($_GET["action"]){
 		$template->display('cards_editquestion.tpl');
 		break;
 	case "deletequestion":
-		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 		$template->assign("setid", $_GET['setid']);
 		$set = $allSets->getSetBySetId($_GET["setid"]);
 		if($set==false){
@@ -227,7 +222,6 @@ switch($_GET["action"]){
 		$template->display('cards_delete.tpl');
 		break;
 	case "addquestion":
-		$allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 		$template->assign("cardsets", $allSets->getSets());
 		if((!empty($_POST["cardset"]))&&(!empty($_POST['question1']))&&(!empty($_POST['answer1']))){
 			$set = $allSets->getSetBySetId($_POST["cardset"]);
