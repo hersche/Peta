@@ -2,7 +2,7 @@
 {include file="menu.tpl"} {include file="forum_menu.tpl"}
 <h1>Hallo Forum :)</h1>
 <table>
-	<form action="forum.php" method="post">
+	<form action="forum.php?action=savethread" method="post">
 	<tr>
 		<td>Title of topic</td>
 		<td><input type="text" name="topictitle" /></td>
