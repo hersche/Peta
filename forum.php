@@ -15,6 +15,21 @@ switch($_GET['action']){
 		$template->assign('show', $_POST['topictext']);
 		$template->display('forum.tpl');
 		break;
+	case "showthread":
+		if(!empty($_GET['threadid'])){
+			# fixme check if this one exists!
+			$thread = $threads->getThreadById($_GET['threadid']);
+			$template->assign('threadTitle', $thread->getTitle());
+			$template->assign('threadText', $thread->getText());
+			$template->assign('threadage', $thread->getTimestamp());
+			$template->assign('threadid', $thread->getId());
+			$template->display('forum_view.tpl');
+			break;
+		}
+		else{
+			$template->assign('errorTitle', "No thread found by this id!");
+			$template->assign('errorDescription', "There was no thread with this id.");
+		}
 	default:
 		$template->assign('show', $_POST['topictext']);
 		$template->assign('threads', $threads->getAllTopThreads());

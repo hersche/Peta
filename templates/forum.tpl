@@ -3,5 +3,5 @@
 <h1>Hallo Forum :)</h1>
 {$show} {section name=forum loop=$threads}
 <li><a
-	href="forum.php?action=showthread&amp;setid={$threads[forum]->getId()}">{$threads[forum]->getTitle()}</a></li>
+	href="forum.php?action=showthread&amp;threadid={$threads[forum]->getId()}">{$threads[forum]->getTitle()}</a></li>
 {/section} {include file="footer.tpl"}

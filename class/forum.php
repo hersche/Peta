@@ -28,7 +28,6 @@ class allThreads{
 		$filteredList = array();
 		foreach($this->threads as $thread){
 			if($thread->getTopTopic()==-1){
-
 				array_push($filteredList, $thread);
 			}
 		}
@@ -44,11 +43,19 @@ class allThreads{
 		}
 		return $filteredList;
 	}
+	public function getThreadById($id){
+		foreach($this->threads as $thread){
+			if($thread->getId()==$id){
+				return $thread;
+			}
+		}
+		return $filteredList;
+	}
 	public function createNewThread($title, $text, $toptopic = -1){
-//		echo $toptopic;
-//		echo $title;
-//		echo $text;
-//		echo $this->user->getId();
+		//		echo $toptopic;
+		//		echo $title;
+		//		echo $text;
+		//		echo $this->user->getId();
 		$this->connect->exec("INSERT INTO `learncards`.`forum_threads` (`forumid`, `userid`, `title`, `text`, `timestamp`, `toptopic`) VALUES (NULL, '".$this->user->getId()."', '".$title."', '".$text."', CURRENT_TIMESTAMP, '".$toptopic."');");
 	}
 
