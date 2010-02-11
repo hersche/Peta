@@ -1,1 +1,1 @@
-<div class="menu"><a href="cards.php">View own cardsets</a><a href="cards.php?action=addquestion">Edit cardset</a><a href="cards.php?action=create">Create cardset</a></div>
+<div class="menu"><a href="cards.php">{t}View own cardsets{/t}</a><a href="cards.php?action=addquestion">{t}Edit cardset{/t}</a><a href="cards.php?action=create">{t}Create cardset{/t}</a></div>

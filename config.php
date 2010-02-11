@@ -16,4 +16,9 @@ $GLOBALS["adminRoles"] = array("admin");
 $GLOBALS["min_password_length"] = 6;
 $GLOBALS["password_need_specialchars"] = true;
 $GLOBALS["showSecurityWarnings"] = true;
+
+/**
+ * You should define your timezone here. For valid values, look here: http://www.php.net/manual/en/timezones.php 
+ */
+$GLOBALS["timezone"] = "Europe/Zurich";
 ?>
