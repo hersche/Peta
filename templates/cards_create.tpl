@@ -5,23 +5,23 @@
 <form action="cards.php?action=mkcreate" method="post">
 <table>
 	<tr>
-		<td>{t}Cardset name:{/t}</td>
+		<td>Cardset name:</td>
 		<td><input TYPE="text" SIZE="40" NAME="cardsetname" value="" /></td>
 	</tr>
 	<tr>
-		<td>{t}Cardset description:{/t}</td>
+		<td>Cardset description:</td>
 		<td><textarea NAME="cardsetdescription" value="" ></textarea></td>
 	</tr>
 	<tr>
-		<td>{t}Question{/t}</td>
+		<td>Question</td>
 		<td><input TYPE="text" SIZE="40" NAME="question1" value="" /></td>
 	</tr>
 	<tr>
-		<td>{t}Answer{/t}</td>
+		<td>Answer</td>
 		<td><input TYPE="text" SIZE="40" NAME="answer1" value="" /></td>
 	</tr>	
 	<tr>
-		<td>{t}Realy want to create that set?{/t}</td>
+		<td>Realy want to create that set?</td>
 		<td><input type="checkbox" name="sure" /></td>
 	</tr>
 	<tr>

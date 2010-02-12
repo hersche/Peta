@@ -3,8 +3,8 @@
 <h1>{$cardsettitle}</h1>
 <a href="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random=yes" >Random start</a>
 <a href="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random=no" >Random stop</a>
-<h2><a href="cards.php?action=editcardset&setid={$setid}">{t}(edit){/t}</a></h2>
-<h2><a href="cards.php?action=deletecardset&setid={$setid}">{t}(delete){/t}</a></h2>
+<h2><a href="cards.php?action=editcardset&setid={$setid}">(edit)</a></h2>
+<h2><a href="cards.php?action=deletecardset&setid={$setid}">(delete)</a></h2>
 <p>{$cardsetdescription}</p>
 
 <form
@@ -13,8 +13,8 @@
 <table>
 	<tr>
 		<td>{$question}<a
-			href="cards.php?action=editquestion&amp;setid={$setid}&amp;questionid={$questionid}">{t}(edit){/t}</a><a
-			href="cards.php?action=deletequestion&setid={$setid}&questionid={$questionid}">{t}(delete){/t}</a></td>
+			href="cards.php?action=editquestion&amp;setid={$setid}&amp;questionid={$questionid}">(edit)</a><a
+			href="cards.php?action=deletequestion&setid={$setid}&questionid={$questionid}">(delete)</a></td>
 		<td><input TYPE="text" SIZE="40" NAME="answer" value="" /></td>
 	</tr>
 

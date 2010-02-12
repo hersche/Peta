@@ -1,3 +1,10 @@
+******Livedemo***********
+A Livedemo could be found here.. actually, there are some debug-messages, but it should work.
+https://death-head.ch/testing-area/learncards/login.php
+Access works just over ssl. You should install the cacert-certificate (http://cacert.org) then it's a trusted source :)
+Remember: You are admin, if you're registered. Please respect other users. Thanks! (it will be changed for productive systems, of course!)
+*************************
+
 If you want to use this project from source, you have to do some little work.
 1. Create 2 directorys in the folder; templates_c and admin/templates_c . These must be writeable!
 2. Execute the SQL/testing_mysql.sql into your database. It should work on mysql, others aren't tested (may they work?)
