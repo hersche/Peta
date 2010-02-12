@@ -35,15 +35,20 @@ class allThreads{
 		return $filteredList;
 	}
 
-	public function getSubThreads($topicid){
+	public function getSubThreads($topicid, $recursive = true){
 		$filteredList = array();
+		// go through every thread
 		foreach($this->threads as $thread){
 			if($thread->getTopTopic()==$topicid){
 				array_push($filteredList, $thread);
+				if($recursive){
+					$filteredList = array_merge($filteredList, $this->getSubThreads($thread->getId()));
+				}
 			}
 		}
 		return $filteredList;
 	}
+
 	public function getThreadById($id){
 		foreach($this->threads as $thread){
 			if($thread->getId()==$id){
@@ -53,11 +58,18 @@ class allThreads{
 		return $filteredList;
 	}
 	public function createNewThread($title, $text, $toptopic = -1){
-		//		echo $toptopic;
-		//		echo $title;
-		//		echo $text;
-		//		echo $this->user->getId();
 		$this->connect->exec("INSERT INTO `learncards`.`forum_threads` (`forumid`, `userid`, `title`, `text`, `timestamp`, `toptopic`) VALUES (NULL, '".$this->user->getId()."', '".$title."', '".$text."', CURRENT_TIMESTAMP, '".$toptopic."');");
+		$this->nrOfThreads += 1;
+		$thread = new thread();
+		$thread->setId($this->connect->lastInsertId());
+		$thread->setText($text);
+		$thread->setTimestamp("");
+		$thread->setTitle($title);
+		$thread->setUserId($this->user->getId());
+		$thread->setTopTopic($toptopic);
+		$thread->setUsername(usertools::getUsernameById($this->user->getId(), $this->connect));
+		array_push($this->threads, $thread);
+		return $this->connect->lastInsertId();
 	}
 
 }

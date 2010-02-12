@@ -19,11 +19,16 @@ switch($_GET['action']){
 		}
 		break;
 	case "savethread":
-		if((!empty($_POST['topictitle']))&&(!empty($_POST['topictext']))){
+		if((!empty($_POST['topictitle']))&&(!empty($_POST['topictext']))&&(empty($_GET['threadid']))){
 			$threads->createNewThread($_POST['topictitle'], $_POST['topictext']);
+			$template->assign('show', $_POST['topictext']);
+			$template->assign('threads', $threads->getAllTopThreads());
+			$template->display('forum.tpl');
+			break;
 		}
 		else if((!empty($_POST['topictext']))&&(!empty($_GET['threadid']))){
-			$threads->createNewThread("", $_POST['topictext'], $_GET['threadid']);
+			if (empty($_POST['topictitle'])){ $_POST['topictitle'] = ""; }
+			$threads->createNewThread($_POST['topictitle'], $_POST['topictext'], $_GET['threadid']);
 		}
 		else{
 			$template->assign('errorTitle', _("No data submitted"));
@@ -33,9 +38,7 @@ switch($_GET['action']){
 		}
 		array_push($messages, _("Message saved!"));
 		$template->assign('messages', $messages);
-		$template->assign('show', $_POST['topictext']);
-		$template->display('forum.tpl');
-		break;
+		#don't place a break here!!! it have to go to showthread!
 	case "showthread":
 		if(!empty($_GET['threadid'])){
 			$thread = $threads->getThreadById($_GET['threadid']);
