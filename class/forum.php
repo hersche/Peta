@@ -17,6 +17,7 @@ class allThreads{
 			$thread->setTitle($row['title']);
 			$thread->setUserId($row['userid']);
 			$thread->setTopTopic($row['toptopic']);
+			$thread->setUsername(usertools::getUsernameById($row['userid'], $connection));
 			array_push($this->threads, $thread);
 		}
 	}
@@ -68,6 +69,7 @@ class thread{
 	private $text;
 	private $timestamp;
 	private $topTopic;
+	private $username;
 	public function setId($id){
 		$this->id = $id;
 	}
@@ -79,6 +81,12 @@ class thread{
 	}
 	public function getUserId(){
 		return $this->userid;
+	}
+	public function getUsername(){
+		return $this->username;
+	}
+	public function setUsername($username){
+		$this->username = $username;
 	}
 	public function setTitle($title){
 		$this->title = $title;

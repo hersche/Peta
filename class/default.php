@@ -5,6 +5,7 @@
 require_once 'config.php';
 require_once 'class/user.php';
 require_once 'class/smarty/Smarty.class.php';
+
 $template = new Smarty();
 session_start();
 if((!isset($_SESSION["user"]))&&(basename($_SERVER['PHP_SELF'])!="login.php")){
@@ -15,12 +16,7 @@ else{
 		$template->assign("admin", true);
 	}
 }
-//setlocale(LC_MESSAGES, 'de_DE.utf8');
-//bindtextdomain("*", "./locale");
-//bind_textdomain_codeset("LearnCards", 'UTF-8'); 
-//textdomain("LearnCards");
-require('class/smarty/plugins/block.t.php');
-$template->register_block('t', 'smarty-translate');
+
 $messages = array();
 try
 {

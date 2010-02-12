@@ -2,7 +2,7 @@
 {include file="menu.tpl"} {include file="forum_menu.tpl"}
 <h1>Reply to {$threadtitle}</h1>
 <table>
-	<form action="forum.php?action=mkreply&amp;threadid={$threadid}" method="post">
+	<form action="forum.php?action=savethread&amp;threadid={$threadid}" method="post">
 	<tr>
 		<td>Text</td>
 		<td>

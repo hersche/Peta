@@ -11,7 +11,7 @@ switch($_GET['action']) {
 				array_push($messages, usertools::registerUser($_POST["name"], $_POST["username"], $_POST["password"], 1, $connection));
 			}
 			else{
-				array_push($messages, "Passwords doesn't match");
+				array_push($messages, _("Passwords doesn't match"));
 			}
 		}
 		$template->assign("messages", $messages);
@@ -27,8 +27,8 @@ switch($_GET['action']) {
 			if((isset($_SESSION["user"]))&&($user->isValid())){
 				header("Location: index.php");
 			}
-			if(is_string($user)){
-				array_push($messages, $user);
+			else{
+				array_push($messages, _("Wrong Password or user"));
 			}
 		}
 		$template->assign("messages", $messages);

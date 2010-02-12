@@ -181,5 +181,10 @@ class usertools{
 			$connection->exec('UPDATE users SET password="'.$password.'" WHERE username="'.$username.'";');
 		}
 	}
+	static public function getUsernameById($userid, $connection){
+		foreach($connection->query('SELECT * FROM fullUser WHERE id="'.$userid.'";') as $userrow){
+			return $userrow['username'];
+		}
+	}
 }
 ?>

@@ -154,7 +154,7 @@ switch($_GET["action"]){
 
 		}
 		if($noCardset){
-			$template->assign("cardsetname", "There is no set with id ".$_POST["setid"].$_GET["setid"]);
+			$template->assign("cardsetname", gettext("There is no set with id ").$_POST["setid"].$_GET["setid"]);
 		}
 		$template->display('cards_editcardset.tpl');
 		break;
