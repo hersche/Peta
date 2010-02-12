@@ -4,3 +4,12 @@ background-color: yellow;
 .menu a{
 margin-left: 25px;
 }
+
+.mainThread {
+border-style:solid; padding:8px;
+background-color: yellow;
+}
+
+.subThread {
+background-color: red;
+}

@@ -35,14 +35,15 @@ class allThreads{
 		return $filteredList;
 	}
 
-	public function getSubThreads($topicid, $recursive = true){
+	public function getSubThreads($topicid,$position = 10, $recursive = true){
 		$filteredList = array();
 		// go through every thread
 		foreach($this->threads as $thread){
 			if($thread->getTopTopic()==$topicid){
+				$thread->setPosition($position);
 				array_push($filteredList, $thread);
 				if($recursive){
-					$filteredList = array_merge($filteredList, $this->getSubThreads($thread->getId()));
+					$filteredList = array_merge($filteredList, $this->getSubThreads($thread->getId(), $position + 20));
 				}
 			}
 		}
@@ -82,11 +83,18 @@ class thread{
 	private $timestamp;
 	private $topTopic;
 	private $username;
+	private $position;
 	public function setId($id){
 		$this->id = $id;
 	}
 	public function getId(){
 		return $this->id;
+	}
+	public function getPosition(){
+		return $this->position;
+	}
+	public function setPosition($position){
+		$this->position = $position;
 	}
 	public function setUserId($userid){
 		$this->userid = $userid;
