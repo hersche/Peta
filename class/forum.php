@@ -50,6 +50,27 @@ class allThreads{
 		return $filteredList;
 	}
 
+	public function getTopThreadId($subthreadid){
+		// get the thread
+		$subThread = $this->getThreadById($subthreadid);
+		$currentId;
+		foreach($this->threads as $thread){
+			// check, if a thread got a id which is the toptopic from the subthread..
+			if($thread->getId()==$subThread->getTopTopic()){
+				if($thread->getTopTopic()!=-1){
+					$currentId = $this->getTopThreadId($thread->getId());
+				}
+				else{
+					return $thread->getId();
+				}
+			}
+			else if($subThread->getTopTopic()==-1){
+				return $subThread->getId();
+			}
+		}
+		return $currentId;
+	}
+	
 	public function getThreadById($id){
 		foreach($this->threads as $thread){
 			if($thread->getId()==$id){
