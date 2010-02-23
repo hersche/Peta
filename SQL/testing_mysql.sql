@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 23, 2009 at 06:47 PM
--- Server version: 5.1.41
--- PHP Version: 5.2.11-2
+-- Generation Time: Feb 16, 2010 at 10:31 AM
+-- Server version: 5.1.43
+-- PHP Version: 5.3.1-4
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -16,11 +16,27 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `forum_threads`
+--
+
+CREATE TABLE IF NOT EXISTS `forum_threads` (
+  `forumid` int(11) NOT NULL AUTO_INCREMENT,
+  `userid` int(11) NOT NULL,
+  `title` text NOT NULL,
+  `text` text NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `toptopic` int(11) NOT NULL,
+  PRIMARY KEY (`forumid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=51 ;
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `fullQuestionSet`
 --
 CREATE TABLE IF NOT EXISTS `fullQuestionSet` (
 `setid` int(11)
-,`setname` varchar(11)
+,`setname` varchar(25)
 ,`setdescription` varchar(1000)
 ,`ownerid` int(11)
 ,`editcount` int(11)
@@ -75,8 +91,9 @@ CREATE TABLE IF NOT EXISTS `question_answer` (
   `answerid` int(11) NOT NULL AUTO_INCREMENT,
   `ownerquestion` int(11) NOT NULL,
   `answertext` varchar(100) NOT NULL,
+  `rightAnswer` tinyint(1) NOT NULL COMMENT 'true if it is the right answer, false if not (for multiple answers)',
   PRIMARY KEY (`answerid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=42 ;
 
 -- --------------------------------------------------------
 
@@ -92,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `question_question` (
   `rightAnswered` int(11) NOT NULL DEFAULT '0',
   `wrongAnswered` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`questionid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=22 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=49 ;
 
 -- --------------------------------------------------------
 
@@ -102,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `question_question` (
 
 CREATE TABLE IF NOT EXISTS `question_set` (
   `setid` int(11) NOT NULL AUTO_INCREMENT,
-  `setname` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
+  `setname` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
   `setdescription` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
   `ownerid` int(11) NOT NULL,
   `editcount` int(11) NOT NULL,
@@ -111,7 +128,7 @@ CREATE TABLE IF NOT EXISTS `question_set` (
   `firstowner` int(11) NOT NULL,
   `tagsid` int(11) NOT NULL,
   PRIMARY KEY (`setid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=20 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=32 ;
 
 -- --------------------------------------------------------
 
@@ -161,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `lastlogin` date NOT NULL,
   `lastip` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=17 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=19 ;
 
 -- --------------------------------------------------------
 

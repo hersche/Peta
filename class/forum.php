@@ -17,6 +17,7 @@ class allThreads{
 			$thread->setTitle($row['title']);
 			$thread->setUserId($row['userid']);
 			$thread->setTopTopic($row['toptopic']);
+			$thread->setThreadState($row['threadstate']);
 			$thread->setUsername(usertools::getUsernameById($row['userid'], $connection));
 			array_push($this->threads, $thread);
 		}
@@ -48,6 +49,10 @@ class allThreads{
 			}
 		}
 		return $filteredList;
+	}
+	
+	public function deleteThread($threadid, $includeSubThreads = true){
+		
 	}
 
 	public function getTopThreadId($subthreadid){
@@ -96,7 +101,7 @@ class allThreads{
 
 }
 
-class thread{
+class thread{	
 	private $id;
 	private $userid;
 	private $title;
@@ -105,6 +110,7 @@ class thread{
 	private $topTopic;
 	private $username;
 	private $position;
+	private $threadState;
 	public function setId($id){
 		$this->id = $id;
 	}
@@ -119,6 +125,12 @@ class thread{
 	}
 	public function setUserId($userid){
 		$this->userid = $userid;
+	}
+	public function setThreadState($threadState){
+		$this->threadState = $threadState;
+	}
+	public function getThreadState(){
+		return $this->threadState;
 	}
 	public function getUserId(){
 		return $this->userid;
@@ -154,6 +166,27 @@ class thread{
 		return $this->topTopic;
 	}
 
+}
+
+class forumtools{
+
+	public static $THREADACTIVE = 0;
+	public static $THREADHIDDEN = 1;
+	public static $THREADREDONLY = 2;
+
+	public static function threadStateToString($threadStateId){
+		if($threadStateId==$THREADACTIVE){
+			return "Active";
+		}
+		else if($threadStateId==$THREADHIDDEN){
+			return "Hidden";
+		}
+		else if($threadStateId==$THREADREADONLY){
+			return "Read only";
+		}
+		// else with exception!
+	}
+	
 }
 
 

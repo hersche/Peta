@@ -21,14 +21,18 @@ switch($_GET['action']){
 	case "savethread":
 		if((!empty($_POST['topictitle']))&&(!empty($_POST['topictext']))&&(empty($_GET['threadid']))){
 			$threads->createNewThread($_POST['topictitle'], $_POST['topictext']);
-			$template->assign('show', $_POST['topictext']);
 			$template->assign('threads', $threads->getAllTopThreads());
+			array_push($messages, "Thread opened");
+			$template->assign('messages', $messages);
 			$template->display('forum.tpl');
 			break;
 		}
 		else if((!empty($_POST['topictext']))&&(!empty($_GET['threadid']))){
-			if (empty($_POST['topictitle'])){ $_POST['topictitle'] = ""; }
-			$threads->createNewThread($_POST['topictitle'], $_POST['topictext'], $_GET['threadid']);
+			$thread = $threads->getThreadById($_GET['threadid']);
+			if((!is_null($thread))&&($thread->getThreadState()==forumtools::$THREADACTIVE)){
+				if (empty($_POST['topictitle'])){ $_POST['topictitle'] = ""; }
+				$threads->createNewThread($_POST['topictitle'], $_POST['topictext'], $_GET['threadid']);
+			}
 		}
 		else{
 			$template->assign('errorTitle', _("No data submitted"));
@@ -36,57 +40,37 @@ switch($_GET['action']){
 			$template->display('error.tpl');
 			break;
 		}
-		array_push($messages, _("Message saved!"));
-		$template->assign('messages', $messages);
-		#fixme - ugly and bad hack.. should be replaced by a method..!
 		header("Location: forum.php?action=showthread&threadid=".$threads->getTopThreadId($_GET['threadid']));
 		break;
-		//		if(!is_null($thread)){
-		//			$template->assign('threadTitle', $thread->getTitle());
-		//			$template->assign('threadText', $thread->getText());
-		//			$template->assign('threadage', $thread->getTimestamp());
-		//			$template->assign('threadid', $thread->getId());
-		//			$template->assign('username', $thread->getUsername());
-		//			$subthreads = $threads->getSubThreads($thread->getId());
-		//			$template->assign('subthreads', $subthreads);
-		//			$template->display('forum_view.tpl');
-		//		}
-		//		else{
-		//			$template->assign('errorTitle', _("No thread found by this id!"));
-		//			$template->assign('errorDescription', _("There was no thread with this id."));
-		//			$template->display('error.tpl');
-		//		}
-		//		break;
-		#don't place a break here!!! it have to go to showthread!
-case "showthread":
-	if(!empty($_GET['threadid'])){
-		$thread = $threads->getThreadById($_GET['threadid']);
-		if(!is_null($thread)){
-			$template->assign('threadTitle', $thread->getTitle());
-			$template->assign('threadText', $thread->getText());
-			$template->assign('threadage', $thread->getTimestamp());
-			$template->assign('threadid', $thread->getId());
-			$template->assign('username', $thread->getUsername());
-			$subthreads = $threads->getSubThreads($thread->getId());
-			$template->assign('subthreads', $subthreads);
-			$template->display('forum_view.tpl');
+	case "showthread":
+		if(!empty($_GET['threadid'])){
+			$thread = $threads->getThreadById($_GET['threadid']);
+			if((!is_null($thread))&&($thread->getThreadState()!=forumtools::$THREADHIDDEN)){
+				$template->assign('threadTitle', $thread->getTitle());
+				$template->assign('threadText', $thread->getText());
+				$template->assign('threadage', $thread->getTimestamp());
+				$template->assign('threadid', $thread->getId());
+				$template->assign('username', $thread->getUsername());
+				$subthreads = $threads->getSubThreads($thread->getId());
+				$template->assign('subthreads', $subthreads);
+				$template->display('forum_view.tpl');
+			}
+			else{
+				$template->assign('errorTitle', _("No thread found by this id!"));
+				$template->assign('errorDescription', _("There was no thread with this id."));
+				$template->display('error.tpl');
+			}
 		}
 		else{
-			$template->assign('errorTitle', _("No thread found by this id!"));
-			$template->assign('errorDescription', _("There was no thread with this id."));
+			$template->assign('errorTitle', _("No thread-id was given"));
+			$template->assign('errorDescription', _("There was no id for a thread!"));
 			$template->display('error.tpl');
 		}
-	}
-	else{
-		$template->assign('errorTitle', _("No thread-id was given"));
-		$template->assign('errorDescription', _("There was no id for a thread!"));
-		$template->display('error.tpl');
-	}
-	break;
-default:
-	$template->assign('show', $_POST['topictext']);
-	$template->assign('threads', $threads->getAllTopThreads());
-	$template->display('forum.tpl');
+		break;
+	default:
+		$template->assign('show', $_POST['topictext']);
+		$template->assign('threads', $threads->getAllTopThreads());
+		$template->display('forum.tpl');
 
 }
 
