@@ -103,7 +103,7 @@ class usertools{
 				try{
 					$password = hash($GLOBALS["password_hash"], $password);
 					// TODO check for specialchars!
-					$datetime = new DateTime();
+					$datetime = new DateTime($GLOBALS["timezone"]);
 					$connection->exec("INSERT INTO users (`username`, `password`, `lastlogin`, `lastip`) VALUES ('".$username."', '".$password."', '".$datetime->format('Y-m-d')."', '".getenv('REMOTE_ADDR')."');");
 					$userid = $connection->lastInsertId();
 					$connection->exec("INSERT INTO users_profile (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES ('".$userid."', '".$name."', '', '', '', '');");

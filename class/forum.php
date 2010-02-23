@@ -52,7 +52,14 @@ class allThreads{
 	}
 	
 	public function deleteThread($threadid, $includeSubThreads = true){
-		
+		$thread = $this->getThreadById($threadid);
+		if(!is_null($thread)){
+			$subthreads = $this->getSubThreads($threadid);
+			$this->connect->exec("DELETE FROM `".$GLOBALS["db_dbname"]."`.`forum_threads` WHERE `forum_threads`.`forumid` = ".$threadid."; ");
+			foreach($subthreads as $subthread){
+				$this->connect->exec("DELETE FROM `".$GLOBALS["db_dbname"]."`.`forum_threads` WHERE `forum_threads`.`forumid` = ".$subthread->getId()."; ");
+			}
+		}
 	}
 
 	public function getTopThreadId($subthreadid){
@@ -85,7 +92,7 @@ class allThreads{
 		return $filteredList;
 	}
 	public function createNewThread($title, $text, $toptopic = -1){
-		$this->connect->exec("INSERT INTO `learncards`.`forum_threads` (`forumid`, `userid`, `title`, `text`, `timestamp`, `toptopic`) VALUES (NULL, '".$this->user->getId()."', '".$title."', '".$text."', CURRENT_TIMESTAMP, '".$toptopic."');");
+		$this->connect->exec("INSERT INTO `".$GLOBALS["db_dbname"]."`.`forum_threads` (`forumid`, `userid`, `title`, `text`, `timestamp`, `toptopic`) VALUES (NULL, '".$this->user->getId()."', '".$title."', '".$text."', CURRENT_TIMESTAMP, '".$toptopic."');");
 		$this->nrOfThreads += 1;
 		$thread = new thread();
 		$thread->setId($this->connect->lastInsertId());

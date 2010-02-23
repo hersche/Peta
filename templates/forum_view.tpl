@@ -11,7 +11,7 @@ topic!</a>
 </div>
 {section name=id loop=$subthreads}
 <div class="subThread" style="margin-left: {$subthreads[id]->getPosition()}px;">
-<h4>{$subthreads[id]->getTitle()}</h4>
+<h4>{$subthreads[id]->getTitle()} {if $admin} (edit) {/if}</h4>
 <div>{$subthreads[id]->getText()}</div>
 <div><a href="forum.php?action=reply&amp;threadid={$subthreads[id]->getId()}">Reply to this post</a></div>
 <div>Posted by {$subthreads[id]->getUsername()}</div>

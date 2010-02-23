@@ -48,14 +48,13 @@ switch($_GET['action']){
 	case "mkuser":
 		if((!empty($_POST['username']))&&(!empty($_POST['name']))){
 			if($_POST['password']==$_POST['password2']){
-				$roleid;
 				foreach(admin::getRoles($connection) as $role){
 					if($role['role'] == $_POST['role']){
 						$roleid = $role['roleid'];
 					}
 				}
-				usertools::registerUser($_POST['username'], $_POST['name'], $_POST['password'], $roleid, $connection);
-				array_push($messages, "User ".$_POST['username']."created succefull");
+				echo $roleid;
+				array_push($messages, usertools::registerUser($_POST['username'], $_POST['name'], $_POST['password'], $roleid, $connection));
 			}
 		}
 		break;
