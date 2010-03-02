@@ -99,8 +99,6 @@ class user extends abstractUser{
 		unset($_SESSION["user"]);
 	}
 
-
-
 }
 
 class alienuser extends abstractUser{
@@ -167,18 +165,18 @@ class usertools{
 
 	static public function getAlienUserbyId($id, $connection){
 		try{
-		$alien = new alienuser();
-		foreach($connection->query('SELECT * FROM fullUser WHERE id='.$id.' LIMIT 1;') as $userrow){
-			$alien->setId($userrow['id']);
-			$alien->setLastlogin($userrow['lastlogin']);
-			$alien->setName($userrow['name']);
-			$alien->setUsername($userrow['username']);
-			return $alien;
+			$alien = new alienuser();
+			foreach($connection->query('SELECT * FROM fullUser WHERE id='.$id.' LIMIT 1;') as $userrow){
+				$alien->setId($userrow['id']);
+				$alien->setLastlogin($userrow['lastlogin']);
+				$alien->setName($userrow['name']);
+				$alien->setUsername($userrow['username']);
+				return $alien;
+			}
 		}
+		catch (Exception $e) {
+			echo 'Exception abgefangen: ',  $e->getMessage(), "\n";
 		}
-	catch (Exception $e) {
-    echo 'Exception abgefangen: ',  $e->getMessage(), "\n";
-}
 
 	}
 	static public function getAlienUserbyUsername($username, $connection){
@@ -246,7 +244,6 @@ class usertools{
 	}
 
 	static public function setRole($userid, $oldRole, $newRole, $connection){
-		echo 'UPDATE userrole SET broleid="'.$newRole.'" WHERE buserid="'.$userid.' AND broleid="'.$oldRole.'";';
 		$connection->exec('UPDATE userrole SET broleid="'.$newRole.'" WHERE buserid="'.$userid.'" AND broleid="'.$oldRole.'";');
 	}
 

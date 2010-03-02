@@ -52,6 +52,7 @@ switch($_GET['action']){
 				$template->assign('threadid', $thread->getId());
 				$template->assign('username', $thread->getUsername());
 				$template->assign('userid', $thread->getUserId());
+				$template->assign('ownuserid', $user->getId());
 				$subthreads = $threads->getSubThreads($thread->getId());
 				$template->assign('subthreads', $subthreads);
 				$template->display('forum_view.tpl');
