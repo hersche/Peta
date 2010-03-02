@@ -11,7 +11,7 @@ topic!</a>
 </div>
 {section name=id loop=$subthreads}
 <div class="subThread" style="margin-left: {$subthreads[id]->getPosition()}px;">
-<h4>{$subthreads[id]->getTitle()} {if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))} (edit) {/if}</h4>
+<h4>{$subthreads[id]->getTitle()} {if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))} <a href="forum.php?action=editthread&amp;threadid={$subthreads[id]->getId()}"> (edit)</a> {/if}</h4>
 <div>{$subthreads[id]->getText()}</div>
 <div><a href="forum.php?action=reply&amp;threadid={$subthreads[id]->getId()}">Reply to this post</a></div>
 <div>Posted by <a href="profile.php?userid={$subthreads[id]->getUserId()}" >{$subthreads[id]->getUsername()}</a></div>

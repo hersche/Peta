@@ -18,6 +18,18 @@ switch($_GET['action']){
 			$template->display('forum_reply.tpl');
 		}
 		break;
+	case "editthread":
+		$thread = $threads->getThreadById($_GET['threadid']);
+		if(!is_null($thread)){
+			$dojorequire = array("dijit.Editor", "dojo.parser");
+			$template->assign("dojorequire", $dojorequire);
+			$template->assign("threadid", $thread->getId());
+			$template->assign("threadtitle", $thread->getTitle());
+			$template->assign("title", $thread->getTitle());
+			$template->assign("text", $thread->getText());
+			$template->display('forum_reply.tpl');
+		}
+		break;
 	case "savethread":
 		if((!empty($_POST['topictitle']))&&(!empty($_POST['topictext']))&&(empty($_GET['threadid']))){
 			$threads->createNewThread($_POST['topictitle'], $_POST['topictext']);
