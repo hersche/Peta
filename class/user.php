@@ -1,5 +1,11 @@
 <?php
-class user{
+
+abstract class abstractUser{
+	abstract public function getId();
+	abstract public function getUsername();
+	abstract public function getName();
+}
+class user extends abstractUser{
 	private $username;
 	private $name;
 	private $lastip;
@@ -97,7 +103,7 @@ class user{
 
 }
 
-class alienuser{
+class alienuser extends abstractUser{
 	private $username;
 	private $name;
 	private $id;
@@ -160,6 +166,7 @@ class usertools{
 	}
 
 	static public function getAlienUserbyId($id, $connection){
+		try{
 		$alien = new alienuser();
 		foreach($connection->query('SELECT * FROM fullUser WHERE id='.$id.' LIMIT 1;') as $userrow){
 			$alien->setId($userrow['id']);
@@ -168,6 +175,10 @@ class usertools{
 			$alien->setUsername($userrow['username']);
 			return $alien;
 		}
+		}
+	catch (Exception $e) {
+    echo 'Exception abgefangen: ',  $e->getMessage(), "\n";
+}
 
 	}
 	static public function getAlienUserbyUsername($username, $connection){

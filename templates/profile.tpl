@@ -1,5 +1,5 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
-{include file="menu.tpl"} {include file="forum_menu.tpl"}
+{include file="menu.tpl"}
 <h1>Profile</h1>
 <h2>Name: {$name}</h2>
 <h2>Username: {$username}</h2>
