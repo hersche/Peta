@@ -186,6 +186,12 @@ class usertools{
 		}
 		return false;
 	}
+	static public function userIdExists($id, $connection){
+		foreach($connection->query('SELECT * FROM fullUser WHERE id='.$id.';') as $userrow){
+			return true;
+		}
+		return false;
+	}
 	static public function passwordRequirements($password, $lenght, $specialchars){
 		if(strlen($password)>=$lenght){
 			return true;
