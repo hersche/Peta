@@ -4,9 +4,11 @@ switch($_GET['action']){
 	case "edit":
 		break;
 	default:
-		$template->assign("name", $_SESSION["user"]->getName());
-		$template->assign("username", $_SESSION["user"]->getUsername());
-		$template->assign("roles", $_SESSION["user"]->getRoles());
+		if(isset($_GET['userid'])){
+			$user = usertools::getAlienUserbyId($_GET['userid'], $connection);
+		}
+		$template->assign("name", $user->getName());
+		$template->assign("username", $user->getUsername());
 		$template->display("profile.tpl");
 		break;
 }

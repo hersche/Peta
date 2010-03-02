@@ -96,6 +96,42 @@ class user{
 
 
 }
+
+class alienuser{
+	private $username;
+	private $name;
+	private $id;
+	private $lastlogin;
+
+	public function getUsername(){
+		return $this->username;
+	}
+
+	public function setUsername($username){
+		$this->username = $username;
+	}
+
+	public function getName(){
+		return $this->name;
+	}
+
+	public function setName($name){
+		$this->name = $name;
+	}
+
+	public function getId(){
+		return $this->id;
+	}
+	public function setId($id){
+		$this->id = $id;
+	}
+	public function getLastlogin(){
+		return $this->lastlogin;
+	}
+	public function setLastlogin($lastlogin){
+		$this->lastlogin = $lastlogin;
+	}
+}
 class usertools{
 	static public function registerUser($name, $username, $password, $role, $connection){
 		if(usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
@@ -120,6 +156,28 @@ class usertools{
 		}
 		else{
 			return "Your password is to short. It needs at least ".$GLOBALS["min_password_length"]." signs";
+		}
+	}
+
+	static public function getAlienUserbyId($id, $connection){
+		$alien = new alienuser();
+		foreach($connection->query('SELECT * FROM fullUser WHERE id='.$id.' LIMIT 1;') as $userrow){
+			$alien->setId($userrow['id']);
+			$alien->setLastlogin($userrow['lastlogin']);
+			$alien->setName($userrow['name']);
+			$alien->setUsername($userrow['username']);
+			return $alien;
+		}
+
+	}
+	static public function getAlienUserbyUsername($username, $connection){
+		$alien = new alienuser();
+		foreach($connection->query('SELECT * FROM fullUser WHERE username="'.$username.'" LIMIT 1;') as $userrow){
+			$alien->setId($userrow['id']);
+			$alien->setLastlogin($userrow['lastlogin']);
+			$alien->setName($userrow['name']);
+			$alien->setUsername($userrow['username']);
+			return $alien;
 		}
 	}
 	static public function userExists($username, $connection){

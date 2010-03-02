@@ -4,7 +4,7 @@
 <div class="mainThread">
 <h3>{$threadTitle}</h3>
 <div>{$threadText}</div>
-<div>Posted by {$username}</div>
+<div>Posted by <a href="profile.php?userid={$userid}" >{$username}</a></div>
 <h4>Last change on {$threadage}</h4>
 <a href="forum.php?action=reply&amp;threadid={$threadid}">Reply to this
 topic!</a>
@@ -14,6 +14,6 @@ topic!</a>
 <h4>{$subthreads[id]->getTitle()} {if $admin} (edit) {/if}</h4>
 <div>{$subthreads[id]->getText()}</div>
 <div><a href="forum.php?action=reply&amp;threadid={$subthreads[id]->getId()}">Reply to this post</a></div>
-<div>Posted by {$subthreads[id]->getUsername()}</div>
+<div>Posted by <a href="profile.php?userid={$subthreads[id]->getUserId()}" >{$subthreads[id]->getUsername()}</a></div>
 </div>
 {/section} {include file="footer.tpl"}

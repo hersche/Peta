@@ -15,6 +15,7 @@ else{
 	if((isset($_SESSION["user"]))&&(usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"]->getRoles()))){
 		$template->assign("admin", true);
 	}
+	$user = $_SESSION["user"];
 }
 
 $messages = array();
