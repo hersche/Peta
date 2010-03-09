@@ -15,5 +15,6 @@ topic!</a>
 <div>{$subthreads[id]->getText()}</div>
 <div><a href="forum.php?action=reply&amp;threadid={$subthreads[id]->getId()}">Reply to this post</a></div>
 <div>Posted by <a href="profile.php?userid={$subthreads[id]->getUserId()}" >{$subthreads[id]->getUsername()}</a></div>
+<div>{$subthreads[id]->getEditCounter()} times editet!</div>
 </div>
 {/section} {include file="footer.tpl"}

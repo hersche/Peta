@@ -18,6 +18,7 @@ class allThreads{
 			$thread->setUserId($row['userid']);
 			$thread->setTopTopic($row['toptopic']);
 			$thread->setThreadState($row['threadstate']);
+			$thread->setEditCounter($row['editcounter']);
 			$thread->setUsername(usertools::getUsernameById($row['userid'], $connection));
 			array_push($this->threads, $thread);
 		}
@@ -50,7 +51,7 @@ class allThreads{
 		}
 		return $filteredList;
 	}
-	
+
 	public function deleteThread($threadid, $includeSubThreads = true){
 		$thread = $this->getThreadById($threadid);
 		if(!is_null($thread)){
@@ -82,7 +83,7 @@ class allThreads{
 		}
 		return $currentId;
 	}
-	
+
 	public function getThreadById($id){
 		foreach($this->threads as $thread){
 			if($thread->getId()==$id){
@@ -106,9 +107,13 @@ class allThreads{
 		return $this->connect->lastInsertId();
 	}
 
+	public function editThread($title, $text, $editcounter, $threadid){
+		$this->connect->exec("UPDATE `learncards`.`forum_threads` SET `title` =  '".$title."', `text` =  '".$text."', `editcounter` =  ".$editcounter."   WHERE `forum_threads`.`forumid` =".$threadid." LIMIT 1 ;");
+	}
+
 }
 
-class thread{	
+class thread{
 	private $id;
 	private $userid;
 	private $title;
@@ -118,6 +123,7 @@ class thread{
 	private $username;
 	private $position;
 	private $threadState;
+	private $editcounter;
 	public function setId($id){
 		$this->id = $id;
 	}
@@ -126,6 +132,12 @@ class thread{
 	}
 	public function getPosition(){
 		return $this->position;
+	}
+	public function getEditCounter(){
+		return $this->editcounter;
+	}
+	public function setEditCounter($editcounter){
+		$this->editcounter = $editcounter;
 	}
 	public function setPosition($position){
 		$this->position = $position;
@@ -193,7 +205,7 @@ class forumtools{
 		}
 		// else with exception!
 	}
-	
+
 }
 
 

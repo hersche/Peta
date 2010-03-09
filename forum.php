@@ -6,6 +6,7 @@ switch($_GET['action']){
 	case "createthread":
 		$dojorequire = array("dijit.Editor", "dojo.parser");
 		$template->assign("dojorequire", $dojorequire);
+		$template->assign("savemethod", "new");
 		$template->display('forum_createThread.tpl');
 		break;
 	case "reply":
@@ -15,6 +16,7 @@ switch($_GET['action']){
 			$template->assign("dojorequire", $dojorequire);
 			$template->assign("threadid", $thread->getId());
 			$template->assign("threadtitle", $thread->getTitle());
+			$template->assign("savemethod", "reply");
 			$template->display('forum_reply.tpl');
 		}
 		break;
@@ -24,14 +26,15 @@ switch($_GET['action']){
 			$dojorequire = array("dijit.Editor", "dojo.parser");
 			$template->assign("dojorequire", $dojorequire);
 			$template->assign("threadid", $thread->getId());
+			$template->assign("savemethod", "edit");
 			$template->assign("threadtitle", $thread->getTitle());
 			$template->assign("title", $thread->getTitle());
 			$template->assign("text", $thread->getText());
-			$template->display('forum_reply.tpl');
+			$template->display('forum_edit.tpl');
 		}
 		break;
 	case "savethread":
-		if((!empty($_POST['topictitle']))&&(!empty($_POST['topictext']))&&(empty($_GET['threadid']))){
+		if((!empty($_POST['topictitle']))&&(!empty($_POST['topictext']))&&($_GET['savemethod']=="new")){
 			$threads->createNewThread($_POST['topictitle'], $_POST['topictext']);
 			$template->assign('threads', $threads->getAllTopThreads());
 			array_push($messages, "Thread opened");
@@ -43,7 +46,14 @@ switch($_GET['action']){
 			$thread = $threads->getThreadById($_GET['threadid']);
 			if((!is_null($thread))&&($thread->getThreadState()==forumtools::$THREADACTIVE)){
 				if (empty($_POST['topictitle'])){ $_POST['topictitle'] = ""; }
-				$threads->createNewThread($_POST['topictitle'], $_POST['topictext'], $_GET['threadid']);
+				if($_GET['savemethod']=="reply"){
+					// threadid means here the topthreadid
+					$threads->createNewThread($_POST['topictitle'], $_POST['topictext'], $_GET['threadid']);
+				}
+				else if ($_GET['savemethod']=="edit"){
+					echo $thread->getEditCounter()+1;
+					$threads->editThread($_POST['topictitle'], $_POST['topictext'], $thread->getEditCounter()+1, $_GET['threadid']);
+				}
 			}
 		}
 		else{
