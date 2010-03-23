@@ -1,5 +1,6 @@
-{include file="header.tpl" title=Login} {include file="messagebox.tpl"}
+{include file="header.tpl" title=Login} {include file="menu.tpl"} {include file="messagebox.tpl"}
 <table>
+<h1>Welcome to LearnCards. For full posibillitys, please log in!</h1>
 	<form method="POST" action="login.php">
 	
 	
