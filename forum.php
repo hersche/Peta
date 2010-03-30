@@ -23,14 +23,22 @@ switch($_GET['action']){
 	case "editthread":
 		$thread = $threads->getThreadById($_GET['threadid']);
 		if(!is_null($thread)){
-			$dojorequire = array("dijit.Editor", "dojo.parser");
-			$template->assign("dojorequire", $dojorequire);
-			$template->assign("threadid", $thread->getId());
-			$template->assign("savemethod", "edit");
-			$template->assign("threadtitle", $thread->getTitle());
-			$template->assign("title", $thread->getTitle());
-			$template->assign("text", $thread->getText());
-			$template->display('forum_edit.tpl');
+			if(($thread->getUserId() == $user->getId())||(usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"]->getRoles()))){
+				$dojorequire = array("dijit.Editor", "dojo.parser");
+				$template->assign("dojorequire", $dojorequire);
+				$template->assign("threadid", $thread->getId());
+				$template->assign("savemethod", "edit");
+				$template->assign("threadtitle", $thread->getTitle());
+				$template->assign("title", $thread->getTitle());
+				$template->assign("text", $thread->getText());
+				$template->display('forum_edit.tpl');
+			}
+
+			else{
+				$template->assign("errorTitle", "You haven't enough rights or the thread doesn't exist");
+				$template->assign("errorDescription", "Please check your roles and verify that this thread exists!");
+				$template->display('error.tpl');
+			}
 		}
 		break;
 	case "savethread":
