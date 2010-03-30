@@ -60,6 +60,8 @@ class allThreads{
 			foreach($subthreads as $subthread){
 				$this->connect->exec("DELETE FROM `".$GLOBALS["db_dbname"]."`.`forum_threads` WHERE `forum_threads`.`forumid` = ".$subthread->getId()."; ");
 			}
+			$this->threads = array();
+			$this->__construct($this->connect, $this->user);
 		}
 	}
 
@@ -84,6 +86,7 @@ class allThreads{
 		return $currentId;
 	}
 
+	
 	public function getThreadById($id){
 		foreach($this->threads as $thread){
 			if($thread->getId()==$id){

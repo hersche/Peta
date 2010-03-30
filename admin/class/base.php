@@ -1,5 +1,5 @@
 <?php
-
+require_once '../class/forum.php';
 
 class allowedSites{
 	private $allAllowedSites = array();

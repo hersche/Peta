@@ -7,6 +7,11 @@ $allThreads = new allThreads($connection, $user);
  */
 switch($_GET['action']){
 
+	case "deletethread":
+		if(!empty($_GET['threadid'])){
+			$allThreads->deleteThread($_GET['threadid'], true);
+		}
+	
 	default:
 		$template->assign("threads", $allThreads->getAllTopThreads());
 		$template->display("forum.tpl");
