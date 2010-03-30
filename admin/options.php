@@ -3,31 +3,31 @@
 require_once 'default.php';
 require_once 'class/base.php';
 $allAllowedSites = new allowedSites($connection);
-$dojorequire = array("dijit.InlineEditBox", "dijit.form.Textarea");
-$template->assign("dojorequire", $dojorequire);
+//$dojorequire = array("dijit.InlineEditBox", "dijit.form.Textarea");
+//$template->assign("dojorequire", $dojorequire);
 /**
  * This is the site for managing the users as admin
  */
 switch($_GET['action']){
 	case "deleteAllowedSite":
 		if(!empty($_GET['siteid'])){
-			$allAllowedSites->deleteAllowedSite($_GET['siteid'], $connection);
-			array_push($messages, "Site removed successfull");
+			array_push($messages, $allAllowedSites->deleteAllowedSite($_GET['siteid'], $connection));
 		}
-
 		$template->assign("messages", $messages);
 		$template->assign('sites', $allAllowedSites->getAllowedSiteList());
 		$template->display('options_misc.tpl');
 		break;
 	case "editAllowedSite":
-		echo $_POST['site'];
+		if(!empty($_POST['site'])){
+			array_push($messages, $allAllowedSites->editSite($_GET['siteid'], $_POST['site'], $connection));
+		}
+		$template->assign("messages", $messages);
 		$template->assign('sites', $allAllowedSites->getAllowedSiteList());
 		$template->display('options_misc.tpl');
 		break;
 	case "createAllowedSite":
 		if(!empty($_POST['site'])){
-			$allAllowedSites->addSite($_POST['site'], $connection);
-			array_push($messages, "Site added successfull");
+			array_push($messages, $allAllowedSites->addSite($_POST['site'], $connection));
 		}
 		$template->assign("messages", $messages);
 		$template->assign('sites', $allAllowedSites->getAllowedSiteList());
