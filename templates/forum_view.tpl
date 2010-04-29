@@ -2,7 +2,7 @@
 {include file="menu.tpl"} {include file="forum_menu.tpl"}
 <h1>Forum</h1>
 <div class="mainThread">
-<h3>{$threadTitle}</h3>
+<h3>{$threadTitle}</h3><h2>{if (($admin)||($ownuserid eq $userid))} <a href="forum.php?action=editthread&amp;threadid={$threadid}"> (edit)</a> {/if}</h2>
 <div>{$threadText}</div>
 <div>Posted by <a href="profile.php?userid={$userid}" >{$username}</a></div>
 <h4>Last change on {$threadage}</h4>

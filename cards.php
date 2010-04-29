@@ -23,7 +23,6 @@ switch($_GET["action"]){
 			$template->assign("messages", $messages);
 			$template->assign("cardsets", $allSets->getSets());
 			$template->display('cards.tpl');
-			break;
 		}
 		break;
 	case "singlecardset":
@@ -42,7 +41,6 @@ switch($_GET["action"]){
 					if(isset($_SESSION['lastid'])){
 						$lastQuestionId = $_SESSION['lastid'];
 					}
-
 					$questionid = cardtools::randomArrayPosition($questions);
 					$question = $questions[$questionid];
 					$_SESSION['lastid'] = $questionid;
@@ -54,7 +52,6 @@ switch($_GET["action"]){
 					$question = $questions[$questionid];
 					$template->assign("questionid",$question->getQuestionId());
 					if(count($questions)>$_GET['nextquestion']){
-
 						$template->assign("nextquestion",$_GET['nextquestion']+1);
 					}
 					else if(count($questions)==$_GET['nextquestion']){
