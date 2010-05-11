@@ -21,8 +21,6 @@ catch (PDOException $e)
  */
 function checkNoNeedForLogin($url, $connection){
 	foreach($connection->query('SELECT * FROM `config_loginneedlesssites` LIMIT 0 , 30') as $row){
-		///echo $one['site'];
-		//echo $row['site'];
 		if(preg_match($row['site'], $url)){
 			return true;
 		}

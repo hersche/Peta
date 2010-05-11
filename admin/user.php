@@ -53,7 +53,6 @@ switch($_GET['action']){
 						$roleid = $role['roleid'];
 					}
 				}
-				echo $roleid;
 				array_push($messages, usertools::registerUser($_POST['username'], $_POST['name'], $_POST['password'], $roleid, $connection));
 			}
 		}

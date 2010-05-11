@@ -175,7 +175,7 @@ class usertools{
 			}
 		}
 		catch (Exception $e) {
-			echo 'Exception abgefangen: ',  $e->getMessage(), "\n";
+			return 'Exception abgefangen: '.  $e->getMessage();
 		}
 
 	}

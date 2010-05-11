@@ -4,7 +4,6 @@ require_once 'class/default.php';
 $template->assign("messages", $messages);
 
 if($_GET['install']=="complete"){
-	echo "beginn install!";
 	$objDb->exec("CREATE TABLE `learncards`.`users` (
 `id` INT( 11 ) NOT NULL ,
 `username` VARCHAR( 11 ) NOT NULL ,

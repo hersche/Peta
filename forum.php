@@ -59,7 +59,6 @@ switch($_GET['action']){
 					$threads->createNewThread($_POST['topictitle'], $_POST['topictext'], $_GET['threadid']);
 				}
 				else if ($_GET['savemethod']=="edit"){
-					echo $thread->getEditCounter()+1;
 					$threads->editThread($_POST['topictitle'], $_POST['topictext'], $thread->getEditCounter()+1, $_GET['threadid']);
 				}
 			}
