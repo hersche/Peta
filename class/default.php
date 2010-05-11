@@ -5,7 +5,7 @@
 require_once 'config.php';
 require_once 'class/user.php';
 require_once 'class/smarty/Smarty.class.php';
-
+$messages = array();
 $template = new Smarty();
 session_start();
 try
@@ -15,6 +15,11 @@ try
 catch (PDOException $e)
 {
 	array_push($messages, $e->getMessage());
+	$template->assign('messages', $messages);
+	$template->assign('errorTitle', "DB-Failure");
+	$template->assign('errorDescription', "There was a DB-Failure! Please check the username and the password in config.php!");
+	$template->display('error.tpl');
+	die();
 }
 /**
  * @param unknown_type $url
@@ -39,8 +44,4 @@ else{
 	}
 	$user = $_SESSION["user"];
 }
-
-$messages = array();
-
-
 ?>
