@@ -55,7 +55,6 @@ class allCardSets{
 
 	public function newSet($set, $userid, $connection){
 		$connection->exec("INSERT INTO question_set (`setname`,`setdescription`, `ownerid`,  `editcount`, `createtimestamp`, `firstowner`) VALUES ('".$set->getSetName()."', '".$set->getSetDescription()."', ".$userid.", 1, '2009-00-00 00:00:00', ".$userid.");");
-		echo $connection->lastInsertId();
 		$set->setSetId($connection->lastInsertId());
 		array_push($this->sets, $set);
 	}
@@ -294,6 +293,10 @@ class tag{
 }
 
 class cardtools{
+	
+	public static $TEXT = 0;
+	public static $RADIO = 1;
+	public static $MULTIPLE = 2;
 	public static function oneBeforeInArray($array, $position){
 		if(count($array)>1){
 			$beforePosition = ($position -1);

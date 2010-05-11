@@ -4,21 +4,27 @@ require_once 'class/card.php';
 $allSets = new allCardSets($_SESSION["user"]->getId(), $connection);
 switch($_GET["action"]){
 	case "create":
+		if(!isset($_GET['nrofquestions'])){
+			$template->assign("nrofquestions", 3);
+		}
+		else{
+			$template->assign("nrofquestions", $_GET['nrofquestions']);
+		}
 		$template->display('cards_create.tpl');
 		break;
-	case "mkcreate":
-		if((!empty($_POST["cardsetname"]))&&(!empty($_POST['answer1']))&&(!empty($_POST['question1']))){
+	case "mkcreatecardset":
+		if(!empty($_POST["cardsetname"])){
 			$newCardSet = new cardSet();
 			$newCardSet->setSetName($_POST["cardsetname"]);
 			$newCardSet->setSetDescription($_POST["cardsetdescription"]);
-			$question = new question();
-			$question->setQuestion($_POST['question1']);
-			$question->setMode(1);
-			$answer = new answer();
-			$answer->setAnswer($_POST['answer1']);
+			//			$question = new question();
+			//			$question->setQuestion($_POST['question1']);
+			//			$question->setMode(1);
+			//			$answer = new answer();
+			//			$answer->setAnswer($_POST['answer1']);
 			$allSets->newSet($newCardSet, $_SESSION["user"]->getId(), $connection);
-			$newCardSet->newQuestion($question, $connection);
-			$question->newAnswer($answer, $connection);
+			//$newCardSet->newQuestion($question, $connection);
+			// $question->newAnswer($answer, $connection);
 			array_push($messages, "Create cardset successfull!");
 			$template->assign("messages", $messages);
 			$template->assign("cardsets", $allSets->getSets());
@@ -93,6 +99,7 @@ switch($_GET["action"]){
 				}
 			}
 			else{
+				//FIXME why i don't come here in? why the array is 1 without having questions?
 				$template->assign("question","There are no questions!");
 			}
 			$template->assign("messages", $messages);
