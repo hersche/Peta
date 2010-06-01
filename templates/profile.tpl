@@ -10,6 +10,7 @@
 		<li>{$roles[role]}</li>
 		 {/section}
 </ul>
+<h2><a href="profile.php?action=edit">Edit</a></h2>
 {/if}
 
 {include file="footer.tpl"}

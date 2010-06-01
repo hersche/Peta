@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * A collection of all the threads..
+ * @author skamster
+ *
+ */
 class allThreads{
 	private $nrOfThreads = 0;
 	private $threads = array();

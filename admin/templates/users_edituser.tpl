@@ -8,7 +8,7 @@ file="menu.tpl"} {include file="messagebox.tpl"}
 	</tr>
 	<tr>
 		<td>Username:</td>
-		<td><input TYPE="text" SIZE="40" NAME="username" readonly
+		<td><input TYPE="text" SIZE="40" NAME="username" readonly="readonly"
 			value="{$username}" /></td>
 	</tr>
 	<tr>
@@ -36,7 +36,7 @@ file="menu.tpl"} {include file="messagebox.tpl"}
 		<td><input type="checkbox" name="sure" /></td>
 	</tr>
 	<tr>
-		<td><input type="submit" value="Edit now!" />
+		<td><input type="submit" value="Edit now!" /></td>
 	
 	</tr>
 </table>

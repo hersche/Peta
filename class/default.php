@@ -32,7 +32,6 @@ function checkNoNeedForLogin($url, $connection){
 	}
 	return false;
 }
-//checkNoNeedForLogin(basename($_SERVER['REQUEST_URI']), $connection);
 if((!isset($_SESSION["user"]))&&(basename($_SERVER['PHP_SELF'])!="login.php")){
 	if(!checkNoNeedForLogin(basename($_SERVER['REQUEST_URI']), $connection)){
 		header("Location: login.php");

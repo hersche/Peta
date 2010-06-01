@@ -45,14 +45,28 @@ class allCardSets{
 			}
 		}
 	}
+	/**
+	 * Get all the sets of cards
+	 */
 	public function getSets(){
 		return $this->sets;
 	}
+	/**
+	 * Delete a specific set
+	 * @param unknown_type $set
+	 * @param unknown_type $connection
+	 */
 	public function deleteSet($set, $connection){
 		//TODO remove from list!
 		$set->deleteSet($connection);
 	}
 
+	/**
+	 * Create a new set..
+	 * @param cardSet $set
+	 * @param unknown_type $userid
+	 * @param unknown_type $connection
+	 */
 	public function newSet($set, $userid, $connection){
 		$connection->exec("INSERT INTO question_set (`setname`,`setdescription`, `ownerid`,  `editcount`, `createtimestamp`, `firstowner`) VALUES ('".$set->getSetName()."', '".$set->getSetDescription()."', ".$userid.", 1, '2009-00-00 00:00:00', ".$userid.");");
 		$set->setSetId($connection->lastInsertId());
@@ -138,6 +152,11 @@ class cardSet{
 	}
 
 
+	/**
+	 * Create a new question
+	 * @param question $question
+	 * @param unknown_type $connection
+	 */
 	public function newQuestion($question, $connection){
 		$connection->exec("INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (".$this->setid.", '".$question->getQuestion()."', '".$question->getMode()."')");
 		$question->setId($connection->lastInsertId());

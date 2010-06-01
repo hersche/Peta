@@ -5,6 +5,12 @@ abstract class abstractUser{
 	abstract public function getUsername();
 	abstract public function getName();
 }
+/**
+ * This class is a logged in user..
+ * It's necessary to be login here! For informations of other user use the alienobject
+ * @author skamster
+ *
+ */
 class user extends abstractUser{
 	private $username;
 	private $name;
@@ -19,10 +25,15 @@ class user extends abstractUser{
 	private $password;
 	// private $connection;
 
+	/**
+	 * This do the login
+	 * @param String $username is the username
+	 * @param String $password is the password
+	 * @param unknown_type $connection is a pdo-object with the right informations
+	 */
 	public function __construct($username, $password, $connection){
 		if((!empty($username))&&(!empty($password))){
 			$firstRound = true;
-			// $this->connection = $connection;
 			$password = hash($GLOBALS["password_hash"], $password);
 
 			foreach($connection->query('SELECT * FROM fullUser WHERE username="'.$username.'" AND password="'.$password.'";') as $userrow){
@@ -49,45 +60,84 @@ class user extends abstractUser{
 		}
 	}
 
+	/**
+	 * Change the password of a user
+	 * @param $newPassword
+	 * @param $oldPassword
+	 * @param $connection
+	 */
 	public function setPassword($newPassword,$oldPassword, $connection){
 		if(hash($GLOBALS["password_hash"], $oldPassword)==$this->password){
 			usertools::setPassword($this->username, $newPassword, $connection);
 		}
 	}
 
+	/**
+	 * Disable the welcome-message
+	 */
 	public function disableWelcome(){
 		$this->welcome = false;
 	}
+
+	/**
+	 * Was the user logged in for one time?
+	 */
 	public function getWelcome(){
 		return $this->welcome;
 	}
 
+	/**
+	 * Get the id
+	 */
 	public function getId() {
 		return $this->id;
 	}
+
+	/**
+	 * Get some messages for the channel (not im-messages, error-messages!)
+	 */
 	public function getMessages(){
 		return $this->messages;
 	}
 
+	/**
+	 * Let's get all the roles a user have
+	 */
 	public function getRoles(){
 		return $this->roles;
 	}
 
+	/**
+	 * get the username
+	 */
 	public function getUsername(){
 		return $this->username;
 	}
 
+	/**
+	 * get the real name
+	 */
 	public function getName(){
 		return $this->name;
 	}
 
+	/**
+	 * get the lastLogin as a date
+	 */
 	public function getLastLogin(){
 		return $this->lastlogin;
 	}
+
+	/**
+	 * get the last used ip
+	 */
 	public function getLastIp(){
 		return $this->lastip;
 	}
-
+	/**
+	 * Check, if the user is realy a user-object
+	 * @return string|string
+	 */
 	public function isValid(){
 		if($_SESSION["user"]==$this){
 			return true;
@@ -95,12 +145,20 @@ class user extends abstractUser{
 		return false;
 	}
 
+	/**
+	 * Do logout the user
+	 */
 	public function logout(){
 		unset($_SESSION["user"]);
 	}
 
 }
 
+/**
+ * A alienuser is a just-information-user, so just for profiles and so on..
+ * @author skamster
+ *
+ */
 class alienuser extends abstractUser{
 	private $username;
 	private $name;
@@ -136,7 +194,20 @@ class alienuser extends abstractUser{
 		$this->lastlogin = $lastlogin;
 	}
 }
+/**
+ * usertools is a little collection of static tools to make a faster developement possible..
+ * @author skamster
+ *
+ */
 class usertools{
+	/**
+	 * Register a new user
+	 * @param unknown_type $name fullname
+	 * @param unknown_type $username username
+	 * @param unknown_type $password a password
+	 * @param unknown_type $role the role.. must be static on public-sites
+	 * @param unknown_type $connection pdo-object
+	 */
 	static public function registerUser($name, $username, $password, $role, $connection){
 		if(usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
 			if(!usertools::userExists($username, $connection)){
@@ -163,6 +234,11 @@ class usertools{
 		}
 	}
 
+	/**
+	 * get a alienuser
+	 * @param $id
+	 * @param $connection
+	 */
 	static public function getAlienUserbyId($id, $connection){
 		try{
 			$alien = new alienuser();
@@ -189,18 +265,34 @@ class usertools{
 			return $alien;
 		}
 	}
+	/**
+	 * Check, if a user exists (with name)
+	 * @param unknown_type $username
+	 * @param unknown_type $connection
+	 */
 	static public function userExists($username, $connection){
 		foreach($connection->query('SELECT * FROM fullUser WHERE username="'.$username.'";') as $userrow){
 			return true;
 		}
 		return false;
 	}
+	/**
+	 * check, if a user exists (with id)
+	 * @param unknown_type $id
+	 * @param unknown_type $connection
+	 */
 	static public function userIdExists($id, $connection){
 		foreach($connection->query('SELECT * FROM fullUser WHERE id='.$id.';') as $userrow){
 			return true;
 		}
 		return false;
 	}
+	/**
+	 * What's required for a password? is the password strong enough?
+	 * @param unknown_type $password
+	 * @param unknown_type $lenght
+	 * @param unknown_type $specialchars
+	 */
 	static public function passwordRequirements($password, $lenght, $specialchars){
 		if(strlen($password)>=$lenght){
 			return true;
@@ -208,6 +300,11 @@ class usertools{
 		return false;
 	}
 
+	/**
+	 * contain the user one of the necessary roles? use getRoles of the user-object!
+	 * @param $roles
+	 * @param $userRoles
+	 */
 	static public function containRoles($roles, $userRoles){
 		foreach($roles as $role){
 			foreach($userRoles as $userRole){
@@ -219,6 +316,13 @@ class usertools{
 		return false;
 	}
 
+	/**
+	 * Change a user
+	 * @param unknown_type $oldUser
+	 * @param unknown_type $editUser
+	 * @param unknown_type $connection
+	 */
+	//TODO find a good art for this method! as example, give direct the POST-array!
 	static public function editUser($oldUser,$editUser, $connection){
 		$changes = false;
 		$password = hash($GLOBALS["password_hash"], $editUser['password']);
@@ -242,17 +346,34 @@ class usertools{
 			$connection->exec($SQLUpdate);
 		}
 	}
-
+	/**
+	 * Set new roles
+	 * @param unknown_type $userid
+	 * @param unknown_type $oldRole
+	 * @param unknown_type $newRole
+	 * @param unknown_type $connection
+	 */
 	static public function setRole($userid, $oldRole, $newRole, $connection){
 		$connection->exec('UPDATE userrole SET broleid="'.$newRole.'" WHERE buserid="'.$userid.'" AND broleid="'.$oldRole.'";');
 	}
-
+	/**
+	 * Set a password
+	 * @param unknown_type $username
+	 * @param unknown_type $password
+	 * @param unknown_type $connection
+	 */
 	static public function setPassword($username, $password, $connection){
 		if(usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
 			$password = hash($GLOBALS["password_hash"], $password);
 			$connection->exec('UPDATE users SET password="'.$password.'" WHERE username="'.$username.'";');
 		}
 	}
+	
+	/**
+	 * Resolve a username with a id..
+	 * @param unknown_type $userid
+	 * @param unknown_type $connection
+	 */
 	static public function getUsernameById($userid, $connection){
 		foreach($connection->query('SELECT * FROM fullUser WHERE id="'.$userid.'";') as $userrow){
 			return $userrow['username'];
