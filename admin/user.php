@@ -6,8 +6,6 @@ require_once 'default.php';
 switch($_GET['action']){
 	case "edituser":
 		if(!empty($_POST['editusername'])){
-			// TODO find a way to kill this session!
-//			$_SESSION['editUser'] = admin::getUser($_POST["editusername"], admin::getUsers($connection));
 			$editUser = usertools::getAlienUserbyUsername($_POST["editusername"], $connection);
 		}
 		$template->assign("name", $editUser->getName());
@@ -30,14 +28,6 @@ switch($_GET['action']){
 	case "mkedit":
 		if($_POST['sure']=="on"){
 			if($_POST['password']==$_POST['password2']){
-//				$roleid;
-//				foreach(admin::getRoles($connection) as $role){
-//					if($role['role'] == $_POST['role']){
-//						$roleid = $role['roleid'];
-//					}
-//				}
-//				$newUser = array("name"=>$_POST['name'], "password"=>$_POST['password'], "broleid" => $roleid);
-				//usertools::editUser($_SESSION['editUser'], $newUser, $connection);
 				usertools::editUser($_GET['userid'], $_POST, $connection);
 				array_push($messages, "Changes where successfull for user ".$_SESSION['editUser']['username']);
 			}
@@ -45,20 +35,21 @@ switch($_GET['action']){
 				array_push($messages, "Passwords don't match!");
 			}
 		}
-		unset($_SESSION['editUser']);
 		break;
 
 	case "mkuser":
-		if((!empty($_POST['username']))&&(!empty($_POST['name']))){
-			if($_POST['password']==$_POST['password2']){
-				foreach(admin::getRoles($connection) as $role){
-					if($role['role'] == $_POST['role']){
-						$roleid = $role['roleid'];
-					}
-				}
-				array_push($messages, usertools::registerUser($_POST['username'], $_POST['name'], $_POST['password'], $roleid, $connection));
-			}
-		}
+//		if((!empty($_POST['username']))&&(!empty($_POST['name']))){
+//			if($_POST['password']==$_POST['password2']){
+//				foreach(admin::getRoles($connection) as $role){
+//					if($role['role'] == $_POST['role']){
+//						$roleid = $role['roleid'];
+//					}
+//				}
+//				array_push($messages, usertools::registerUser($_POST['username'], $_POST['name'], $_POST['password'], $roleid, $connection));
+//			}
+//		}
+
+		array_push($messages, usertools::registerUser($_POST, $connection));
 		break;
 
 

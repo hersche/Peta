@@ -5,16 +5,11 @@ if((isset($_SESSION['user']))&&($_SESSION['user']->isValid())){
 }
 switch($_GET['action']) {
 	case "register":
-		if((!empty($_POST['name']))&&(!empty($_POST['username']))&&(!empty($_POST['password']))&&(!empty($_POST['password2']))){
-			if($_POST["password"]==$_POST["password2"]){
-				// FIXME use default-value from db for role!
-				array_push($messages, usertools::registerUser($_POST["name"], $_POST["username"], $_POST["password"], 1, $connection));
-			}
-			else{
-				array_push($messages, _("Passwords doesn't match"));
-			}
+		if(!empty($_POST)){
+			$_POST['role'] = "admin";
+			array_push($messages, usertools::registerUser($_POST, $connection));
+			$template->assign("messages", $messages);
 		}
-		$template->assign("messages", $messages);
 		$template->display('register.tpl');
 		break;
 	case "logout":

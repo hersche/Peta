@@ -231,13 +231,15 @@ class alienuser extends abstractUser{
 class usertools{
 	/**
 	 * Register a new user
+	 * Was once registerUser
+	 * @deprecated
 	 * @param unknown_type $name fullname
 	 * @param unknown_type $username username
 	 * @param unknown_type $password a password
 	 * @param unknown_type $role the role.. must be static on public-sites
 	 * @param unknown_type $connection pdo-object
 	 */
-	static public function registerUser($name, $username, $password, $role, $connection){
+	static public function registerUser2($name, $username, $password, $role, $connection){
 		if(usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
 			if(!usertools::userExists($username, $connection)){
 				try{
@@ -263,29 +265,43 @@ class usertools{
 		}
 	}
 
-	public static function registerUser2($post, $role, $connection){
-		if(usertools::passwordRequirements($post['password'], $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
-			if(!usertools::userExists($post['username'], $connection)){
-				try{
-					$password = hash($GLOBALS["password_hash"], $post['password']);
-					// TODO check for specialchars!
-					$datetime = new DateTime($GLOBALS["timezone"]);
-					$connection->exec("INSERT INTO users (`username`, `password`, `lastlogin`, `lastip`) VALUES ('".$post['username']."', '".$password."', '".$datetime->format('Y-m-d')."', '".getenv('REMOTE_ADDR')."');");
-					$userid = $connection->lastInsertId();
-					$connection->exec("INSERT INTO users_profile (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES ('".$userid."', '".$post['name']."', '', '', '', '');");
-					$connection->exec("INSERT INTO userrole (`buserid`, `broleid`) VALUES ('".$userid."', '".$role."');");
-					return "User ".$post['username']." was created successfull!";
+	/**
+	 * create a user
+	 * @param array $post your post-variable <br />
+	 * it must contain<br />
+	 * password<br />
+	 * password2<br />
+	 * username<br />
+	 * role<br />
+	 * name<br />
+	 * @param unknown_type $connection
+	 */
+	public static function registerUser($post, $connection){
+		if(!empty($post)){
+			if(($post['password']==$post['password2'])&&(usertools::passwordRequirements($post['password'], $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"]))){
+				if(!usertools::userExists($post['username'], $connection)){
+					try{
+						$roleid = usertools::getIdFromRole($post['role'], $connection);
+						$password = hash($GLOBALS["password_hash"], $post['password']);
+						// TODO check for specialchars!
+						$datetime = new DateTime($GLOBALS["timezone"]);
+						$connection->exec("INSERT INTO users (`username`, `password`, `lastlogin`, `lastip`) VALUES ('".$post['username']."', '".$password."', '".$datetime->format('Y-m-d')."', '".getenv('REMOTE_ADDR')."');");
+						$userid = $connection->lastInsertId();
+						$connection->exec("INSERT INTO users_profile (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES ('".$userid."', '".$post['name']."', '', '', '', '');");
+						$connection->exec("INSERT INTO userrole (`buserid`, `broleid`) VALUES ('".$userid."', '".$roleid."');");
+						return "User ".$post['username']." was created successfull!";
+					}
+					catch (Exception $e){
+						return "Error is happend: ".$e;
+					}
 				}
-				catch (Exception $e){
-					return "Error is happend: ".$e;
+				else{
+					return "User does already exist";
 				}
 			}
 			else{
-				return "User does already exist";
+				return "Something is strange with your password. Remember: <br /> It needs at least ".$GLOBALS["min_password_length"]." signs<br />You should type two passwords which are the same (to confirm)";
 			}
-		}
-		else{
-			return "Your password is to short. It needs at least ".$GLOBALS["min_password_length"]." signs";
 		}
 	}
 
@@ -377,7 +393,8 @@ class usertools{
 
 	/**
 	 * Change a user
-	 * @deprecated 
+	 * was once called editUser
+	 * @deprecated
 	 * @param unknown_type $oldUser
 	 * @param unknown_type $editUser
 	 * @param unknown_type $connection
@@ -466,8 +483,7 @@ class usertools{
 
 	public static function getIdFromRole($role, $connection){
 		foreach($connection->query('SELECT * FROM role WHERE role="'.$role.'" LIMIT 1;') as $rolerow){
-			echo $rolerow['id'];
-			return $rolerow['id'];
+			return $rolerow['roleid'];
 		}
 	}
 	/**
