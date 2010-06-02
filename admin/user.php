@@ -7,12 +7,14 @@ switch($_GET['action']){
 	case "edituser":
 		if(!empty($_POST['editusername'])){
 			// TODO find a way to kill this session!
-			$_SESSION['editUser'] = admin::getUser($_POST["editusername"], admin::getUsers($connection));
+//			$_SESSION['editUser'] = admin::getUser($_POST["editusername"], admin::getUsers($connection));
+			$editUser = usertools::getAlienUserbyUsername($_POST["editusername"], $connection);
 		}
-		$template->assign("name", $_SESSION['editUser']["name"]);
+		$template->assign("name", $editUser->getName());
 		$template->assign("roles", admin::extractFromArray(admin::getRoles($connection), "role"));
-		$template->assign("selectRole", $_SESSION['editUser']["role"]);
-		$template->assign("username", $_SESSION['editUser']["username"]);
+		$template->assign("selectRole", $editUser->getRole());
+		$template->assign("username", $editUser->getUsername());
+		$template->assign("userid", $editUser->getId());
 		$template->assign("messages", $messages);
 		$template->display('users_edituser.tpl');
 		break;
@@ -28,14 +30,15 @@ switch($_GET['action']){
 	case "mkedit":
 		if($_POST['sure']=="on"){
 			if($_POST['password']==$_POST['password2']){
-				$roleid;
-				foreach(admin::getRoles($connection) as $role){
-					if($role['role'] == $_POST['role']){
-						$roleid = $role['roleid'];
-					}
-				}
-				$newUser = array("name"=>$_POST['name'], "password"=>$_POST['password'], "broleid" => $roleid);
-				usertools::editUser($_SESSION['editUser'], $newUser, $connection);
+//				$roleid;
+//				foreach(admin::getRoles($connection) as $role){
+//					if($role['role'] == $_POST['role']){
+//						$roleid = $role['roleid'];
+//					}
+//				}
+//				$newUser = array("name"=>$_POST['name'], "password"=>$_POST['password'], "broleid" => $roleid);
+				//usertools::editUser($_SESSION['editUser'], $newUser, $connection);
+				usertools::editUser($_GET['userid'], $_POST, $connection);
 				array_push($messages, "Changes where successfull for user ".$_SESSION['editUser']['username']);
 			}
 			else{

@@ -18,7 +18,7 @@
 	</tr>
 	<tr>
 		<td>Password validation:</td>
-		<td><input TYPE="password" SIZE="40" NAME="confirmpassword" /></td>
+		<td><input TYPE="password" SIZE="40" NAME="password2" /></td>
 	</tr>
 </table>
 <input type="submit" value="Edit now!" />

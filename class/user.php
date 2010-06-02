@@ -73,6 +73,12 @@ class user extends abstractUser{
 	}
 
 	/**
+	 * Get the hashed password of a user
+	 */
+	public function getPassword(){
+		return $this->password;
+	}
+	/**
 	 * Disable the welcome-message
 	 */
 	public function disableWelcome(){
@@ -84,6 +90,10 @@ class user extends abstractUser{
 	 */
 	public function getWelcome(){
 		return $this->welcome;
+	}
+
+	public function setName($name){
+		$this->name=$name;
 	}
 
 	/**
@@ -163,7 +173,9 @@ class alienuser extends abstractUser{
 	private $username;
 	private $name;
 	private $id;
+	private $password;
 	private $lastlogin;
+	private $role;
 
 	public function getUsername(){
 		return $this->username;
@@ -171,6 +183,22 @@ class alienuser extends abstractUser{
 
 	public function setUsername($username){
 		$this->username = $username;
+	}
+
+	public function getPassword(){
+		return $this->password;
+	}
+
+	public function getRole(){
+		return $this->role;
+	}
+
+	public function setRole($role){
+		$this->role = $role;
+	}
+
+	public function setPassword($password){
+		$this->password = $password;
 	}
 
 	public function getName(){
@@ -193,6 +221,7 @@ class alienuser extends abstractUser{
 	public function setLastlogin($lastlogin){
 		$this->lastlogin = $lastlogin;
 	}
+
 }
 /**
  * usertools is a little collection of static tools to make a faster developement possible..
@@ -234,6 +263,32 @@ class usertools{
 		}
 	}
 
+	public static function registerUser2($post, $role, $connection){
+		if(usertools::passwordRequirements($post['password'], $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])){
+			if(!usertools::userExists($post['username'], $connection)){
+				try{
+					$password = hash($GLOBALS["password_hash"], $post['password']);
+					// TODO check for specialchars!
+					$datetime = new DateTime($GLOBALS["timezone"]);
+					$connection->exec("INSERT INTO users (`username`, `password`, `lastlogin`, `lastip`) VALUES ('".$post['username']."', '".$password."', '".$datetime->format('Y-m-d')."', '".getenv('REMOTE_ADDR')."');");
+					$userid = $connection->lastInsertId();
+					$connection->exec("INSERT INTO users_profile (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES ('".$userid."', '".$post['name']."', '', '', '', '');");
+					$connection->exec("INSERT INTO userrole (`buserid`, `broleid`) VALUES ('".$userid."', '".$role."');");
+					return "User ".$post['username']." was created successfull!";
+				}
+				catch (Exception $e){
+					return "Error is happend: ".$e;
+				}
+			}
+			else{
+				return "User does already exist";
+			}
+		}
+		else{
+			return "Your password is to short. It needs at least ".$GLOBALS["min_password_length"]." signs";
+		}
+	}
+
 	/**
 	 * get a alienuser
 	 * @param $id
@@ -247,6 +302,8 @@ class usertools{
 				$alien->setLastlogin($userrow['lastlogin']);
 				$alien->setName($userrow['name']);
 				$alien->setUsername($userrow['username']);
+				$alien->setPassword($userrow['password']);
+				$alien->setRole($userrow['role']);
 				return $alien;
 			}
 		}
@@ -262,6 +319,8 @@ class usertools{
 			$alien->setLastlogin($userrow['lastlogin']);
 			$alien->setName($userrow['name']);
 			$alien->setUsername($userrow['username']);
+			$alien->setPassword($userrow['password']);
+			$alien->setRole($userrow['role']);
 			return $alien;
 		}
 	}
@@ -318,12 +377,13 @@ class usertools{
 
 	/**
 	 * Change a user
+	 * @deprecated 
 	 * @param unknown_type $oldUser
 	 * @param unknown_type $editUser
 	 * @param unknown_type $connection
 	 */
 	//TODO find a good art for this method! as example, give direct the POST-array!
-	static public function editUser($oldUser,$editUser, $connection){
+	static public function editUser2($oldUser,$editUser, $connection){
 		$changes = false;
 		$password = hash($GLOBALS["password_hash"], $editUser['password']);
 		$changeSQL = array();
@@ -346,6 +406,51 @@ class usertools{
 			$connection->exec($SQLUpdate);
 		}
 	}
+
+	/**
+	 *
+	 * @param int $oldUserId
+	 * @param array $editUser a post-variable which contains a user..
+	 * working var-names:
+	 * password = cleartext-password<br />
+	 * name = the name of the user..<br />
+	 * username = the username<br />
+	 * role = the new role
+	 * @param PDO $connection
+	 */
+	static public function editUser($oldUserId,$editUser, $connection){
+		if(!empty($editUser)){
+			$fakeOldUser = usertools::getAlienUserbyId($oldUserId, $connection);
+			$changes = false;
+			$changeSQL = array();
+
+			if($fakeOldUser->getName()!=$editUser['name']){
+				array_push($changeSQL, ' name="'.$editUser['name'].'"');
+				if($_SESSION['user']->getId()==$oldUserId){
+					$_SESSION['user']->setName($editUser['name']);
+				}
+				$changes = true;
+			}
+			if(!empty($editUser['password'])){
+				$password = hash($GLOBALS["password_hash"], $editUser['password']);
+				if($fakeOldUser->getPassword()!=$password){
+					usertools::setPassword($fakeOldUser->getUsername(), $editUser['password'], $connection);
+				}
+			}
+			//TODO for more than one role?
+			if($fakeOldUser->getRole()!=$editUser['role']){
+				usertools::setRole($fakeOldUser->getId(), $fakeOldUser->getRole(), $editUser['role'], $connection);
+			}
+			if($changes){
+				$SQLUpdate = "UPDATE users_profile SET";
+				foreach($changeSQL as $singlechange){
+					$SQLUpdate .= $singlechange;
+				}
+				$SQLUpdate .= ' WHERE user_profile_id="'.$fakeOldUser->getId().'";';
+				$connection->exec($SQLUpdate);
+			}
+		}
+	}
 	/**
 	 * Set new roles
 	 * @param unknown_type $userid
@@ -354,7 +459,16 @@ class usertools{
 	 * @param unknown_type $connection
 	 */
 	static public function setRole($userid, $oldRole, $newRole, $connection){
-		$connection->exec('UPDATE userrole SET broleid="'.$newRole.'" WHERE buserid="'.$userid.'" AND broleid="'.$oldRole.'";');
+		$oldId = usertools::getIdFromRole($oldRole, $connection);
+		$newId = usertools::getIdFromRole($newRole,$connection);
+		$connection->exec('UPDATE userrole SET broleid="'.$newId.'" WHERE buserid="'.$userid.'" AND broleid="'.$oldId.'";');
+	}
+
+	public static function getIdFromRole($role, $connection){
+		foreach($connection->query('SELECT * FROM role WHERE role="'.$role.'" LIMIT 1;') as $rolerow){
+			echo $rolerow['id'];
+			return $rolerow['id'];
+		}
 	}
 	/**
 	 * Set a password
@@ -368,7 +482,7 @@ class usertools{
 			$connection->exec('UPDATE users SET password="'.$password.'" WHERE username="'.$username.'";');
 		}
 	}
-	
+
 	/**
 	 * Resolve a username with a id..
 	 * @param unknown_type $userid

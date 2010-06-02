@@ -1,6 +1,6 @@
 {include file="header.tpl" title=Usermanagement} {include
 file="menu.tpl"} {include file="messagebox.tpl"}
-<form action="user.php?action=mkedit" method="post">
+<form action="user.php?action=mkedit&userid={$userid}" method="post">
 <table>
 	<tr>
 		<td>Name:</td>

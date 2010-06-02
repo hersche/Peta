@@ -2,11 +2,7 @@
 require_once 'class/default.php';
 switch($_GET['action']){
 	case "edit":
-		if((!empty($_POST['password']))&&(!empty($_POST['confirmpassword']))){
-			if(($_POST['password']==$_POST['confirmpassword'])&&($_SESSION["user"]->getId()==$user->getId())){
-				usertools::setPassword($_POST['username'], $_POST['password'], $connection);
-			}
-		}
+		usertools::editUser($user->getId(), $_POST, $connection);
 		$template->assign("name", $user->getName());
 		$template->assign("username", $user->getUsername());
 		$template->assign("roles", $user->getRoles());
