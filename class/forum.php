@@ -117,6 +117,16 @@ class allThreads{
 	public function editThread($title, $text, $editcounter, $threadid){
 		$this->connect->exec("UPDATE `learncards`.`forum_threads` SET `title` =  '".$title."', `text` =  '".$text."', `editcounter` =  ".$editcounter."   WHERE `forum_threads`.`forumid` =".$threadid." LIMIT 1 ;");
 	}
+	
+	public function changeThreadState($threadid, $newState, $recursive = false){
+		if($recursive){
+			$subThreads = $this->getSubThreads($threadid, 0, true);
+			foreach ($subThreads as $subThread){
+				$this->changeThreadState($subThread->getId(), $newState);
+			}
+		}
+		$this->connect->exec("UPDATE `learncards`.`forum_threads` SET `threadstate` =  '".$newState."' WHERE `forum_threads`.`forumid` =".$threadid." LIMIT 1 ;");
+	}
 
 }
 

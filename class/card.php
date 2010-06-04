@@ -57,7 +57,7 @@ class allCardSets{
 	 * @param unknown_type $connection
 	 */
 	public function deleteSet($set, $connection){
-		//TODO remove from list!
+		//TODO remove from list
 		$set->deleteSet($connection);
 	}
 

@@ -14,6 +14,16 @@
   </textarea></div>
 		</td>
 	</tr>
+	{if $admin}
+	<tr>
+		<td>Forumstate</td>
+		<td><select name="state" size="1">
+		<option value="1">Active</option>
+		<option value="2">Read only</option>
+		<option value="3">Hidden</option>
+		</select></td>
+	</tr>
+	{/if}
 	<tr>
 		<td><input type="submit" value="Send it!" /></td>
 	</tr>

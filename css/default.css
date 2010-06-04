@@ -12,4 +12,80 @@ background-color: yellow;
 
 .subThread {
 background-color: red;
+padding-left: 10px;
+}
+
+body
+{
+border-style: groove;
+border-width: thin;
+width: 800px;
+height: 100%;
+padding:0px,0px,0px,0px,;
+position: relative; 
+left: 25%;
+right: 25%; 
+}
+
+
+
+.menu
+{
+border-style: dashed;
+border-width: thin 0px thin 0px;
+width: 100%;
+height: 30px;
+padding: 0px,0px,0px,0px,;
+background-color: #DBF7A2;
+}
+
+
+.header
+{
+border-style: none;
+border-width: inherit;
+width: 100%;
+height: 130px;
+padding: 0px,0px,0px,0px,;
+background-color: #DBF7A2;
+}
+
+.main
+{
+border-style: none;
+border-width: inherit;
+width: 100%;
+height: 100%;
+padding: 0px,0px,0px,0px,;
+
+}
+
+.footer
+{
+border-style: dashed;
+border-width: thin 0px 0px 0px;
+width: 100%;
+height: 105px;
+padding: 0px,0px,0px,0px,;
+background-color: #DBF7A2;
+}
+h1
+{
+font-family: Arial, Helvetica, sans-serif;
+font-size: x-large;
+font-weight: normal;
+font-style: oblique;
+font-variant: normal;
+text-transform: inherit;
+text-decoration: underline;
+}
+
+.one
+{
+font-family: 'Times New Roman' , Times, serif;
+font-size: small;
+font-weight: normal;
+font-style: normal;
+font-variant: normal;
+text-transform: none;
 }
