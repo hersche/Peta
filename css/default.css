@@ -1,91 +1,87 @@
 .menu {
-background-color: yellow;
+	background-color: yellow;
 }
-.menu a{
-margin-left: 25px;
+
+.menu a {
+	margin-left: 25px;
 }
 
 .mainThread {
-border-style:solid; padding:8px;
-background-color: yellow;
+	border-style: solid;
+	padding: 8px;
+	background-color: yellow;
 }
 
 .subThread {
-background-color: red;
-padding-left: 10px;
+	background-color: red;
+	padding-left: 10px;
 }
 
-body
-{
-border-style: groove;
-border-width: thin;
-width: 800px;
-height: 100%;
-padding:0px,0px,0px,0px,;
-position: relative; 
-left: 25%;
-right: 25%; 
+.subThreads {
+	background-color: red;
 }
 
-
-
-.menu
-{
-border-style: dashed;
-border-width: thin 0px thin 0px;
-width: 100%;
-height: 30px;
-padding: 0px,0px,0px,0px,;
-background-color: #DBF7A2;
+body {
+	border-style: groove;
+	border-width: thin;
+	width: 800px;
+	height: 100%;
+	padding: 0px, 0px, 0px, 0px,;
+	position: relative;
+	left: 25%;
+	right: 25%;
 }
 
-
-.header
-{
-border-style: none;
-border-width: inherit;
-width: 100%;
-height: 130px;
-padding: 0px,0px,0px,0px,;
-background-color: #DBF7A2;
+.menu {
+	border-style: dashed;
+	border-width: thin 0px thin 0px;
+	width: 100%;
+	height: 30px;
+	padding: 0px, 0px, 0px, 0px,;
+	background-color: #DBF7A2;
 }
 
-.main
-{
-border-style: none;
-border-width: inherit;
-width: 100%;
-height: 100%;
-padding: 0px,0px,0px,0px,;
-
+.header {
+	border-style: none;
+	border-width: inherit;
+	width: 100%;
+	height: 130px;
+	padding: 0px, 0px, 0px, 0px,;
+	background-color: #DBF7A2;
 }
 
-.footer
-{
-border-style: dashed;
-border-width: thin 0px 0px 0px;
-width: 100%;
-height: 105px;
-padding: 0px,0px,0px,0px,;
-background-color: #DBF7A2;
-}
-h1
-{
-font-family: Arial, Helvetica, sans-serif;
-font-size: x-large;
-font-weight: normal;
-font-style: oblique;
-font-variant: normal;
-text-transform: inherit;
-text-decoration: underline;
+.main {
+	border-style: none;
+	border-width: inherit;
+	width: 100%;
+	height: 100%;
+	padding: 0px, 0px, 0px, 0px,;
 }
 
-.one
-{
-font-family: 'Times New Roman' , Times, serif;
-font-size: small;
-font-weight: normal;
-font-style: normal;
-font-variant: normal;
-text-transform: none;
+.footer {
+	border-style: dashed;
+	border-width: thin 0px 0px 0px;
+	width: 100%;
+	height: 105px;
+	padding: 0px, 0px, 0px, 0px,;
+	background-color: #DBF7A2;
+}
+
+h1 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: x-large;
+	font-weight: normal;
+	font-style: oblique;
+	font-variant: normal;
+	text-transform: inherit;
+	text-decoration: underline;
+}
+
+.one {
+	font-family: 'Times New Roman', Times, serif;
+	font-size: small;
+	font-weight: normal;
+	font-style: normal;
+	font-variant: normal;
+	text-transform: none;
 }

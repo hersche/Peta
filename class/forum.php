@@ -26,6 +26,9 @@ class allThreads{
 			$thread->setUsername(usertools::getUsernameById($row['userid'], $connection));
 			array_push($this->threads, $thread);
 		}
+		foreach ($this->threads as $thread){
+			$thread->setSubThreadCounter($this->countSubThreads($thread->getId()));
+		}
 	}
 	/**
 	 * This method return a list of toptopics.. could be used to make a overview
@@ -47,13 +50,30 @@ class allThreads{
 		foreach($this->threads as $thread){
 			if($thread->getTopTopic()==$topicid){
 				$thread->setPosition($position);
-				array_push($filteredList, $thread);
+				if(($thread->getThreadState()!=forumtools::$THREADHIDDEN)||(usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"]->getRoles()))){
+					array_push($filteredList, $thread);
+				}
 				if($recursive){
 					$filteredList = array_merge($filteredList, $this->getSubThreads($thread->getId(), $position + 20));
 				}
 			}
 		}
 		return $filteredList;
+	}
+	
+	public function countSubThreads($topicid){
+		$counter = 0;
+				// go through every thread
+		foreach($this->threads as $thread){
+			if($thread->getTopTopic()==$topicid){
+				if(($thread->getThreadState()!=forumtools::$THREADHIDDEN)||(usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"]->getRoles()))){
+					$counter += 1;
+				}
+					$counter += $this->countSubThreads($thread->getId());
+				
+			}
+		}
+		return $counter;
 	}
 
 	public function deleteThread($threadid, $includeSubThreads = true){
@@ -90,7 +110,7 @@ class allThreads{
 		return $currentId;
 	}
 
-	
+
 	public function getThreadById($id){
 		foreach($this->threads as $thread){
 			if($thread->getId()==$id){
@@ -117,14 +137,16 @@ class allThreads{
 	public function editThread($title, $text, $editcounter, $threadid){
 		$this->connect->exec("UPDATE `learncards`.`forum_threads` SET `title` =  '".$title."', `text` =  '".$text."', `editcounter` =  ".$editcounter."   WHERE `forum_threads`.`forumid` =".$threadid." LIMIT 1 ;");
 	}
-	
+
 	public function changeThreadState($threadid, $newState, $recursive = false){
+		
 		if($recursive){
 			$subThreads = $this->getSubThreads($threadid, 0, true);
 			foreach ($subThreads as $subThread){
 				$this->changeThreadState($subThread->getId(), $newState);
 			}
 		}
+
 		$this->connect->exec("UPDATE `learncards`.`forum_threads` SET `threadstate` =  '".$newState."' WHERE `forum_threads`.`forumid` =".$threadid." LIMIT 1 ;");
 	}
 
@@ -141,11 +163,18 @@ class thread{
 	private $position;
 	private $threadState;
 	private $editcounter;
+	private $subThreadCounter;
 	public function setId($id){
 		$this->id = $id;
 	}
 	public function getId(){
 		return $this->id;
+	}
+	public function getSubThreadCounter(){
+		return $this->subThreadCounter;
+	}
+	public function setSubThreadCounter($nrOfSubThreads){
+		$this->subThreadCounter = $nrOfSubThreads;
 	}
 	public function getPosition(){
 		return $this->position;

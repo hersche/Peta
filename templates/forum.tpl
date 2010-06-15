@@ -5,10 +5,12 @@
 {if $threads}
 <ul>
 {section name=forum loop=$threads}
-
-<li><a
-	href="forum.php?action=showthread&amp;threadid={$threads[forum]->getId()}">{$threads[forum]->getTitle()}</a></li>
+<table border="1">
+<li><tr><td><a
+	href="forum.php?action=showthread&amp;threadid={$threads[forum]->getId()}">{$threads[forum]->getTitle()}</a></td><td>{$threads[forum]->getSubThreadCounter()} posts are there</td></tr></li>
+</table>
 {/section}
+
 </ul>
 {/if}
  {include file="footer.tpl"}

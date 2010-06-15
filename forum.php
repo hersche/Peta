@@ -52,7 +52,7 @@ switch($_GET['action']){
 		}
 		else if((!empty($_POST['topictext']))&&(!empty($_GET['threadid']))){
 			$thread = $threads->getThreadById($_GET['threadid']);
-			if((!is_null($thread))&&($thread->getThreadState()==forumtools::$THREADACTIVE)){
+			if((!is_null($thread))&&(($thread->getThreadState()==forumtools::$THREADACTIVE)||($admin))){
 				if (empty($_POST['topictitle'])){ $_POST['topictitle'] = ""; }
 				if($_GET['savemethod']=="reply"){
 					// threadid means here the topthreadid
@@ -60,6 +60,7 @@ switch($_GET['action']){
 				}
 				else if ($_GET['savemethod']=="edit"){
 					$threads->editThread($_POST['topictitle'], $_POST['topictext'], $thread->getEditCounter()+1, $_GET['threadid']);
+					$threads->changeThreadState($thread->getId(), $_POST['state']);
 				}
 			}
 		}
@@ -74,7 +75,7 @@ switch($_GET['action']){
 	case "showthread":
 		if(!empty($_GET['threadid'])){
 			$thread = $threads->getThreadById($_GET['threadid']);
-			if((!is_null($thread))&&($thread->getThreadState()!=forumtools::$THREADHIDDEN)){
+			if((!is_null($thread))&&(($thread->getThreadState()!=forumtools::$THREADHIDDEN)||$admin)){
 				$template->assign('threadTitle', $thread->getTitle());
 				$template->assign('threadText', $thread->getText());
 				$template->assign('threadage', $thread->getTimestamp());
@@ -84,7 +85,7 @@ switch($_GET['action']){
 				if(isset($user)){
 					$template->assign('ownuserid', $user->getId());
 				}
-				$subthreads = $threads->getSubThreads($thread->getId());
+				$subthreads = $threads->getSubThreads($thread->getId(), $admin);
 				$template->assign('subthreads', $subthreads);
 				$template->display('forum_view.tpl');
 			}

@@ -40,6 +40,7 @@ if((!isset($_SESSION["user"]))&&(basename($_SERVER['PHP_SELF'])!="login.php")){
 else{
 	if((isset($_SESSION["user"]))&&(usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"]->getRoles()))){
 		$template->assign("admin", true);
+		$admin = true;
 	}
 	$user = $_SESSION["user"];
 }

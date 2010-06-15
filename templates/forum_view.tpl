@@ -2,19 +2,38 @@
 {include file="menu.tpl"} {include file="forum_menu.tpl"}
 <h1>Forum</h1>
 <div class="mainThread">
-<h3>{$threadTitle}</h3><h2>{if (($admin)||($ownuserid eq $userid))} <a href="forum.php?action=editthread&amp;threadid={$threadid}"> (edit)</a> {/if}</h2>
-<div>{$threadText}</div>
-<div>Posted by <a href="profile.php?userid={$userid}" >{$username}</a></div>
-<h4>Last change on {$threadage}</h4>
-<a href="forum.php?action=reply&amp;threadid={$threadid}">Reply to this
-topic!</a>
+<table border="1">
+<tr><td colspan="2"><h3>{$threadTitle}</h3></td >{if (($admin)||($ownuserid eq $userid))}<td><h3><a href="forum.php?action=editthread&amp;threadid={$threadid}"> (edit)</a></h3></td>{/if}</tr>
+<tr><td colspan="3">{$threadText}</td></tr>
+<tr><td>Posted by <a href="profile.php?userid={$userid}">{$username}</a></td><td><a href="forum.php?action=reply&amp;threadid={$threadid}">Reply to this
+topic!</a></td><td>Last change on {$threadage}</td></tr>
+</table>
+
 </div>
+<div class="subThreads">
 {section name=id loop=$subthreads}
-<div class="subThread" style="margin-left: {$subthreads[id]->getPosition()}px;">
-<h4>{$subthreads[id]->getTitle()} {if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))} <a href="forum.php?action=editthread&amp;threadid={$subthreads[id]->getId()}"> (edit)</a> {/if}</h4>
-<div>{$subthreads[id]->getText()}</div>
-<div><a href="forum.php?action=reply&amp;threadid={$subthreads[id]->getId()}">Reply to this post</a></div>
-<div>Posted by <a href="profile.php?userid={$subthreads[id]->getUserId()}" >{$subthreads[id]->getUsername()}</a></div>
-<div>{$subthreads[id]->getEditCounter()} times editet!</div>
+<div class="subThread"
+	style="margin-left: {$subthreads[id]->getPosition()}px; margin-top: 20px">
+<table border="1">
+	<tr>
+		{if $subthreads[id]->getTitle() neq ""}<td colspan="2"><h3>{$subthreads[id]->getTitle()}</h3></td>{/if}
+		{if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))}<td> <a
+			href="forum.php?action=editthread&amp;threadid={$subthreads[id]->getId()}">
+		(edit)</a> </td>{/if}
+	</tr>
+	<tr>
+		<td colspan="3">{$subthreads[id]->getText()}</td>
+	</tr>
+	<tr>
+		<td>Posted by <a href="profile.php?userid={$subthreads[id]->getUserId()}">{$subthreads[id]->getUsername()}</a></td>
+		<td><a
+			href="forum.php?action=reply&amp;threadid={$subthreads[id]->getId()}">Reply
+		to this post</a></td>
+		<td>{$subthreads[id]->getEditCounter()} times editet!</td>
+	</tr>
+</table>
+
 </div>
-{/section} {include file="footer.tpl"}
+{/section}
+</div>
+ {include file="footer.tpl"}

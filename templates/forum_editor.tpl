@@ -18,9 +18,9 @@
 	<tr>
 		<td>Forumstate</td>
 		<td><select name="state" size="1">
-		<option value="1">Active</option>
+		<option value="0">Active</option>
+		<option value="1">Hidden</option>
 		<option value="2">Read only</option>
-		<option value="3">Hidden</option>
 		</select></td>
 	</tr>
 	{/if}

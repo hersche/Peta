@@ -441,7 +441,7 @@ class usertools{
 			$changes = false;
 			$changeSQL = array();
 
-			if($fakeOldUser->getName()!=$editUser['name']){
+			if((!empty($editUser['role']))&&($fakeOldUser->getName()!=$editUser['name'])){
 				array_push($changeSQL, ' name="'.$editUser['name'].'"');
 				if($_SESSION['user']->getId()==$oldUserId){
 					$_SESSION['user']->setName($editUser['name']);

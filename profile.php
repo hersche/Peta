@@ -18,7 +18,6 @@ switch($_GET['action']){
 		}
 		$template->assign("name", $user->getName());
 		$template->assign("username", $user->getUsername());
-
 		$template->display("profile.tpl");
 		break;
 }
