@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -51,6 +51,7 @@ if(!this.edit.isEditing()){
 var _4=this.focus.focusView||this.views.views[0];
 _4.content.decorateEvent(e);
 this.onRowClick(e);
+dojo.stopEvent(e);
 }
 break;
 case dk.SPACE:

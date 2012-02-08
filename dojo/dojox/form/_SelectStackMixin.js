@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -25,7 +25,7 @@ if(!_3){
 _5={};
 dojo.forEach(_4,function(w){
 _5[w.id]=w.disabled;
-w.attr("disabled",true);
+w.set("disabled",true);
 });
 _2._savedStates=_5;
 }else{
@@ -35,7 +35,7 @@ var _6=_5[w.id];
 if(_6==undefined){
 _6=false;
 }
-w.attr("disabled",_6);
+w.set("disabled",_6);
 });
 delete _2._savedStates;
 }

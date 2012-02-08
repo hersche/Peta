@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.data.util.filter"]){
 dojo._hasResource["dojo.data.util.filter"]=true;
 dojo.provide("dojo.data.util.filter");
+dojo.getObject("data.util.filter",true,dojo);
 dojo.data.util.filter.patternToRegExp=function(_1,_2){
 var _3="^";
 var c=null;

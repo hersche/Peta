@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dijit._editor.html"]){
 dojo._hasResource["dijit._editor.html"]=true;
 dojo.provide("dijit._editor.html");
+dojo.getObject("_editor",true,dijit);
 dijit._editor.escapeXml=function(_1,_2){
 _1=_1.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;").replace(/"/gm,"&quot;");
 if(!_2){
@@ -20,7 +21,7 @@ var _4;
 switch(_3.nodeType){
 case 1:
 var _5=_3.nodeName.toLowerCase();
-if(_5.charAt(0)=="/"){
+if(!_5||_5.charAt(0)=="/"){
 return "";
 }
 _4="<"+_5;

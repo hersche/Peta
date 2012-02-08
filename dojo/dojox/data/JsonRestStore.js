@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.JsonRestStore"]){
 dojo._hasResource["dojox.data.JsonRestStore"]=true;
 dojo.provide("dojox.data.JsonRestStore");
-dojo.require("dojox.data.ServiceStore");
 dojo.require("dojox.rpc.JsonRest");
+dojo.require("dojox.data.ServiceStore");
 dojo.declare("dojox.data.JsonRestStore",dojox.data.ServiceStore,{constructor:function(_1){
 dojo.connect(dojox.rpc.Rest._index,"onUpdate",this,function(_2,_3,_4,_5){
 var _6=this.service.servicePath;
@@ -21,13 +21,13 @@ this.onSet(_2,_3,_4,_5);
 }
 });
 this.idAttribute=this.idAttribute||"id";
-if(typeof this.target=="string"){
-this.target=this.target.match(/\/$/)||this.allowNoTrailingSlash?this.target:(this.target+"/");
+if(typeof _1.target=="string"){
+_1.target=_1.target.match(/\/$/)||this.allowNoTrailingSlash?_1.target:(_1.target+"/");
 if(!this.service){
-this.service=dojox.rpc.JsonRest.services[this.target]||dojox.rpc.Rest(this.target,true);
+this.service=dojox.rpc.JsonRest.services[_1.target]||dojox.rpc.Rest(_1.target,true);
 }
 }
-dojox.rpc.JsonRest.registerService(this.service,this.target,this.schema);
+dojox.rpc.JsonRest.registerService(this.service,_1.target,this.schema);
 this.schema=this.service._schema=this.schema||this.service._schema||{};
 this.service._store=this;
 this.service.idAsRef=this.idAsRef;

@@ -164,6 +164,11 @@ class thread{
 	private $threadState;
 	private $editcounter;
 	private $subThreadCounter;
+	
+	public function __toString(){
+		return $this->title." ".$this->text;
+	}
+	
 	public function setId($id){
 		$this->id = $id;
 	}

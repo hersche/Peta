@@ -1,16 +1,14 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
 
 /*
-	This is a compiled version of Dojo, built for deployment and not for
-	development. To get an editable version, please visit:
+	This is an optimized version of Dojo, built for deployment and not for
+	development. To get sources and documentation, please visit:
 
 		http://dojotoolkit.org
-
-	for documentation and information on getting the source.
 */
 
 if(!dojo._hasResource["dojox.string.Builder"]){ //_hasResource checks added by build. Do not use _hasResource directly in your code.
@@ -29,10 +27,10 @@ dojox.string.Builder = function(/*String?*/str){
 	var b = "";
 	this.length = 0;
 	
-	this.append = function(/* String... */s){ 
-		// summary: Append all arguments to the end of the buffer 
+	this.append = function(/* String... */s){
+		// summary: Append all arguments to the end of the buffer
 		if(arguments.length>1){
-			/*  
+			/*
 				This is a loop unroll was designed specifically for Firefox;
 				it would seem that static index access on an Arguments
 				object is a LOT faster than doing dynamic index access.
@@ -47,10 +45,10 @@ dojox.string.Builder = function(/*String?*/str){
 				Safari or Opera, so we just use it for all.
 
 				It turns out also that this loop unroll can increase performance
-				significantly with Internet Explorer, particularly when 
+				significantly with Internet Explorer, particularly when
 				as many arguments are provided as possible.
 
-				Loop unroll per suggestion from Kris Zyp, implemented by 
+				Loop unroll per suggestion from Kris Zyp, implemented by
 				Tom Trenka.
 
 				Note: added empty string to force a string cast if needed.
@@ -98,7 +96,7 @@ dojox.string.Builder = function(/*String?*/str){
 	};
 	
 	this.clear = function(){
-		//	summary: 
+		//	summary:
 		//		Remove all characters from the buffer.
 		b = "";
 		this.length = 0;
@@ -106,7 +104,7 @@ dojox.string.Builder = function(/*String?*/str){
 	};
 	
 	this.replace = function(/* String */oldStr, /* String */ newStr){
-		// 	summary: 
+		// 	summary:
 		//		Replace instances of one string with another in the buffer.
 		b = b.replace(oldStr,newStr);
 		this.length = b.length;
@@ -125,7 +123,7 @@ dojox.string.Builder = function(/*String?*/str){
 	};
 	
 	this.insert = function(/* Number */index, /* String */str){
-		//	summary: 
+		//	summary:
 		//		Insert string str starting at index.
 		if(index == 0){
 			b = str + b;
@@ -210,8 +208,14 @@ dojo.experimental("dojox.dtl");
 
 	dd._Context = dojo.extend(function(dict){
 		// summary: Pass one of these when rendering a template to tell the template what values to use.
-		dojo._mixin(this, dict || {});
-		this._dicts = [];
+		if(dict){
+			dojo._mixin(this, dict);
+			if(dict.get){
+				// Preserve passed getter and restore prototype get
+				this._getter = dict.get;
+				delete this.get;
+			}
+		}
 	},
 	{
 		push: function(){
@@ -224,14 +228,17 @@ dojo.experimental("dojox.dtl");
 			throw new Error("pop() called on empty Context");
 		},
 		get: function(key, otherwise){
-			if(typeof this[key] != "undefined"){
-				return this._normalize(this[key]);
+			var n = this._normalize;
+
+			if(this._getter){
+				var got = this._getter(key);
+				if(typeof got != "undefined"){
+					return n(got);
+				}
 			}
 
-			for(var i = 0, dict; dict = this._dicts[i]; i++){
-				if(typeof dict[key] != "undefined"){
-					return this._normalize(dict[key]);
-				}
+			if(typeof this[key] != "undefined"){
+				return n(this[key]);
 			}
 
 			return otherwise;
@@ -258,7 +265,7 @@ dojo.experimental("dojox.dtl");
 		}
 	});
 
-	var smart_split_re = /("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s]+)/g;           
+	var smart_split_re = /("(?:[^"\\]*(?:\\.[^"\\]*)*)"|'(?:[^'\\]*(?:\\.[^'\\]*)*)'|[^\s]+)/g;
 	var split_re = /\s+/g;
 	var split = function(/*String|RegExp?*/ splitter, /*Integer?*/ limit){
 		splitter = splitter || split_re;
@@ -917,7 +924,7 @@ dojox.dtl.Context = dojo.extend(function(dict){
 	getKeys: function(){
 		var keys = [];
 		for(var key in this){
-			if(this.hasOwnProperty(key) && key != "_dicts" && key != "_this"){
+			if(this.hasOwnProperty(key) && key != "_this"){
 				keys.push(key);
 			}
 		}
@@ -961,14 +968,15 @@ dojox.dtl.Context = dojo.extend(function(dict){
 		return this._this;
 	},
 	hasKey: function(key){
-		if(typeof this[key] != "undefined"){
-			return true;
-		}
-
-		for(var i = 0, dict; dict = this._dicts[i]; i++){
-			if(typeof dict[key] != "undefined"){
+		if(this._getter){
+			var got = this._getter(key);
+			if(typeof got != "undefined"){
 				return true;
 			}
+		}
+
+		if(typeof this[key] != "undefined"){
+			return true;
 		}
 
 		return false;
@@ -1461,6 +1469,8 @@ if(!dojo._hasResource["dojo.date"]){ //_hasResource checks added by build. Do no
 dojo._hasResource["dojo.date"] = true;
 dojo.provide("dojo.date");
 
+dojo.getObject("date", true, dojo);
+
 /*=====
 dojo.date = {
 	// summary: Date manipulation utilities
@@ -1474,7 +1484,7 @@ dojo.date.getDaysInMonth = function(/*Date*/dateObject){
 	var days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	if(month == 1 && dojo.date.isLeapYear(dateObject)){ return 29; } // Number
 	return days[month]; // Number
-}
+};
 
 dojo.date.isLeapYear = function(/*Date*/dateObject){
 	//	summary:
@@ -1488,7 +1498,7 @@ dojo.date.isLeapYear = function(/*Date*/dateObject){
 
 	var year = dateObject.getFullYear();
 	return !(year%400) || (!(year%4) && !!(year%100)); // Boolean
-}
+};
 
 // FIXME: This is not localized
 dojo.date.getTimezoneName = function(/*Date*/dateObject){
@@ -1513,7 +1523,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 	}else{
 		// If at first you don't succeed ...
 		// If IE knows about the TZ, it appears before the year
-		// Capital letters or slash before a 4-digit year 
+		// Capital letters or slash before a 4-digit year
 		// at the end of string
 		var pat = /([A-Z\/]+) \d{4}$/;
 		if((match = str.match(pat))){
@@ -1522,7 +1532,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 		// Some browsers (e.g. Safari) glue the TZ on the end
 		// of toLocaleString instead of putting it in toString
 			str = dateObject.toLocaleString();
-			// Capital letters or slash -- end of string, 
+			// Capital letters or slash -- end of string,
 			// after space
 			pat = / ([A-Z\/]+)$/;
 			if((match = str.match(pat))){
@@ -1533,7 +1543,7 @@ dojo.date.getTimezoneName = function(/*Date*/dateObject){
 
 	// Make sure it doesn't somehow end up return AM or PM
 	return (tz == 'AM' || tz == 'PM') ? '' : tz; // String
-}
+};
 
 // Utility methods to do arithmetic calculations with Dates
 
@@ -1809,7 +1819,7 @@ dojo.provide("dojox.date.php");
 dojox.date.php.format = function(/*Date*/ date, /*String*/ format){
 	// summary: Get a formatted string for a given date object
 	var df = new dojox.date.php.DateFormat(format);
-	return df.format(date);	
+	return df.format(date);
 }
 
 dojox.date.php.DateFormat = function(/*String*/ format){
@@ -2126,7 +2136,7 @@ dojo.extend(dojox.dtl.utils.date.DateFormat, dojox.date.php.DateFormat.prototype
 	f: function(){
 		// summary:
 		//		Time, in 12-hour hours and minutes, with minutes left off if they're zero.
-		// description: 
+		// description:
 		//		Examples: '1', '1:30', '2:05', '2'
 		//		Proprietary extension.
 		return (!this.date.getMinutes()) ? this.g() : this.g() + ":" + this.i();

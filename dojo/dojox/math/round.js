@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.math.round"]){
 dojo._hasResource["dojox.math.round"]=true;
 dojo.provide("dojox.math.round");
+dojo.getObject("math.round",true,dojox);
 dojo.experimental("dojox.math.round");
 dojox.math.round=function(_1,_2,_3){
 var _4=Math.log(Math.abs(_1))/Math.log(10);

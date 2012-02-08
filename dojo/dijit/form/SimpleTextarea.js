@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -9,21 +9,21 @@ if(!dojo._hasResource["dijit.form.SimpleTextarea"]){
 dojo._hasResource["dijit.form.SimpleTextarea"]=true;
 dojo.provide("dijit.form.SimpleTextarea");
 dojo.require("dijit.form.TextBox");
-dojo.declare("dijit.form.SimpleTextarea",dijit.form.TextBox,{baseClass:"dijitTextArea",attributeMap:dojo.delegate(dijit.form._FormValueWidget.prototype.attributeMap,{rows:"textbox",cols:"textbox"}),rows:"3",cols:"20",templateString:"<textarea ${nameAttrSetting} dojoAttachPoint='focusNode,containerNode,textbox' autocomplete='off'></textarea>",postMixInProperties:function(){
+dojo.declare("dijit.form.SimpleTextarea",dijit.form.TextBox,{baseClass:"dijitTextBox dijitTextArea",attributeMap:dojo.delegate(dijit.form._FormValueWidget.prototype.attributeMap,{rows:"textbox",cols:"textbox"}),rows:"3",cols:"20",templateString:"<textarea ${!nameAttrSetting} dojoAttachPoint='focusNode,containerNode,textbox' autocomplete='off'></textarea>",postMixInProperties:function(){
 if(!this.value&&this.srcNodeRef){
 this.value=this.srcNodeRef.value;
 }
 this.inherited(arguments);
+},buildRendering:function(){
+this.inherited(arguments);
+if(dojo.isIE&&this.cols){
+dojo.addClass(this.textbox,"dijitTextAreaCols");
+}
 },filter:function(_1){
 if(_1){
 _1=_1.replace(/\r/g,"");
 }
 return this.inherited(arguments);
-},postCreate:function(){
-this.inherited(arguments);
-if(dojo.isIE&&this.cols){
-dojo.addClass(this.textbox,"dijitTextAreaCols");
-}
 },_previousValue:"",_onInput:function(e){
 if(this.maxLength){
 var _2=parseInt(this.maxLength);

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.date.stamp"]){
 dojo._hasResource["dojo.date.stamp"]=true;
 dojo.provide("dojo.date.stamp");
+dojo.getObject("date.stamp",true,dojo);
 dojo.date.stamp.fromISOString=function(_1,_2){
 if(!dojo.date.stamp._isoRegExp){
 dojo.date.stamp._isoRegExp=/^(?:(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?)?(?:T(\d{2}):(\d{2})(?::(\d{2})(.\d+)?)?((?:[+-](\d{2}):(\d{2}))|Z)?)?$/;
@@ -23,12 +24,10 @@ _3[6]*=1000;
 }
 if(_2){
 _2=new Date(_2);
-dojo.map(["FullYear","Month","Date","Hours","Minutes","Seconds","Milliseconds"],function(_5){
+dojo.forEach(dojo.map(["FullYear","Month","Date","Hours","Minutes","Seconds","Milliseconds"],function(_5){
 return _2["get"+_5]();
-}).forEach(function(_6,_7){
-if(_3[_7]===undefined){
-_3[_7]=_6;
-}
+}),function(_6,_7){
+_3[_7]=_3[_7]||_6;
 });
 }
 _4=new Date(_3[0]||1970,_3[1]||0,_3[2]||1,_3[3]||0,_3[4]||0,_3[5]||0,_3[6]||0);

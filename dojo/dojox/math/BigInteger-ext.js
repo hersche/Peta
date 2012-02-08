@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.math.BigInteger-ext"]){
 dojo._hasResource["dojox.math.BigInteger-ext"]=true;
 dojo.provide("dojox.math.BigInteger-ext");
-dojo.experimental("dojox.math.BigInteger-ext");
 dojo.require("dojox.math.BigInteger");
+dojo.experimental("dojox.math.BigInteger-ext");
 (function(){
 var _1=dojox.math.BigInteger,_2=_1._nbi,_3=_1._nbv,_4=_1._nbits,_5=_1._Montgomery;
 function _6(){

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -11,10 +11,9 @@ dojo.provide("dijit.layout._LayoutWidget");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Container");
 dojo.require("dijit._Contained");
-dojo.declare("dijit.layout._LayoutWidget",[dijit._Widget,dijit._Container,dijit._Contained],{baseClass:"dijitLayoutContainer",isLayoutContainer:true,postCreate:function(){
-dojo.addClass(this.domNode,"dijitContainer");
-dojo.addClass(this.domNode,this.baseClass);
+dojo.declare("dijit.layout._LayoutWidget",[dijit._Widget,dijit._Container,dijit._Contained],{baseClass:"dijitLayoutContainer",isLayoutContainer:true,buildRendering:function(){
 this.inherited(arguments);
+dojo.addClass(this.domNode,"dijitContainer");
 },startup:function(){
 if(this._started){
 return;
@@ -52,72 +51,78 @@ this._contentBox={l:dojo._toPixelValue(_4,cs.paddingLeft),t:dojo._toPixelValue(_
 this.layout();
 },layout:function(){
 },_setupChild:function(_5){
-dojo.addClass(_5.domNode,this.baseClass+"-child");
-if(_5.baseClass){
-dojo.addClass(_5.domNode,this.baseClass+"-"+_5.baseClass);
-}
-},addChild:function(_6,_7){
+var _6=this.baseClass+"-child "+(_5.baseClass?this.baseClass+"-"+_5.baseClass:"");
+dojo.addClass(_5.domNode,_6);
+},addChild:function(_7,_8){
 this.inherited(arguments);
 if(this._started){
-this._setupChild(_6);
+this._setupChild(_7);
 }
-},removeChild:function(_8){
-dojo.removeClass(_8.domNode,this.baseClass+"-child");
-if(_8.baseClass){
-dojo.removeClass(_8.domNode,this.baseClass+"-"+_8.baseClass);
-}
+},removeChild:function(_9){
+var _a=this.baseClass+"-child"+(_9.baseClass?" "+this.baseClass+"-"+_9.baseClass:"");
+dojo.removeClass(_9.domNode,_a);
 this.inherited(arguments);
 }});
-dijit.layout.marginBox2contentBox=function(_9,mb){
-var cs=dojo.getComputedStyle(_9);
-var me=dojo._getMarginExtents(_9,cs);
-var pb=dojo._getPadBorderExtents(_9,cs);
-return {l:dojo._toPixelValue(_9,cs.paddingLeft),t:dojo._toPixelValue(_9,cs.paddingTop),w:mb.w-(me.w+pb.w),h:mb.h-(me.h+pb.h)};
+dijit.layout.marginBox2contentBox=function(_b,mb){
+var cs=dojo.getComputedStyle(_b);
+var me=dojo._getMarginExtents(_b,cs);
+var pb=dojo._getPadBorderExtents(_b,cs);
+return {l:dojo._toPixelValue(_b,cs.paddingLeft),t:dojo._toPixelValue(_b,cs.paddingTop),w:mb.w-(me.w+pb.w),h:mb.h-(me.h+pb.h)};
 };
 (function(){
-var _a=function(_b){
-return _b.substring(0,1).toUpperCase()+_b.substring(1);
+var _c=function(_d){
+return _d.substring(0,1).toUpperCase()+_d.substring(1);
 };
-var _c=function(_d,_e){
-_d.resize?_d.resize(_e):dojo.marginBox(_d.domNode,_e);
-dojo.mixin(_d,dojo.marginBox(_d.domNode));
-dojo.mixin(_d,_e);
-};
-dijit.layout.layoutChildren=function(_f,dim,_10){
-dim=dojo.mixin({},dim);
-dojo.addClass(_f,"dijitLayoutContainer");
-_10=dojo.filter(_10,function(_11){
-return _11.layoutAlign!="client";
-}).concat(dojo.filter(_10,function(_12){
-return _12.layoutAlign=="client";
-}));
-dojo.forEach(_10,function(_13){
-var elm=_13.domNode,pos=_13.layoutAlign;
-var _14=elm.style;
-_14.left=dim.l+"px";
-_14.top=dim.t+"px";
-_14.bottom=_14.right="auto";
-dojo.addClass(elm,"dijitAlign"+_a(pos));
-if(pos=="top"||pos=="bottom"){
-_c(_13,{w:dim.w});
-dim.h-=_13.h;
-if(pos=="top"){
-dim.t+=_13.h;
+var _e=function(_f,dim){
+var _10=_f.resize?_f.resize(dim):dojo.marginBox(_f.domNode,dim);
+if(_10){
+dojo.mixin(_f,_10);
 }else{
-_14.top=dim.t+dim.h+"px";
+dojo.mixin(_f,dojo.marginBox(_f.domNode));
+dojo.mixin(_f,dim);
+}
+};
+dijit.layout.layoutChildren=function(_11,dim,_12,_13,_14){
+dim=dojo.mixin({},dim);
+dojo.addClass(_11,"dijitLayoutContainer");
+_12=dojo.filter(_12,function(_15){
+return _15.region!="center"&&_15.layoutAlign!="client";
+}).concat(dojo.filter(_12,function(_16){
+return _16.region=="center"||_16.layoutAlign=="client";
+}));
+dojo.forEach(_12,function(_17){
+var elm=_17.domNode,pos=(_17.region||_17.layoutAlign);
+var _18=elm.style;
+_18.left=dim.l+"px";
+_18.top=dim.t+"px";
+_18.position="absolute";
+dojo.addClass(elm,"dijitAlign"+_c(pos));
+var _19={};
+if(_13&&_13==_17.id){
+_19[_17.region=="top"||_17.region=="bottom"?"h":"w"]=_14;
+}
+if(pos=="top"||pos=="bottom"){
+_19.w=dim.w;
+_e(_17,_19);
+dim.h-=_17.h;
+if(pos=="top"){
+dim.t+=_17.h;
+}else{
+_18.top=dim.t+dim.h+"px";
 }
 }else{
 if(pos=="left"||pos=="right"){
-_c(_13,{h:dim.h});
-dim.w-=_13.w;
+_19.h=dim.h;
+_e(_17,_19);
+dim.w-=_17.w;
 if(pos=="left"){
-dim.l+=_13.w;
+dim.l+=_17.w;
 }else{
-_14.left=dim.l+dim.w+"px";
+_18.left=dim.l+dim.w+"px";
 }
 }else{
-if(pos=="client"){
-_c(_13,dim);
+if(pos=="client"||pos=="center"){
+_e(_17,dim);
 }
 }
 }

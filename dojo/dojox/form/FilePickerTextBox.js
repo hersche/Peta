@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,10 +8,11 @@
 if(!dojo._hasResource["dojox.form.FilePickerTextBox"]){
 dojo._hasResource["dojox.form.FilePickerTextBox"]=true;
 dojo.provide("dojox.form.FilePickerTextBox");
-dojo.require("dojox.widget.FilePicker");
+dojo.require("dojo.window");
 dojo.require("dijit.form.ValidationTextBox");
 dojo.require("dijit._HasDropDown");
-dojo.declare("dojox.form.FilePickerTextBox",[dijit.form.ValidationTextBox,dijit._HasDropDown],{baseClass:"dojoxFilePickerTextBox",templateString:dojo.cache("dojox.form","resources/FilePickerTextBox.html","<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\"\n\tdojoAttachEvent=\"onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse\" waiRole=\"combobox\" tabIndex=\"-1\"\n\t><div style=\"overflow:hidden;\"\n\t\t><div class='dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton'\n\t\t\tdojoAttachPoint=\"downArrowNode,_buttonNode,_popupStateNode\" waiRole=\"presentation\"\n\t\t\t><div class=\"dijitArrowButtonInner\">&thinsp;</div\n\t\t\t><div class=\"dijitArrowButtonChar\">&#9660;</div\n\t\t></div\n\t\t><div class=\"dijitReset dijitValidationIcon\"><br></div\n\t\t><div class=\"dijitReset dijitValidationIconText\">&Chi;</div\n\t\t><div class=\"dijitReset dijitInputField\"\n\t\t\t><input type=\"text\" autocomplete=\"off\" ${nameAttrSetting} class='dijitReset'\n\t\t\t\tdojoAttachEvent='onkeypress:_onKey' \n\t\t\t\tdojoAttachPoint='textbox,focusNode' waiRole=\"textbox\" waiState=\"haspopup-true,autocomplete-list\"\n\t\t/></div\n\t></div\n></div>\n"),searchDelay:500,_stopClickEvents:false,valueItem:null,numPanes:2.25,postMixInProperties:function(){
+dojo.require("dojox.widget.FilePicker");
+dojo.declare("dojox.form.FilePickerTextBox",[dijit.form.ValidationTextBox,dijit._HasDropDown],{baseClass:"dojoxFilePickerTextBox",templateString:dojo.cache("dojox.form","resources/FilePickerTextBox.html","<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\"\n\trole=\"combobox\" tabIndex=\"-1\"\n\t><div style=\"overflow:hidden;\"\n\t\t><div class='dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton'\n\t\t\tdojoAttachPoint=\"downArrowNode,_buttonNode,_popupStateNode\" role=\"presentation\"\n\t\t\t><div class=\"dijitArrowButtonInner\">&thinsp;</div\n\t\t\t><div class=\"dijitArrowButtonChar\">&#9660;</div\n\t\t></div\n\t\t><div class=\"dijitReset dijitValidationIcon\"><br></div\n\t\t><div class=\"dijitReset dijitValidationIconText\">&Chi;</div\n\t\t><div class=\"dijitReset dijitInputField\"\n\t\t\t><input type=\"text\" autocomplete=\"off\" ${!nameAttrSetting} class='dijitReset'\n\t\t\t\tdojoAttachEvent='onkeypress:_onKey' \n\t\t\t\tdojoAttachPoint='textbox,focusNode' role=\"textbox\" aria-haspopup=\"true\" aria-autocomplete=\"list\"\n\t\t/></div\n\t></div\n></div>\n"),searchDelay:500,valueItem:null,numPanes:2.25,postMixInProperties:function(){
 this.inherited(arguments);
 this.dropDown=new dojox.widget.FilePicker(this.constraints);
 },postCreate:function(){
@@ -26,7 +27,7 @@ dijit.selectInputText(this.focusNode);
 if(!this._searchInProgress){
 this.inherited(arguments);
 _1=_1||"";
-var _4=this.dropDown.attr("pathValue")||"";
+var _4=this.dropDown.get("pathValue")||"";
 if(_1!==_4){
 this._skip=true;
 var fx=dojo.hitch(this,"_setBlurValue");
@@ -57,13 +58,13 @@ this.inherited(arguments);
 },openDropDown:function(){
 this.dropDown.domNode.style.width="0px";
 if(!("minPaneWidth" in (this.constraints||{}))){
-this.dropDown.attr("minPaneWidth",(this.domNode.offsetWidth/this.numPanes));
+this.dropDown.set("minPaneWidth",(this.domNode.offsetWidth/this.numPanes));
 }
 this.inherited(arguments);
 },toggleDropDown:function(){
 this.inherited(arguments);
 if(this._opened){
-this.dropDown.attr("pathValue",this.attr("value"));
+this.dropDown.set("pathValue",this.get("value"));
 }
 },_focusBlur:function(e){
 if(e.explicitOriginalTarget==this.focusNode&&!this._allowBlur){
@@ -101,7 +102,7 @@ this.inherited(arguments);
 },_setBlurValue:function(){
 if(this.dropDown&&!this._settingBlurValue){
 this._settingBlurValue=true;
-this.attr("value",this.focusNode.value);
+this.set("value",this.focusNode.value);
 }else{
 delete this._settingBlurValue;
 this.inherited(arguments);
@@ -111,7 +112,7 @@ if(this._hasValidPath||this._hasSelection){
 return _8;
 }
 var dd=this.dropDown,_a=dd.topDir,_b=dd.pathSeparator;
-var _c=dd.attr("pathValue");
+var _c=dd.get("pathValue");
 var _d=function(v){
 if(_a.length&&v.indexOf(_a)===0){
 v=v.substring(_a.length);
@@ -184,7 +185,7 @@ _1a+=dd.pathSeparator;
 }
 _1a=_1a.substring(dir.length);
 window.setTimeout(function(){
-dijit.scrollIntoView(_19.domNode);
+dojo.window.scrollIntoView(_19.domNode);
 },1);
 fn.value=_10+_1a;
 dijit.selectInputText(fn,_10.length);

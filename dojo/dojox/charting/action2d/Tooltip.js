@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,8 +8,9 @@
 if(!dojo._hasResource["dojox.charting.action2d.Tooltip"]){
 dojo._hasResource["dojox.charting.action2d.Tooltip"]=true;
 dojo.provide("dojox.charting.action2d.Tooltip");
-dojo.require("dojox.charting.action2d.Base");
 dojo.require("dijit.Tooltip");
+dojo.require("dojox.charting.action2d.Base");
+dojo.require("dojox.gfx.matrix");
 dojo.require("dojox.lang.functional");
 dojo.require("dojox.lang.functional.scan");
 dojo.require("dojox.lang.functional.fold");
@@ -24,7 +25,7 @@ return "<table cellpadding=\"1\" cellspacing=\"0\" border=\"0\" style=\"font-siz
 }
 return o.element=="bar"?o.x:o.y;
 };
-var df=dojox.lang.functional,_2=Math.PI/4,_3=Math.PI/2;
+var df=dojox.lang.functional,m=dojox.gfx.matrix,_2=Math.PI/4,_3=Math.PI/2;
 dojo.declare("dojox.charting.action2d.Tooltip",dojox.charting.action2d.Base,{defaultParams:{text:_1},optionalParams:{},constructor:function(_4,_5,_6){
 this.text=_6&&_6.text?_6.text:_1;
 this.connect();
@@ -32,6 +33,9 @@ this.connect();
 if(o.type==="onplotreset"||o.type==="onmouseout"){
 dijit.hideTooltip(this.aroundRect);
 this.aroundRect=null;
+if(o.type==="onplotreset"){
+delete this.angles;
+}
 return;
 }
 if(!o.shape||o.type!=="onmouseover"){
@@ -68,19 +72,19 @@ this.angles=df.map(df.scanl(o.run.data,"+",0),"* 2 * Math.PI / this",df.foldl(o.
 this.angles=df.map(df.scanl(o.run.data,"a + b.y",0),"* 2 * Math.PI / this",df.foldl(o.run.data,"a + b.y",0));
 }
 }
-var _9=(this.angles[o.index]+this.angles[o.index+1])/2;
-_7.x=o.cx+o.cr*Math.cos(_9);
-_7.y=o.cy+o.cr*Math.sin(_9);
+var _9=m._degToRad(o.plot.opt.startAngle),_a=(this.angles[o.index]+this.angles[o.index+1])/2+_9;
+_7.x=o.cx+o.cr*Math.cos(_a);
+_7.y=o.cy+o.cr*Math.sin(_a);
 _7.width=_7.height=1;
-if(_9<_2){
+if(_a<_2){
 }else{
-if(_9<_3+_2){
+if(_a<_3+_2){
 _8=["below","above"];
 }else{
-if(_9<Math.PI+_2){
+if(_a<Math.PI+_2){
 _8=["before","after"];
 }else{
-if(_9<2*Math.PI-_2){
+if(_a<2*Math.PI-_2){
 _8=["above","below"];
 }
 }
@@ -96,7 +100,10 @@ _7.y=Math.round(_7.y);
 _7.width=Math.ceil(_7.width);
 _7.height=Math.ceil(_7.height);
 this.aroundRect=_7;
-dijit.showTooltip(this.text(o),this.aroundRect,_8);
+var _b=this.text(o);
+if(_b){
+dijit.showTooltip(_b,this.aroundRect,_8);
+}
 }});
 })();
 }

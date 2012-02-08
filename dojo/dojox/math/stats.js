@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.math.stats"]){
 dojo._hasResource["dojox.math.stats"]=true;
 dojo.provide("dojox.math.stats");
+dojo.getObject("math.stats",true,dojox);
 (function(){
 var st=dojox.math.stats;
 dojo.mixin(st,{sd:function(a){

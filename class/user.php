@@ -22,6 +22,7 @@ class user extends abstractUser{
 	private $welcome = true;
 	private $messages = array();
 	private $roles = array();
+	private $customfields = array();
 	private $password;
 	// private $connection;
 
@@ -46,6 +47,7 @@ class user extends abstractUser{
 					$this->lastlogin = $userrow['lastlogin'];
 					$this->password = $userrow['password'];
 					array_push($this->roles, $userrow["role"]);
+
 					$datetime = new DateTime($GLOBALS["timezone"]);
 					$this->currentlogin = $datetime->format("Y-m-d");
 					$connection->exec('UPDATE users SET lastlogin="'.$this->currentlogin.'", lastip="'.$this->currentip.'" WHERE username="'.$this->username.' AND password="'.$this->password.'";');
@@ -59,6 +61,20 @@ class user extends abstractUser{
 
 		}
 	}
+
+	public function getCustomfields(){
+		if($this->customfields==Null){
+			foreach($connection->query('SELECT * FROM user_customfields WHERE user_id="'.$this->id.'";') as $customfieldrow){
+			$customfield = new customfield();
+			$customfield->setId($customfieldrow[id]);
+			$customfield->setKey($customfieldrow[key]);
+			$customfield->setValue($customfieldrow[value]);
+			array_push($this->customfields, $$customfield);
+			}
+		}
+		return $this->customfields;
+	}
+	
 
 	/**
 	 * Change the password of a user
@@ -162,6 +178,32 @@ class user extends abstractUser{
 		unset($_SESSION["user"]);
 	}
 
+}
+
+class customfield{
+	private $id;
+	private $key;
+	private $value;
+	
+	public function setId($id){
+		$this->id = $id;
+	}
+	
+	public function getId(){
+		return $this->id;
+	}
+	public function setKey($key){
+		$this->key = $key;
+	}
+	public function getKey(){
+		return $this->key;
+	}
+	public function setValue($value){
+		$this->value = $value;
+	}
+	public function getValue(){
+		return $this->value;
+	}
 }
 
 /**
@@ -289,7 +331,7 @@ class usertools{
 						$userid = $connection->lastInsertId();
 						$connection->exec("INSERT INTO users_profile (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES ('".$userid."', '".$post['name']."', '', '', '', '');");
 						$connection->exec("INSERT INTO userrole (`buserid`, `broleid`) VALUES ('".$userid."', '".$roleid."');");
-						return "User ".$post['username']." was created successfull!";
+						return "0";
 					}
 					catch (Exception $e){
 						return "Error is happend: ".$e;

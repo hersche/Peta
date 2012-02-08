@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -12,134 +12,94 @@ dojo.require("dojo.date");
 dojo.require("dojo.date.locale");
 dojo.require("dojo.date.stamp");
 dojo.require("dijit.form.ValidationTextBox");
-dojo.declare("dijit.form._DateTimeTextBox",dijit.form.RangeBoundTextBox,{regExpGen:dojo.date.locale.regexp,datePackage:"dojo.date",compare:dojo.date.compare,format:function(_1,_2){
-if(!_1){
+dojo.require("dijit._HasDropDown");
+new Date("X");
+dojo.declare("dijit.form._DateTimeTextBox",[dijit.form.RangeBoundTextBox,dijit._HasDropDown],{templateString:dojo.cache("dijit.form","templates/DropDownBox.html","<div class=\"dijit dijitReset dijitInlineTable dijitLeft\"\n\tid=\"widget_${id}\"\n\trole=\"combobox\"\n\t><div class='dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton dijitArrowButtonContainer'\n\t\tdojoAttachPoint=\"_buttonNode, _popupStateNode\" role=\"presentation\"\n\t\t><input class=\"dijitReset dijitInputField dijitArrowButtonInner\" value=\"&#9660; \" type=\"text\" tabIndex=\"-1\" readonly=\"readonly\" role=\"presentation\"\n\t\t\t${_buttonInputDisabled}\n\t/></div\n\t><div class='dijitReset dijitValidationContainer'\n\t\t><input class=\"dijitReset dijitInputField dijitValidationIcon dijitValidationInner\" value=\"&#935; \" type=\"text\" tabIndex=\"-1\" readonly=\"readonly\" role=\"presentation\"\n\t/></div\n\t><div class=\"dijitReset dijitInputField dijitInputContainer\"\n\t\t><input class='dijitReset dijitInputInner' ${!nameAttrSetting} type=\"text\" autocomplete=\"off\"\n\t\t\tdojoAttachPoint=\"textbox,focusNode\" role=\"textbox\" aria-haspopup=\"true\"\n\t/></div\n></div>\n"),hasDownArrow:true,openOnClick:true,regExpGen:dojo.date.locale.regexp,datePackage:"dojo.date",compare:function(_1,_2){
+var _3=this._isInvalidDate(_1);
+var _4=this._isInvalidDate(_2);
+return _3?(_4?0:-1):(_4?1:dojo.date.compare(_1,_2,this._selector));
+},forceWidth:true,format:function(_5,_6){
+if(!_5){
 return "";
 }
-return this.dateLocaleModule.format(_1,_2);
-},parse:function(_3,_4){
-return this.dateLocaleModule.parse(_3,_4)||(this._isEmpty(_3)?null:undefined);
-},serialize:function(_5,_6){
-if(_5.toGregorian){
-_5=_5.toGregorian();
+return this.dateLocaleModule.format(_5,_6);
+},"parse":function(_7,_8){
+return this.dateLocaleModule.parse(_7,_8)||(this._isEmpty(_7)?null:undefined);
+},serialize:function(_9,_a){
+if(_9.toGregorian){
+_9=_9.toGregorian();
 }
-return dojo.date.stamp.toISOString(_5,_6);
-},value:new Date(""),_blankValue:null,popupClass:"",_selector:"",constructor:function(_7){
-var _8=_7.datePackage?_7.datePackage+".Date":"Date";
-this.dateClassObj=dojo.getObject(_8,false);
+return dojo.date.stamp.toISOString(_9,_a);
+},dropDownDefaultValue:new Date(),value:new Date(""),_blankValue:null,popupClass:"",_selector:"",constructor:function(_b){
+var _c=_b.datePackage?_b.datePackage+".Date":"Date";
+this.dateClassObj=dojo.getObject(_c,false);
 this.value=new this.dateClassObj("");
-this.datePackage=_7.datePackage||this.datePackage;
+this.datePackage=_b.datePackage||this.datePackage;
 this.dateLocaleModule=dojo.getObject(this.datePackage+".locale",false);
 this.regExpGen=this.dateLocaleModule.regexp;
-},postMixInProperties:function(){
+this._invalidDate=dijit.form._DateTimeTextBox.prototype.value.toString();
+},buildRendering:function(){
 this.inherited(arguments);
-if(!this.value||this.value.toString()==dijit.form._DateTimeTextBox.prototype.value.toString()){
-this.value=null;
+if(!this.hasDownArrow){
+this._buttonNode.style.display="none";
 }
-var _9=this.constraints;
-_9.selector=this._selector;
-_9.fullYear=true;
-var _a=dojo.date.stamp.fromISOString;
-if(typeof _9.min=="string"){
-_9.min=_a(_9.min);
+if(this.openOnClick||!this.hasDownArrow){
+this._buttonNode=this.domNode;
+this.baseClass+=" dijitComboBoxOpenOnClick";
 }
-if(typeof _9.max=="string"){
-_9.max=_a(_9.max);
+},_setConstraintsAttr:function(_d){
+_d.selector=this._selector;
+_d.fullYear=true;
+var _e=dojo.date.stamp.fromISOString;
+if(typeof _d.min=="string"){
+_d.min=_e(_d.min);
 }
-},_onFocus:function(_b){
-this._open();
-this.inherited(arguments);
-},_setValueAttr:function(_c,_d,_e){
-if(_c instanceof Date&&!(this.dateClassObj instanceof Date)){
-_c=new this.dateClassObj(_c);
+if(typeof _d.max=="string"){
+_d.max=_e(_d.max);
 }
 this.inherited(arguments);
-if(this._picker){
-if(!_c){
-_c=new this.dateClassObj();
+},_isInvalidDate:function(_f){
+return !_f||isNaN(_f)||typeof _f!="object"||_f.toString()==this._invalidDate;
+},_setValueAttr:function(_10,_11,_12){
+if(_10!==undefined){
+if(typeof _10=="string"){
+_10=dojo.date.stamp.fromISOString(_10);
 }
-this._picker.attr("value",_c);
+if(this._isInvalidDate(_10)){
+_10=null;
 }
-},_open:function(){
-if(this.disabled||this.readOnly||!this.popupClass){
+if(_10 instanceof Date&&!(this.dateClassObj instanceof Date)){
+_10=new this.dateClassObj(_10);
+}
+}
+this.inherited(arguments);
+if(this.dropDown){
+this.dropDown.set("value",_10,false);
+}
+},_set:function(_13,_14){
+if(_13=="value"&&this.value instanceof Date&&this.compare(_14,this.value)==0){
 return;
 }
-var _f=this;
-if(!this._picker){
-var _10=dojo.getObject(this.popupClass,false);
-this._picker=new _10({onValueSelected:function(_11){
-if(_f._tabbingAway){
-delete _f._tabbingAway;
-}else{
-_f.focus();
+this.inherited(arguments);
+},_setDropDownDefaultValueAttr:function(val){
+if(this._isInvalidDate(val)){
+val=new this.dateClassObj();
 }
-setTimeout(dojo.hitch(_f,"_close"),1);
-dijit.form._DateTimeTextBox.superclass._setValueAttr.call(_f,_11,true);
-},id:this.id+"_popup",lang:_f.lang,constraints:_f.constraints,datePackage:_f.datePackage,isDisabledDate:function(_12){
-var _13=dojo.date.compare;
-var _14=_f.constraints;
-return _14&&(_14.min&&(_13(_14.min,_12,_f._selector)>0)||(_14.max&&_13(_14.max,_12,_f._selector)<0));
+this.dropDownDefaultValue=val;
+},openDropDown:function(_15){
+if(this.dropDown){
+this.dropDown.destroy();
+}
+var _16=dojo.getObject(this.popupClass,false),_17=this,_18=this.get("value");
+this.dropDown=new _16({onChange:function(_19){
+dijit.form._DateTimeTextBox.superclass._setValueAttr.call(_17,_19,true);
+},id:this.id+"_popup",dir:_17.dir,lang:_17.lang,value:_18,currentFocus:!this._isInvalidDate(_18)?_18:this.dropDownDefaultValue,constraints:_17.constraints,filterString:_17.filterString,datePackage:_17.datePackage,isDisabledDate:function(_1a){
+return !_17.rangeCheck(_1a,_17.constraints);
 }});
-this._picker.attr("value",this.attr("value")||new this.dateClassObj());
-}
-if(!this._opened){
-dijit.popup.open({parent:this,popup:this._picker,around:this.domNode,onCancel:dojo.hitch(this,this._close),onClose:function(){
-_f._opened=false;
-}});
-this._opened=true;
-}
-dojo.marginBox(this._picker.domNode,{w:this.domNode.offsetWidth});
-},_close:function(){
-if(this._opened){
-dijit.popup.close(this._picker);
-this._opened=false;
-}
-},_onBlur:function(){
-this._close();
-if(this._picker){
-this._picker.destroy();
-delete this._picker;
-}
 this.inherited(arguments);
 },_getDisplayedValueAttr:function(){
 return this.textbox.value;
-},_setDisplayedValueAttr:function(_15,_16){
-this._setValueAttr(this.parse(_15,this.constraints),_16,_15);
-},destroy:function(){
-if(this._picker){
-this._picker.destroy();
-delete this._picker;
-}
-this.inherited(arguments);
-},postCreate:function(){
-this.inherited(arguments);
-this.connect(this.focusNode,"onkeypress",this._onKeyPress);
-this.connect(this.focusNode,"onclick",this._open);
-},_onKeyPress:function(e){
-var p=this._picker,dk=dojo.keys;
-if(p&&this._opened&&p.handleKey){
-if(p.handleKey(e)===false){
-return;
-}
-}
-if(this._opened&&e.charOrCode==dk.ESCAPE&&!(e.shiftKey||e.ctrlKey||e.altKey||e.metaKey)){
-this._close();
-dojo.stopEvent(e);
-}else{
-if(!this._opened&&e.charOrCode==dk.DOWN_ARROW){
-this._open();
-dojo.stopEvent(e);
-}else{
-if(e.charOrCode===dk.TAB){
-this._tabbingAway=true;
-}else{
-if(this._opened&&(e.keyChar||e.charOrCode===dk.BACKSPACE||e.charOrCode==dk.DELETE)){
-setTimeout(dojo.hitch(this,function(){
-dijit.placeOnScreenAroundElement(p.domNode.parentNode,this.domNode,{"BL":"TL","TL":"BL"},p.orient?dojo.hitch(p,"orient"):null);
-}),1);
-}
-}
-}
-}
+},_setDisplayedValueAttr:function(_1b,_1c){
+this._setValueAttr(this.parse(_1b,this.constraints),_1c,_1b);
 }});
 }

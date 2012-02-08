@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -9,82 +9,69 @@ if(!dojo._hasResource["dijit.layout.ContentPane"]){
 dojo._hasResource["dijit.layout.ContentPane"]=true;
 dojo.provide("dijit.layout.ContentPane");
 dojo.require("dijit._Widget");
-dojo.require("dijit._Contained");
-dojo.require("dijit.layout._LayoutWidget");
-dojo.require("dojo.parser");
+dojo.require("dijit.layout._ContentPaneResizeMixin");
 dojo.require("dojo.string");
 dojo.require("dojo.html");
-dojo.requireLocalization("dijit","loading",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,ko,nb,nl,pl,pt,pt-pt,ru,sk,sl,sv,th,tr,zh,zh-tw");
-dojo.declare("dijit.layout.ContentPane",dijit._Widget,{href:"",extractContent:false,parseOnLoad:true,preventCache:false,preload:false,refreshOnShow:false,loadingMessage:"<span class='dijitContentPaneLoading'>${loadingState}</span>",errorMessage:"<span class='dijitContentPaneError'>${errorState}</span>",isLoaded:false,baseClass:"dijitContentPane",doLayout:true,ioArgs:{},isContainer:true,isLayoutContainer:true,onLoadDeferred:null,attributeMap:dojo.delegate(dijit._Widget.prototype.attributeMap,{title:[]}),postMixInProperties:function(){
-this.inherited(arguments);
-var _1=dojo.i18n.getLocalization("dijit","loading",this.lang);
-this.loadingMessage=dojo.string.substitute(this.loadingMessage,_1);
-this.errorMessage=dojo.string.substitute(this.errorMessage,_1);
-if(!this.href&&this.srcNodeRef&&this.srcNodeRef.innerHTML){
-this.isLoaded=true;
+dojo.requireLocalization("dijit","loading",null,"ROOT,ar,ca,cs,da,de,el,es,fi,fr,he,hu,it,ja,kk,ko,nb,nl,pl,pt,pt-pt,ro,ru,sk,sl,sv,th,tr,zh,zh-tw");
+dojo.declare("dijit.layout.ContentPane",[dijit._Widget,dijit.layout._ContentPaneResizeMixin],{href:"",extractContent:false,parseOnLoad:true,parserScope:dojo._scopeName,preventCache:false,preload:false,refreshOnShow:false,loadingMessage:"<span class='dijitContentPaneLoading'>${loadingState}</span>",errorMessage:"<span class='dijitContentPaneError'>${errorState}</span>",isLoaded:false,baseClass:"dijitContentPane",ioArgs:{},onLoadDeferred:null,attributeMap:dojo.delegate(dijit._Widget.prototype.attributeMap,{title:[]}),stopParser:true,template:false,create:function(_1,_2){
+if((!_1||!_1.template)&&_2&&!("href" in _1)&&!("content" in _1)){
+var df=dojo.doc.createDocumentFragment();
+_2=dojo.byId(_2);
+while(_2.firstChild){
+df.appendChild(_2.firstChild);
 }
+_1=dojo.delegate(_1,{content:df});
+}
+this.inherited(arguments,[_1,_2]);
+},postMixInProperties:function(){
+this.inherited(arguments);
+var _3=dojo.i18n.getLocalization("dijit","loading",this.lang);
+this.loadingMessage=dojo.string.substitute(this.loadingMessage,_3);
+this.errorMessage=dojo.string.substitute(this.errorMessage,_3);
 },buildRendering:function(){
 this.inherited(arguments);
 if(!this.containerNode){
 this.containerNode=this.domNode;
 }
-},postCreate:function(){
 this.domNode.title="";
 if(!dojo.attr(this.domNode,"role")){
 dijit.setWaiRole(this.domNode,"group");
 }
-dojo.addClass(this.domNode,this.baseClass);
-},startup:function(){
-if(this._started){
-return;
-}
-var _2=dijit._Contained.prototype.getParent.call(this);
-this._childOfLayoutWidget=_2&&_2.isLayoutContainer;
-this._needLayout=!this._childOfLayoutWidget;
-if(this.isLoaded){
-dojo.forEach(this.getChildren(),function(_3){
-_3.startup();
-});
-}
-if(this._isShown()||this.preload){
-this._onShow();
-}
+},_startChildren:function(){
 this.inherited(arguments);
-},_checkIfSingleChild:function(){
-var _4=dojo.query("> *",this.containerNode).filter(function(_5){
-return _5.tagName!=="SCRIPT";
-}),_6=_4.filter(function(_7){
-return dojo.hasAttr(_7,"dojoType")||dojo.hasAttr(_7,"widgetId");
-}),_8=dojo.filter(_6.map(dijit.byNode),function(_9){
-return _9&&_9.domNode&&_9.resize;
-});
-if(_4.length==_6.length&&_8.length==1){
-this._singleChild=_8[0];
-}else{
-delete this._singleChild;
+if(this._contentSetter){
+dojo.forEach(this._contentSetter.parseResults,function(_4){
+if(!_4._started&&!_4._destroyed&&dojo.isFunction(_4.startup)){
+_4.startup();
+_4._started=true;
 }
-dojo.toggleClass(this.containerNode,this.baseClass+"SingleChild",!!this._singleChild);
-},setHref:function(_a){
-dojo.deprecated("dijit.layout.ContentPane.setHref() is deprecated. Use attr('href', ...) instead.","","2.0");
-return this.attr("href",_a);
-},_setHrefAttr:function(_b){
+},this);
+}
+},setHref:function(_5){
+dojo.deprecated("dijit.layout.ContentPane.setHref() is deprecated. Use set('href', ...) instead.","","2.0");
+return this.set("href",_5);
+},_setHrefAttr:function(_6){
 this.cancel();
 this.onLoadDeferred=new dojo.Deferred(dojo.hitch(this,"cancel"));
-this.href=_b;
-if(this._created&&(this.preload||this._isShown())){
+this.onLoadDeferred.addCallback(dojo.hitch(this,"onLoad"));
+this._set("href",_6);
+if(this.preload||(this._created&&this._isShown())){
 this._load();
 }else{
 this._hrefChanged=true;
 }
 return this.onLoadDeferred;
-},setContent:function(_c){
-dojo.deprecated("dijit.layout.ContentPane.setContent() is deprecated.  Use attr('content', ...) instead.","","2.0");
-this.attr("content",_c);
-},_setContentAttr:function(_d){
-this.href="";
+},setContent:function(_7){
+dojo.deprecated("dijit.layout.ContentPane.setContent() is deprecated.  Use set('content', ...) instead.","","2.0");
+this.set("content",_7);
+},_setContentAttr:function(_8){
+this._set("href","");
 this.cancel();
 this.onLoadDeferred=new dojo.Deferred(dojo.hitch(this,"cancel"));
-this._setContent(_d||"");
+if(this._created){
+this.onLoadDeferred.addCallback(dojo.hitch(this,"onLoad"));
+}
+this._setContent(_8||"");
 this._isDownloaded=false;
 return this.onLoadDeferred;
 },_getContentAttr:function(){
@@ -100,101 +87,62 @@ if(this._beingDestroyed){
 this.cancel();
 }
 this.inherited(arguments);
-},destroyRecursive:function(_e){
+},destroyRecursive:function(_9){
 if(this._beingDestroyed){
 return;
 }
 this.inherited(arguments);
-},resize:function(_f,_10){
-if(!this._wasShown){
-this._onShow();
-}
-this._resizeCalled=true;
-if(_f){
-dojo.marginBox(this.domNode,_f);
-}
-var cn=this.containerNode;
-if(cn===this.domNode){
-var mb=_10||{};
-dojo.mixin(mb,_f||{});
-if(!("h" in mb)||!("w" in mb)){
-mb=dojo.mixin(dojo.marginBox(cn),mb);
-}
-this._contentBox=dijit.layout.marginBox2contentBox(cn,mb);
-}else{
-this._contentBox=dojo.contentBox(cn);
-}
-this._layoutChildren();
-},_isShown:function(){
-if(this._childOfLayoutWidget){
-if(this._resizeCalled&&"open" in this){
-return this.open;
-}
-return this._resizeCalled;
-}else{
-if("open" in this){
-return this.open;
-}else{
-var _11=this.domNode;
-return (_11.style.display!="none")&&(_11.style.visibility!="hidden")&&!dojo.hasClass(_11,"dijitHidden");
-}
-}
 },_onShow:function(){
+this.inherited(arguments);
 if(this.href){
 if(!this._xhrDfd&&(!this.isLoaded||this._hrefChanged||this.refreshOnShow)){
-this.refresh();
-}
-}else{
-if(!this._childOfLayoutWidget&&this._needLayout){
-this._layoutChildren();
+return this.refresh();
 }
 }
-this.inherited(arguments);
-this._wasShown=true;
 },refresh:function(){
 this.cancel();
 this.onLoadDeferred=new dojo.Deferred(dojo.hitch(this,"cancel"));
+this.onLoadDeferred.addCallback(dojo.hitch(this,"onLoad"));
 this._load();
 return this.onLoadDeferred;
 },_load:function(){
 this._setContent(this.onDownloadStart(),true);
-var _12=this;
-var _13={preventCache:(this.preventCache||this.refreshOnShow),url:this.href,handleAs:"text"};
+var _a=this;
+var _b={preventCache:(this.preventCache||this.refreshOnShow),url:this.href,handleAs:"text"};
 if(dojo.isObject(this.ioArgs)){
-dojo.mixin(_13,this.ioArgs);
+dojo.mixin(_b,this.ioArgs);
 }
-var _14=(this._xhrDfd=(this.ioMethod||dojo.xhrGet)(_13));
-_14.addCallback(function(_15){
+var _c=(this._xhrDfd=(this.ioMethod||dojo.xhrGet)(_b));
+_c.addCallback(function(_d){
 try{
-_12._isDownloaded=true;
-_12._setContent(_15,false);
-_12.onDownloadEnd();
+_a._isDownloaded=true;
+_a._setContent(_d,false);
+_a.onDownloadEnd();
 }
 catch(err){
-_12._onError("Content",err);
+_a._onError("Content",err);
 }
-delete _12._xhrDfd;
-return _15;
+delete _a._xhrDfd;
+return _d;
 });
-_14.addErrback(function(err){
-if(!_14.canceled){
-_12._onError("Download",err);
+_c.addErrback(function(_e){
+if(!_c.canceled){
+_a._onError("Download",_e);
 }
-delete _12._xhrDfd;
-return err;
+delete _a._xhrDfd;
+return _e;
 });
 delete this._hrefChanged;
-},_onLoadHandler:function(_16){
-this.isLoaded=true;
+},_onLoadHandler:function(_f){
+this._set("isLoaded",true);
 try{
-this.onLoadDeferred.callback(_16);
-this.onLoad(_16);
+this.onLoadDeferred.callback(_f);
 }
 catch(e){
 console.error("Error "+this.widgetId+" running custom onLoad code: "+e.message);
 }
 },_onUnloadHandler:function(){
-this.isLoaded=false;
+this._set("isLoaded",false);
 try{
 this.onUnload();
 }
@@ -205,86 +153,65 @@ console.error("Error "+this.widgetId+" running custom onUnload code: "+e.message
 if(this.isLoaded){
 this._onUnloadHandler();
 }
-var _17=this._contentSetter;
-dojo.forEach(this.getChildren(),function(_18){
-if(_18.destroyRecursive){
-_18.destroyRecursive();
+var _10=this._contentSetter;
+dojo.forEach(this.getChildren(),function(_11){
+if(_11.destroyRecursive){
+_11.destroyRecursive();
 }
 });
-if(_17){
-dojo.forEach(_17.parseResults,function(_19){
-if(_19.destroyRecursive&&_19.domNode&&_19.domNode.parentNode==dojo.body()){
-_19.destroyRecursive();
+if(_10){
+dojo.forEach(_10.parseResults,function(_12){
+if(_12.destroyRecursive&&_12.domNode&&_12.domNode.parentNode==dojo.body()){
+_12.destroyRecursive();
 }
 });
-delete _17.parseResults;
+delete _10.parseResults;
 }
 dojo.html._emptyNode(this.containerNode);
 delete this._singleChild;
-},_setContent:function(_1a,_1b){
+},_setContent:function(_13,_14){
 this.destroyDescendants();
-var _1c=this._contentSetter;
-if(!(_1c&&_1c instanceof dojo.html._ContentSetter)){
-_1c=this._contentSetter=new dojo.html._ContentSetter({node:this.containerNode,_onError:dojo.hitch(this,this._onError),onContentError:dojo.hitch(this,function(e){
-var _1d=this.onContentError(e);
+var _15=this._contentSetter;
+if(!(_15&&_15 instanceof dojo.html._ContentSetter)){
+_15=this._contentSetter=new dojo.html._ContentSetter({node:this.containerNode,_onError:dojo.hitch(this,this._onError),onContentError:dojo.hitch(this,function(e){
+var _16=this.onContentError(e);
 try{
-this.containerNode.innerHTML=_1d;
+this.containerNode.innerHTML=_16;
 }
 catch(e){
 console.error("Fatal "+this.id+" could not change content due to "+e.message,e);
 }
 })});
 }
-var _1e=dojo.mixin({cleanContent:this.cleanContent,extractContent:this.extractContent,parseContent:this.parseOnLoad},this._contentSetterParams||{});
-dojo.mixin(_1c,_1e);
-_1c.set((dojo.isObject(_1a)&&_1a.domNode)?_1a.domNode:_1a);
+var _17=dojo.mixin({cleanContent:this.cleanContent,extractContent:this.extractContent,parseContent:this.parseOnLoad,parserScope:this.parserScope,startup:false,dir:this.dir,lang:this.lang},this._contentSetterParams||{});
+_15.set((dojo.isObject(_13)&&_13.domNode)?_13.domNode:_13,_17);
 delete this._contentSetterParams;
-if(!_1b){
-dojo.forEach(this.getChildren(),function(_1f){
-if(!this.parseOnLoad||_1f.getParent){
-_1f.startup();
-}
-},this);
-this._scheduleLayout();
-this._onLoadHandler(_1a);
-}
-},_onError:function(_20,err,_21){
-this.onLoadDeferred.errback(err);
-var _22=this["on"+_20+"Error"].call(this,err);
-if(_21){
-console.error(_21,err);
-}else{
-if(_22){
-this._setContent(_22,true);
-}
-}
-},_scheduleLayout:function(){
-if(this._isShown()){
-this._layoutChildren();
-}else{
-this._needLayout=true;
-}
-},_layoutChildren:function(){
 if(this.doLayout){
 this._checkIfSingleChild();
 }
-if(this._singleChild&&this._singleChild.resize){
-var cb=this._contentBox||dojo.contentBox(this.containerNode);
-this._singleChild.resize({w:cb.w,h:cb.h});
+if(!_14){
+if(this._started){
+this._startChildren();
+this._scheduleLayout();
+}
+this._onLoadHandler(_13);
+}
+},_onError:function(_18,err,_19){
+this.onLoadDeferred.errback(err);
+var _1a=this["on"+_18+"Error"].call(this,err);
+if(_19){
+console.error(_19,err);
 }else{
-dojo.forEach(this.getChildren(),function(_23){
-if(_23.resize){
-_23.resize();
+if(_1a){
+this._setContent(_1a,true);
 }
-});
 }
-delete this._needLayout;
-},onLoad:function(_24){
+},onLoad:function(_1b){
 },onUnload:function(){
 },onDownloadStart:function(){
 return this.loadingMessage;
-},onContentError:function(_25){
-},onDownloadError:function(_26){
+},onContentError:function(_1c){
+},onDownloadError:function(_1d){
 return this.errorMessage;
 },onDownloadEnd:function(){
 }});

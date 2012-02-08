@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.gears"]){
 dojo._hasResource["dojo.gears"]=true;
 dojo.provide("dojo.gears");
+dojo.getObject("gears",true,dojo);
 dojo.gears._gearsObject=function(){
 var _1;
 var _2;

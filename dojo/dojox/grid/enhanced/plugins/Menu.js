@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,63 +8,84 @@
 if(!dojo._hasResource["dojox.grid.enhanced.plugins.Menu"]){
 dojo._hasResource["dojox.grid.enhanced.plugins.Menu"]=true;
 dojo.provide("dojox.grid.enhanced.plugins.Menu");
-dojo.declare("dojox.grid.enhanced.plugins.Menu",null,{constructor:function(_1){
-_1.mixin(_1,this);
-},_initMenus:function(){
-var _2=this.menuContainer;
-!this.headerMenu&&(this.headerMenu=this._getMenuWidget(this.menus["headerMenu"]));
-!this.rowMenu&&(this.rowMenu=this._getMenuWidget(this.menus["rowMenu"]));
-!this.cellMenu&&(this.cellMenu=this._getMenuWidget(this.menus["cellMenu"]));
-!this.selectedRegionMenu&&(this.selectedRegionMenu=this._getMenuWidget(this.menus["selectedRegionMenu"]));
-this.headerMenu&&this.attr("headerMenu",this.headerMenu)&&this.setupHeaderMenu();
-this.rowMenu&&this.attr("rowMenu",this.rowMenu);
-this.cellMenu&&this.attr("cellMenu",this.cellMenu);
-this.isDndSelectEnable&&this.selectedRegionMenu&&dojo.connect(this.select,"setDrugCoverDivs",dojo.hitch(this,this._bindDnDSelectEvent));
-},_getMenuWidget:function(_3){
-if(!_3){
+dojo.require("dojox.grid.enhanced._Plugin");
+dojo.declare("dojox.grid.enhanced.plugins.Menu",dojox.grid.enhanced._Plugin,{name:"menus",types:["headerMenu","rowMenu","cellMenu","selectedRegionMenu"],constructor:function(){
+var g=this.grid;
+g.showMenu=dojo.hitch(g,this.showMenu);
+g._setRowMenuAttr=dojo.hitch(this,"_setRowMenuAttr");
+g._setCellMenuAttr=dojo.hitch(this,"_setCellMenuAttr");
+g._setSelectedRegionMenuAttr=dojo.hitch(this,"_setSelectedRegionMenuAttr");
+},onStartUp:function(){
+var _1,_2=this.option;
+for(_1 in _2){
+if(dojo.indexOf(this.types,_1)>=0&&_2[_1]){
+this._initMenu(_1,_2[_1]);
+}
+}
+},_initMenu:function(_3,_4){
+var g=this.grid;
+if(!g[_3]){
+var m=this._getMenuWidget(_4);
+if(!m){
 return;
 }
-var _4=dijit.byId(_3);
-if(!_4){
-throw new Error("Menu '"+_3+"' not existed");
+g.set(_3,m);
+if(_3!="headerMenu"){
+m._scheduleOpen=function(){
+return;
+};
 }
-return _4;
-},_bindDnDSelectEvent:function(){
-dojo.forEach(this.select.coverDIVs,dojo.hitch(this,function(_5){
-this.selectedRegionMenu.bindDomNode(_5);
-dojo.connect(_5,"contextmenu",dojo.hitch(this,function(e){
-dojo.mixin(e,this.select.getSelectedRegionInfo());
-this.onSelectedRegionContextMenu(e);
-}));
-}));
+}
+},_getMenuWidget:function(_5){
+return (_5 instanceof dijit.Menu)?_5:dijit.byId(_5);
 },_setRowMenuAttr:function(_6){
-this._setRowCellMenuAttr(_6,"rowMenu");
+this._setMenuAttr(_6,"rowMenu");
 },_setCellMenuAttr:function(_7){
-this._setRowCellMenuAttr(_7,"cellMenu");
-},_setRowCellMenuAttr:function(_8,_9){
-if(!_8){
+this._setMenuAttr(_7,"cellMenu");
+},_setSelectedRegionMenuAttr:function(_8){
+this._setMenuAttr(_8,"selectedRegionMenu");
+},_setMenuAttr:function(_9,_a){
+var g=this.grid,n=g.domNode;
+if(!_9||!(_9 instanceof dijit.Menu)){
+console.warn(_a," of Grid ",g.id," is not existed!");
 return;
 }
-if(this[_9]){
-this[_9].unBindDomNode(this.domNode);
+if(g[_a]){
+g[_a].unBindDomNode(n);
 }
-this[_9]=_8;
-this[_9].bindDomNode(this.domNode);
-},showRowCellMenu:function(e){
-var _a=e.sourceView.declaredClass=="dojox.grid._RowSelector";
-if(this.rowMenu&&(!e.cell||this.selection.isSelected(e.rowIndex))){
-this.rowMenu._openMyself(e);
+g[_a]=_9;
+g[_a].bindDomNode(n);
+},showMenu:function(e){
+var _b=(e.cellNode&&dojo.hasClass(e.cellNode,"dojoxGridRowSelected")||e.rowNode&&(dojo.hasClass(e.rowNode,"dojoxGridRowSelected")||dojo.hasClass(e.rowNode,"dojoxGridRowbarSelected")));
+if(_b&&this.selectedRegionMenu){
+this.onSelectedRegionContextMenu(e);
+return;
+}
+var _c={target:e.target,coords:e.keyCode!==dojo.keys.F10&&"pageX" in e?{x:e.pageX,y:e.pageY}:null};
+if(this.rowMenu&&(!this.cellMenu||this.selection.isSelected(e.rowIndex)||e.rowNode&&dojo.hasClass(e.rowNode,"dojoxGridRowbar"))){
+this.rowMenu._openMyself(_c);
 dojo.stopEvent(e);
 return;
 }
-if(_a||e.cell&&e.cell.isRowSelector){
+if(this.cellMenu){
+this.cellMenu._openMyself(_c);
+}
 dojo.stopEvent(e);
-return;
+},destroy:function(){
+var g=this.grid;
+if(g.headerMenu){
+g.headerMenu.unBindDomNode(g.viewsHeaderNode);
 }
-if(this.isDndSelectEnable){
-this.select.cellClick(e.cellIndex,e.rowIndex);
-this.focus.setFocusCell(e.cell,e.rowIndex);
+if(g.rowMenu){
+g.rowMenu.unBindDomNode(g.domNode);
 }
-this.cellMenu&&this.cellMenu._openMyself(e);
+if(g.cellMenu){
+g.cellMenu.unBindDomNode(g.domNode);
+}
+if(g.selectedRegionMenu){
+g.selectedRegionMenu.destroy();
+}
+this.inherited(arguments);
 }});
+dojox.grid.EnhancedGrid.registerPlugin(dojox.grid.enhanced.plugins.Menu);
 }

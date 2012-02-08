@@ -7,14 +7,32 @@ switch($_GET['action']) {
 	case "register":
 		if(!empty($_POST)){
 			$_POST['role'] = "admin";
-			array_push($messages, usertools::registerUser($_POST, $connection));
+			$userResult = usertools::registerUser($_POST, $connection);
+			if($userResult=="0"){
+				array_push($messages, $userResult);
+				array_push($messages, "User ".$_POST['username']." was created successfull!");
+				$template->assign("messages", $messages);
+				$template->display('login.tpl');
+				break;
+			}
+			else{
+			array_push($messages, $userResult);
 			$template->assign("messages", $messages);
+			}
+			
 		}
 		$template->display('register.tpl');
 		break;
 	case "logout":
-		$_SESSION["user"]->logout();
-		header("Location: login.php");
+		if(isset($_SESSION["user"])){
+			$_SESSION["user"]->logout();
+			header("Location: login.php");
+		}
+		else{
+				$template->assign('errorTitle', "You couldn't logout without a user");
+	$template->assign('errorDescription', "If you like to logout, please login first ;)");
+	$template->display('error.tpl');
+		}
 		break;
 	default:
 		if((!empty($_POST['username']))&&(!empty($_POST['password']))){

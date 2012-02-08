@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -23,108 +23,115 @@ location.href="#"+_1;
 }
 return _1;
 };
-var _5=null,_6=null,_7=dojo.config.hashPollFrequency||100;
-function _3(){
-var h=location.href,i=h.indexOf("#");
-return (i>=0)?decodeURIComponent(h.substring(i+1)):"";
+var _5,_6,_7,_8=dojo.config.hashPollFrequency||100;
+function _9(_a,_b){
+var i=_a.indexOf(_b);
+return (i>=0)?_a.substring(i+1):"";
 };
-function _8(){
+function _3(){
+return _9(location.href,"#");
+};
+function _c(){
 dojo.publish("/dojo/hashchange",[_3()]);
 };
-function _9(){
+function _d(){
 if(_3()===_5){
 return;
 }
 _5=_3();
-_8();
+_c();
 };
-function _4(_a){
+function _4(_e){
 if(_6){
 if(_6.isTransitioning()){
-setTimeout(dojo.hitch(null,_4,_a),_7);
+setTimeout(dojo.hitch(null,_4,_e),_8);
 return;
 }
-var _b=_6.iframe.location.href;
-var _c=_b.indexOf("?");
-_6.iframe.location.replace(_b.substring(0,_c)+"?"+_a);
+var _f=_6.iframe.location.href;
+var _10=_f.indexOf("?");
+_6.iframe.location.replace(_f.substring(0,_10)+"?"+_e);
 return;
 }
-location.replace("#"+_a);
-_9();
+location.replace("#"+_e);
+!_7&&_d();
 };
-function _d(){
-var _e=document.createElement("iframe"),_f="dojo-hash-iframe",_10=dojo.config.dojoBlankHtmlUrl||dojo.moduleUrl("dojo","resources/blank.html");
-_e.id=_f;
-_e.src=_10+"?"+_3();
-_e.style.display="none";
-document.body.appendChild(_e);
-this.iframe=dojo.global[_f];
-var _11,_12,_13,_14,_15,_16=this.iframe.location,_17=dojo.global.location;
-function _18(){
-_5=_17.hash;
-_11=_15?_5:_16.search;
-_12=false;
-_13=null;
+function _11(){
+var ifr=document.createElement("iframe"),_12="dojo-hash-iframe",_13=dojo.config.dojoBlankHtmlUrl||dojo.moduleUrl("dojo","resources/blank.html");
+if(dojo.config.useXDomain&&!dojo.config.dojoBlankHtmlUrl){
+console.warn("dojo.hash: When using cross-domain Dojo builds,"+" please save dojo/resources/blank.html to your domain and set djConfig.dojoBlankHtmlUrl"+" to the path on your domain to blank.html");
+}
+ifr.id=_12;
+ifr.src=_13+"?"+_3();
+ifr.style.display="none";
+document.body.appendChild(ifr);
+this.iframe=dojo.global[_12];
+var _14,_15,_16,_17,_18,_19=this.iframe.location;
+function _1a(){
+_5=_3();
+_14=_18?_5:_9(_19.href,"?");
+_15=false;
+_16=null;
 };
 this.isTransitioning=function(){
-return _12;
+return _15;
 };
 this.pollLocation=function(){
-if(!_15){
+if(!_18){
 try{
-_16.search;
-if(document.title!=_14){
-_14=this.iframe.document.title=document.title;
+var _1b=_9(_19.href,"?");
+if(document.title!=_17){
+_17=this.iframe.document.title=document.title;
 }
 }
 catch(e){
-_15=true;
+_18=true;
 console.error("dojo.hash: Error adding history entry. Server unreachable.");
 }
 }
-if(_12&&_5===_17.hash){
-if(_15||_16.search===_13){
-_18();
-_8();
+var _1c=_3();
+if(_15&&_5===_1c){
+if(_18||_1b===_16){
+_1a();
+_c();
 }else{
 setTimeout(dojo.hitch(this,this.pollLocation),0);
 return;
 }
 }else{
-if(_5===_17.hash&&(_15||_11===_16.search)){
+if(_5===_1c&&(_18||_14===_1b)){
 }else{
-if(_5!==_17.hash){
-_5=_17.hash;
-_12=true;
-_13="?"+_3();
-_e.src=_10+_13;
-_15=false;
+if(_5!==_1c){
+_5=_1c;
+_15=true;
+_16=_1c;
+ifr.src=_13+"?"+_16;
+_18=false;
 setTimeout(dojo.hitch(this,this.pollLocation),0);
 return;
 }else{
-if(!_15){
-_17.href="#"+_16.search.substring(1);
-_18();
-_8();
+if(!_18){
+location.href="#"+_19.search.substring(1);
+_1a();
+_c();
 }
 }
 }
 }
-setTimeout(dojo.hitch(this,this.pollLocation),_7);
+setTimeout(dojo.hitch(this,this.pollLocation),_8);
 };
-_18();
-setTimeout(dojo.hitch(this,this.pollLocation),_7);
+_1a();
+setTimeout(dojo.hitch(this,this.pollLocation),_8);
 };
 dojo.addOnLoad(function(){
 if("onhashchange" in dojo.global&&(!dojo.isIE||(dojo.isIE>=8&&document.compatMode!="BackCompat"))){
-dojo.connect(dojo.global,"onhashchange",_8);
+_7=dojo.connect(dojo.global,"onhashchange",_c);
 }else{
 if(document.addEventListener){
 _5=_3();
-setInterval(_9,_7);
+setInterval(_d,_8);
 }else{
 if(document.attachEvent){
-_6=new _d();
+_6=new _11();
 }
 }
 }

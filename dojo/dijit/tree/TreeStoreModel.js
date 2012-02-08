@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -61,41 +61,47 @@ _10++;
 if(_10==0){
 _9(_e);
 }else{
-var _12=function _12(_13){
+dojo.forEach(_e,function(_12,idx){
+if(!_b.isItemLoaded(_12)){
+_b.loadItem({item:_12,onItem:function(_13){
+_e[idx]=_13;
 if(--_10==0){
 _9(_e);
 }
-};
-dojo.forEach(_e,function(_14){
-if(!_b.isItemLoaded(_14)){
-_b.loadItem({item:_14,onItem:_12,onError:_a});
+},onError:_a});
 }
 });
 }
-},isItem:function(_15){
-return this.store.isItem(_15);
-},fetchItemByIdentity:function(_16){
-this.store.fetchItemByIdentity(_16);
-},getIdentity:function(_17){
-return this.store.getIdentity(_17);
-},getLabel:function(_18){
+},isItem:function(_14){
+return this.store.isItem(_14);
+},fetchItemByIdentity:function(_15){
+this.store.fetchItemByIdentity(_15);
+},getIdentity:function(_16){
+return this.store.getIdentity(_16);
+},getLabel:function(_17){
 if(this.labelAttr){
-return this.store.getValue(_18,this.labelAttr);
+return this.store.getValue(_17,this.labelAttr);
 }else{
-return this.store.getLabel(_18);
+return this.store.getLabel(_17);
 }
-},newItem:function(_19,_1a,_1b){
-var _1c={parent:_1a,attribute:this.childrenAttrs[0],insertIndex:_1b};
-if(this.newItemIdAttr&&_19[this.newItemIdAttr]){
-this.fetchItemByIdentity({identity:_19[this.newItemIdAttr],scope:this,onItem:function(_1d){
+},newItem:function(_18,_19,_1a){
+var _1b={parent:_19,attribute:this.childrenAttrs[0]},_1c;
+if(this.newItemIdAttr&&_18[this.newItemIdAttr]){
+this.fetchItemByIdentity({identity:_18[this.newItemIdAttr],scope:this,onItem:function(_1d){
 if(_1d){
-this.pasteItem(_1d,null,_1a,true,_1b);
+this.pasteItem(_1d,null,_19,true,_1a);
 }else{
-this.store.newItem(_19,_1c);
+_1c=this.store.newItem(_18,_1b);
+if(_1c&&(_1a!=undefined)){
+this.pasteItem(_1c,_19,_19,false,_1a);
+}
 }
 }});
 }else{
-this.store.newItem(_19,_1c);
+_1c=this.store.newItem(_18,_1b);
+if(_1c&&(_1a!=undefined)){
+this.pasteItem(_1c,_19,_19,false,_1a);
+}
 }
 },pasteItem:function(_1e,_1f,_20,_21,_22){
 var _23=this.store,_24=this.childrenAttrs[0];
@@ -114,7 +120,7 @@ _24=_25;
 }
 if(_20){
 if(typeof _22=="number"){
-var _27=_23.getValues(_20,_24);
+var _27=_23.getValues(_20,_24).slice();
 _27.splice(_22,0,_1e);
 _23.setValues(_20,_24,_27);
 }else{

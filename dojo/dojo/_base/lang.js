@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -99,11 +99,14 @@ dojo.clone=function(o){
 if(!o||typeof o!="object"||d.isFunction(o)){
 return o;
 }
-if(o.nodeType&&o.cloneNode){
+if(o.nodeType&&"cloneNode" in o){
 return o.cloneNode(true);
 }
 if(o instanceof Date){
 return new Date(o.getTime());
+}
+if(o instanceof RegExp){
+return new RegExp(o);
 }
 var r,i,l,s,_19;
 if(d.isArray(o)){

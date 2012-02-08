@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -14,18 +14,22 @@ this.grid=_1;
 this.cell=null;
 this.rowIndex=-1;
 this._connects=[];
+this._headerConnects=[];
+this.headerMenu=this.grid.headerMenu;
 this._connects.push(dojo.connect(this.grid.domNode,"onfocus",this,"doFocus"));
 this._connects.push(dojo.connect(this.grid.domNode,"onblur",this,"doBlur"));
+this._connects.push(dojo.connect(this.grid.domNode,"oncontextmenu",this,"doContextMenu"));
 this._connects.push(dojo.connect(this.grid.lastFocusNode,"onfocus",this,"doLastNodeFocus"));
 this._connects.push(dojo.connect(this.grid.lastFocusNode,"onblur",this,"doLastNodeBlur"));
 this._connects.push(dojo.connect(this.grid,"_onFetchComplete",this,"_delayedCellFocus"));
 this._connects.push(dojo.connect(this.grid,"postrender",this,"_delayedHeaderFocus"));
 },destroy:function(){
 dojo.forEach(this._connects,dojo.disconnect);
+dojo.forEach(this._headerConnects,dojo.disconnect);
 delete this.grid;
 delete this.cell;
-},_colHeadNode:null,_colHeadFocusIdx:null,tabbingOut:false,focusClass:"dojoxGridCellFocus",focusView:null,initFocusView:function(){
-this.focusView=this.grid.views.getFirstScrollingView()||this.focusView;
+},_colHeadNode:null,_colHeadFocusIdx:null,_contextMenuBindNode:null,tabbingOut:false,focusClass:"dojoxGridCellFocus",focusView:null,initFocusView:function(){
+this.focusView=this.grid.views.getFirstScrollingView()||this.focusView||this.grid.views.views[0];
 this._initColumnHeaders();
 },isFocusCell:function(_2,_3){
 return (this.cell==_2)&&(this.rowIndex==_3);
@@ -76,7 +80,7 @@ if(n){
 try{
 if(!this.grid.edit.isEditing()){
 dojo.toggleClass(n,this.focusClass,true);
-dojo.removeAttr(this.grid.domNode,"aria-activedescendant");
+this.blurHeader();
 dojox.grid.util.fire(n,"focus");
 }
 }
@@ -89,10 +93,12 @@ this.focusHeader();
 this.grid.domNode.focus();
 }
 },_initColumnHeaders:function(){
+dojo.forEach(this._headerConnects,dojo.disconnect);
+this._headerConnects=[];
 var _5=this._findHeaderCells();
 for(var i=0;i<_5.length;i++){
-this._connects.push(dojo.connect(_5[i],"onfocus",this,"doColHeaderFocus"));
-this._connects.push(dojo.connect(_5[i],"onblur",this,"doColHeaderBlur"));
+this._headerConnects.push(dojo.connect(_5[i],"onfocus",this,"doColHeaderFocus"));
+this._headerConnects.push(dojo.connect(_5[i],"onblur",this,"doColHeaderBlur"));
 }
 },_findHeaderCells:function(){
 var _6=dojo.query("th",this.grid.viewsHeaderNode);
@@ -210,8 +216,7 @@ this.setFocusCell(this.grid.getCell(_22),_21);
 if(_23&&!this.isFocusCell(_23,_24)){
 this.tabbingOut=false;
 if(this._colHeadNode){
-dojo.toggleClass(this._colHeadNode,this.focusClass,false);
-dojo.removeAttr(this.grid.domNode,"aria-activedescendant");
+this.blurHeader();
 }
 this._colHeadNode=this._colHeadFocusIdx=null;
 this.focusGridView();
@@ -238,7 +243,7 @@ row=rc;
 }
 if(this.grid.edit.isEditing()){
 var _25=this.grid.getCell(col);
-if(!this.isLastFocusCell()&&!_25.editable){
+if(!this.isLastFocusCell()&&(!_25.editable||this.grid.canEdit&&!this.grid.canEdit(_25,row))){
 this.cell=_25;
 this.rowIndex=row;
 this.next();
@@ -306,6 +311,20 @@ _2c=this.grid.getCell(col);
 if(!_2c||_2c.hidden===true){
 col=i;
 }
+var n=_2c.getNode(row);
+if(!n&&_27){
+if((row+_27)>=0&&(row+_27)<=rc){
+this.move(_27>0?++_27:--_27,_28);
+}
+return;
+}else{
+if((!n||dojo.style(n,"display")==="none")&&_28){
+if((col+_27)>=0&&(col+_27)<=cc){
+this.move(_27,_28>0?++_28:--_28);
+}
+return;
+}
+}
 this.setFocusIndex(row,col);
 if(_27){
 this.grid.updateRow(r);
@@ -336,7 +355,7 @@ this.focusHeader();
 dojo.stopEvent(e);
 }else{
 if(this.isNavHeader()){
-dojo.toggleClass(this._colHeadNode,this.focusClass,false);
+this.blurHeader();
 if(!this.findAndFocusGridCell()){
 this.tabOut(this.grid.lastFocusNode);
 }
@@ -400,11 +419,25 @@ this._colHeadFocusIdx++;
 this._colHeadNode=_34[this._colHeadFocusIdx];
 }
 if(this._colHeadNode&&this._colHeadNode.style.display!="none"){
+if(this.headerMenu&&this._contextMenuBindNode!=this.grid.domNode){
+this.headerMenu.unBindDomNode(this.grid.viewsHeaderNode);
+this.headerMenu.bindDomNode(this.grid.domNode);
+this._contextMenuBindNode=this.grid.domNode;
+}
 this._setActiveColHeader(this._colHeadNode,this._colHeadFocusIdx,_35);
 this._scrollHeader(this._colHeadFocusIdx);
 this._focusifyCellNode(false);
 }else{
 this.findAndFocusGridCell();
+}
+},blurHeader:function(){
+dojo.removeClass(this._colHeadNode,this.focusClass);
+dojo.removeAttr(this.grid.domNode,"aria-activedescendant");
+if(this.headerMenu&&this._contextMenuBindNode==this.grid.domNode){
+var _36=this.grid.viewsHeaderNode;
+this.headerMenu.unBindDomNode(this.grid.domNode);
+this.headerMenu.bindDomNode(_36);
+this._contextMenuBindNode=_36;
 }
 },doFocus:function(e){
 if(e&&e.target!=e.currentTarget){
@@ -418,6 +451,10 @@ this.tabbingOut=false;
 dojo.stopEvent(e);
 },doBlur:function(e){
 dojo.stopEvent(e);
+},doContextMenu:function(e){
+if(!this.headerMenu){
+dojo.stopEvent(e);
+}
 },doLastNodeFocus:function(e){
 if(this.tabbingOut){
 this._focusifyCellNode(false);

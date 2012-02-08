@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.date"]){
 dojo._hasResource["dojo.date"]=true;
 dojo.provide("dojo.date");
+dojo.getObject("date",true,dojo);
 dojo.date.getDaysInMonth=function(_1){
 var _2=_1.getMonth();
 var _3=[31,28,31,30,31,30,31,31,30,31,30,31];

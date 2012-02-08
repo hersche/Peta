@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,9 +8,9 @@
 if(!dojo._hasResource["dojox.data.HtmlStore"]){
 dojo._hasResource["dojox.data.HtmlStore"]=true;
 dojo.provide("dojox.data.HtmlStore");
-dojo.require("dojox.xml.parser");
 dojo.require("dojo.data.util.simpleFetch");
 dojo.require("dojo.data.util.filter");
+dojo.require("dojox.xml.parser");
 dojo.declare("dojox.data.HtmlStore",null,{constructor:function(_1){
 if(_1&&"urlPreventCache" in _1){
 this.urlPreventCache=_1.urlPreventCache?true:false;
@@ -26,14 +26,16 @@ this.url=_1.url;
 this.dataId=_1.dataId;
 }else{
 if(_1.dataId){
-this._rootNode=dojo.byId(_1.dataId);
-this.dataId=this._rootNode.id;
-}else{
-this._rootNode=dojo.byId(this.dataId);
+this.dataId=_1.dataId;
 }
-this._indexItems();
 }
-},url:"",dataId:"",trimWhitespace:false,urlPreventCache:false,_indexItems:function(){
+if(_1&&"fetchOnCreate" in _1){
+this.fetchOnCreate=_1.fetchOnCreate?true:false;
+}
+if(this.fetchOnCreate&&this.dataId){
+this.fetch();
+}
+},url:"",dataId:"",trimWhitespace:false,urlPreventCache:false,fetchOnCreate:false,_indexItems:function(){
 this._getHeadings();
 if(this._rootNode.rows){
 if(this._rootNode.tBodies&&this._rootNode.tBodies.length>0){
@@ -41,14 +43,12 @@ this._rootNode=this._rootNode.tBodies[0];
 }
 var i;
 for(i=0;i<this._rootNode.rows.length;i++){
-this._rootNode.rows[i].store=this;
 this._rootNode.rows[i]._ident=i+1;
 }
 }else{
 var c=1;
 for(i=0;i<this._rootNode.childNodes.length;i++){
 if(this._rootNode.childNodes[i].nodeType===1){
-this._rootNode.childNodes[i].store=this;
 this._rootNode.childNodes[i]._ident=c;
 c++;
 }
@@ -136,10 +136,7 @@ return true;
 }
 return false;
 },isItem:function(_1c){
-if(_1c&&_1c.store&&_1c.store===this){
-return true;
-}
-return false;
+return _1c&&dojo.isDescendant(_1c,this._rootNode);
 },isItemLoaded:function(_1d){
 return this.isItem(_1d);
 },loadItem:function(_1e){
@@ -150,6 +147,8 @@ this._finishFetchItems(_1f,_20,_21);
 }else{
 if(!this.url){
 this._rootNode=dojo.byId(this.dataId);
+this._indexItems();
+this._finishFetchItems(_1f,_20,_21);
 }else{
 var _22={url:this.url,handleAs:"text",preventCache:this.urlPreventCache};
 var _23=this;
@@ -181,7 +180,7 @@ _21(_29,_1f);
 }
 }
 },_finishFetchItems:function(_2a,_2b,_2c){
-var _2d=null;
+var _2d=[];
 var _2e=this._getAllItems();
 if(_2a.query){
 var _2f=_2a.queryOptions?_2a.queryOptions.ignoreCase:false;

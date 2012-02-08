@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -42,14 +42,15 @@ d._scopeArgs=[dojo,dijit,dojox];
 }
 d.global=this;
 d.config={isDebug:false,debugAtAllCosts:false};
-if(typeof djConfig!="undefined"){
-for(var _2 in djConfig){
-d.config[_2]=djConfig[_2];
+var _2=typeof djConfig!="undefined"?djConfig:typeof dojoConfig!="undefined"?dojoConfig:null;
+if(_2){
+for(var c in _2){
+d.config[c]=_2[c];
 }
 }
 dojo.locale=d.config.locale;
-var _3="$Rev: 20973 $".match(/\d+/);
-dojo.version={major:1,minor:4,patch:0,flag:"",revision:_3?+_3[0]:NaN,toString:function(){
+var _3="$Rev: 24595 $".match(/\d+/);
+dojo.version={major:1,minor:6,patch:1,flag:"",revision:_3?+_3[0]:NaN,toString:function(){
 with(d.version){
 return major+"."+minor+"."+patch+flag+" ("+revision+")";
 }
@@ -110,7 +111,7 @@ dojo.getObject=function(_14,_15,_16){
 return d._getProp(_14.split("."),_15,_16);
 };
 dojo.exists=function(_17,obj){
-return !!d.getObject(_17,false,obj);
+return d.getObject(_17,false,obj)!==undefined;
 };
 dojo["eval"]=function(_18){
 return d.global.eval?d.global.eval(_18):eval(_18);

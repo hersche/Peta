@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.data.util.sorter"]){
 dojo._hasResource["dojo.data.util.sorter"]=true;
 dojo.provide("dojo.data.util.sorter");
+dojo.getObject("data.util.sorter",true,dojo);
 dojo.data.util.sorter.basicComparator=function(a,b){
 var r=-1;
 if(a===null){

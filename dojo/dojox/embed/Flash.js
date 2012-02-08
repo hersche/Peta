@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -37,7 +37,8 @@ var a=[];
 for(p in _9.vars){
 a.push(p+"="+_9.vars[p]);
 }
-_a+=((_a.indexOf("?")==-1)?"?":"&")+a.join("&");
+_9.params.FlashVars=a.join("&");
+delete _9.vars;
 }
 var s="<object id=\""+_9.id+"\" "+"classid=\"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000\" "+"width=\""+_9.width+"\" "+"height=\""+_9.height+"\""+((_9.style)?" style=\""+_9.style+"\"":"")+">"+"<param name=\"movie\" value=\""+_a+"\" />";
 if(_9.params){
@@ -91,9 +92,10 @@ var a=[];
 for(p in _f.vars){
 a.push(p+"="+_f.vars[p]);
 }
-_10+=((_10.indexOf("?")==-1)?"?":"&")+a.join("&");
+_f.params.flashVars=a.join("&");
+delete _f.vars;
 }
-var s="<embed type=\"application/x-shockwave-flash\" "+"src=\""+_10+"\" "+"id=\""+_f.id+"\" "+"width=\""+_f.width+"\" "+"height=\""+_f.height+"\""+((_f.style)?" style=\""+_f.style+"\" ":"")+"swLiveConnect=\""+_f.swLiveConnect+"\" "+"allowScriptAccess=\""+_f.allowScriptAccess+"\" "+"allowNetworking=\""+_f.allowNetworking+"\" "+"pluginspage=\""+window.location.protocol+"//www.adobe.com/go/getflashplayer\" ";
+var s="<embed type=\"application/x-shockwave-flash\" "+"src=\""+_10+"\" "+"id=\""+_f.id+"\" "+"width=\""+_f.width+"\" "+"height=\""+_f.height+"\""+((_f.style)?" style=\""+_f.style+"\" ":"")+"pluginspage=\""+window.location.protocol+"//www.adobe.com/go/getflashplayer\" ";
 if(_f.params){
 for(p in _f.params){
 s+=" "+p+"=\""+_f.params[p]+"\"";
@@ -128,7 +130,7 @@ if(_12.expressInstall||this.available&&this.available>=this.minimumVersion){
 if(_12&&_13){
 this.init(_12,_13);
 }else{
-this.onError("embed.Flash was not provided with teh proper arguments.");
+this.onError("embed.Flash was not provided with the proper arguments.");
 }
 }else{
 if(!this.available){
@@ -238,16 +240,6 @@ return __flash__toXML(_1e);
 });
 },obj);
 }});
-if(dojo.isIE){
-if(dojo._initFired){
-var e=document.createElement("script");
-e.type="text/javascript";
-e.src=dojo.moduleUrl("dojox","embed/IE/flash.js");
-document.getElementsByTagName("head")[0].appendChild(e);
-}else{
-document.write("<scr"+"ipt type=\"text/javascript\" src=\""+dojo.moduleUrl("dojox","embed/IE/flash.js")+"\">"+"</scr"+"ipt>");
-}
-}else{
 dojox.embed.Flash.place=function(_1f,_20){
 var o=_1(_1f);
 _20=dojo.byId(_20);
@@ -263,6 +255,5 @@ return o.id;
 return null;
 };
 dojox.embed.Flash.onInitialize();
-}
 })();
 }

@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -54,8 +54,7 @@ this.canDropFlag=_7;
 this.avatar.update();
 }
 },stopDrag:function(){
-dojo.removeClass(dojo.body(),"dojoDndCopy");
-dojo.removeClass(dojo.body(),"dojoDndMove");
+dojo.removeClass(dojo.body(),["dojoDndCopy","dojoDndMove"]);
 dojo.forEach(this.events,dojo.disconnect);
 this.events=[];
 this.avatar.destroy();
@@ -81,7 +80,7 @@ this._setCopyStatus(_8);
 },onMouseUp:function(e){
 if(this.avatar){
 if(this.target&&this.canDropFlag){
-var _9=Boolean(this.source.copyState(dojo.isCopyKey(e))),_a=[this.source,this.nodes,_9,this.target];
+var _9=Boolean(this.source.copyState(dojo.isCopyKey(e))),_a=[this.source,this.nodes,_9,this.target,e];
 dojo.publish("/dnd/drop/before",_a);
 dojo.publish("/dnd/drop",_a);
 }else{
@@ -115,8 +114,7 @@ this._setCopyStatus(_c);
 this.copy=_d;
 this.source._markDndStatus(this.copy);
 this.updateAvatar();
-dojo.removeClass(dojo.body(),"dojoDnd"+(this.copy?"Move":"Copy"));
-dojo.addClass(dojo.body(),"dojoDnd"+(this.copy?"Copy":"Move"));
+dojo.replaceClass(dojo.body(),"dojoDnd"+(this.copy?"Copy":"Move"),"dojoDnd"+(this.copy?"Move":"Copy"));
 }});
 dojo.dnd._manager=null;
 dojo.dnd.manager=function(){

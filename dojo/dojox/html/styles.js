@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -90,7 +90,9 @@ _f="default";
 if(!_1[_f]){
 if(dojo.doc.createStyleSheet){
 _1[_f]=dojo.doc.createStyleSheet();
+if(dojo.isIE<9){
 _1[_f].title=_f;
+}
 }else{
 _1[_f]=dojo.doc.createElement("style");
 _1[_f].setAttribute("type","text/css");

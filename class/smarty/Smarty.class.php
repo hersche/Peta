@@ -1853,7 +1853,7 @@ class Smarty
                                                   'depth'     => ++$this->_inclusion_depth);
             $included_tpls_idx = count($this->_smarty_debug_info) - 1;
         }
-
+		echo($this->_tpl_vars[0]);
         $this->_tpl_vars = array_merge($this->_tpl_vars, $params['smarty_include_vars']);
 
         // config vars are treated as local, so push a copy of the

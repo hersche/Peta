@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -75,16 +75,22 @@ val=it[i];
 if((typeof val=="object")&&val&&!(val instanceof Date)&&i!="__parent"){
 _a=val[_4]||(_5&&val[_3]);
 if(!_a||!val.__parent){
-val.__parent=it;
+if(it!=_b){
+val.__parent=_15;
+}
 }
 if(_a){
 delete it[i];
 var _1a=_a.toString().replace(/(#)([^\.\[])/,"$1.$2").match(/(^([^\[]*\/)?[^#\.\[]*)#?([\.\[].*)?/);
+if(_8[(_6+_a).replace(_c,"$2$3")]){
+_a=_8[(_6+_a).replace(_c,"$2$3")];
+}else{
 if((_a=(_1a[1]=="$"||_1a[1]=="this"||_1a[1]=="")?_1:_8[(_6+_1a[1]).replace(_c,"$2$3")])){
 if(_1a[3]){
 _1a[3].replace(/(\[([^\]]+)\])|(\.?([^\.\[]+))/g,function(t,a,b,c,d){
 _a=_a&&_a[b?b.replace(/[\"\'\\]/,""):d];
 });
+}
 }
 }
 if(_a){
@@ -116,7 +122,7 @@ _8.onUpdate(_15,i,old,val);
 }
 }
 }
-if(_14&&(_3 in it)){
+if(_14&&(_3 in it||_15 instanceof Array)){
 for(i in _15){
 if(!_15.__isDirty&&_15.hasOwnProperty(i)&&!it.hasOwnProperty(i)&&!(i.charAt(0)=="_"&&i.charAt(1)=="_")&&!(_15 instanceof Array&&isNaN(i))){
 if(_8.onUpdate&&i!="_loadObject"&&i!="_idAttr"){

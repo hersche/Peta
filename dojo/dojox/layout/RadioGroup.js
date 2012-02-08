@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -23,8 +23,8 @@ if(this.hasButtons){
 dojo.style(this.buttonHolder,"display","block");
 }
 },_setupChild:function(_1){
-if(this.hasButtons){
 dojo.style(_1.domNode,"position","absolute");
+if(this.hasButtons){
 var _2=this.buttonNode.appendChild(dojo.create("td"));
 var n=dojo.create("div",null,_2),_3=dojo.getObject(this.buttonClass),_4=new _3({label:_1.title,page:_1},n);
 dojo.mixin(_1,{_radioButton:_4});

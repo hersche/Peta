@@ -25,6 +25,7 @@
 </table>
 		<h3>Statistic-Chart: How many was this question wrong answered and how
 		many times was it right?</h3>
+		{if $rightAnswered != "0.1" || $wrongAnswered !="0.1"}
 		<div><b>The answer was {$rightAnswered}  times right answered and
 		{$wrongAnswered} times wrong answered (0.1 means the answer is never answered!)</b></div>
 		<div dojoType="dojox.charting.widget.Chart2D" id="chart4"
@@ -40,6 +41,10 @@
 		<div class="action" type="Tooltip"></div>
 		<div class="action" type="MoveSlice" shift="2"></div>
 		</div>
+		{/if}
+		{if $rightAnswered == "0.1" && $wrongAnswered =="0.1"}
+		<h2>No Question answerd..</h2>
+		{/if}
 
 </form>
 

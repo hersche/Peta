@@ -1,6 +1,9 @@
 <?php
 require_once 'class/default.php';
 require_once 'class/forum.php';
+array_push($allcss, "css/speech.css");
+$template->assign("allcss", $allcss);
+
 $threads = new allThreads($connection, $_SESSION["user"]);
 switch($_GET['action']){
 	case "createthread":

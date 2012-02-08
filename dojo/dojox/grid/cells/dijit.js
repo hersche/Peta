@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -32,22 +32,22 @@ this.widgetClass=dojo.getObject(this.widgetClass);
 this.needFormatNode(_3,_4);
 return "<div></div>";
 },getValue:function(_5){
-return this.widget.attr("value");
+return this.widget.get("value");
 },setValue:function(_6,_7){
-if(this.widget&&this.widget.attr){
+if(this.widget&&this.widget.set){
 if(this.widget.onLoadDeferred){
 var _8=this;
 this.widget.onLoadDeferred.addCallback(function(){
-_8.widget.attr("value",_7===null?"":_7);
+_8.widget.set("value",_7===null?"":_7);
 });
 }else{
-this.widget.attr("value",_7);
+this.widget.set("value",_7);
 }
 }else{
 this.inherited(arguments);
 }
 },getWidgetProps:function(_9){
-return dojo.mixin({},this.widgetProps||{},{constraints:dojo.mixin({},this.constraint)||{},value:_9});
+return dojo.mixin({dir:this.dir,lang:this.lang},this.widgetProps||{},{constraints:dojo.mixin({},this.constraint)||{},value:_9});
 },createWidget:function(_a,_b,_c){
 return new this.widgetClass(this.getWidgetProps(_b),_a);
 },attachWidget:function(_d,_e,_f){
@@ -63,7 +63,8 @@ this.widget=this.createWidget.apply(this,arguments);
 this.attachWidget.apply(this,arguments);
 }
 this.sizeWidget.apply(this,arguments);
-this.grid.rowHeightChanged(_12);
+this.grid.views.renormalizeRow(_12);
+this.grid.scroller.rowHeightChanged(_12,true);
 this.focus();
 return undefined;
 },sizeWidget:function(_13,_14,_15){
@@ -78,6 +79,9 @@ dojox.grid.util.fire(this,"focus");
 },_finish:function(_18){
 this.inherited(arguments);
 dojox.grid.util.removeNode(this.widget.domNode);
+if(dojo.isIE){
+dojo.setSelectable(this.widget.domNode,true);
+}
 }});
 _1._Widget.markupFactory=function(_19,_1a){
 _1._Base.markupFactory(_19,_1a);
@@ -104,8 +108,8 @@ var _20=new dojo.data.ItemFileReadStore({data:{identifier:"name",items:_1f}});
 return dojo.mixin({},this.widgetProps||{},{value:_1e,store:_20});
 },getValue:function(){
 var e=this.widget;
-e.attr("displayedValue",e.attr("displayedValue"));
-return e.attr("value");
+e.set("displayedValue",e.get("displayedValue"));
+return e.get("value");
 }});
 _1.ComboBox.markupFactory=function(_21,_22){
 _1._Widget.markupFactory(_21,_22);
@@ -120,7 +124,7 @@ _22.options=o;
 };
 dojo.declare("dojox.grid.cells.DateTextBox",_1._Widget,{widgetClass:dijit.form.DateTextBox,setValue:function(_24,_25){
 if(this.widget){
-this.widget.attr("value",new Date(_25));
+this.widget.set("value",new Date(_25));
 }else{
 this.inherited(arguments);
 }
@@ -134,7 +138,7 @@ dojo.declare("dojox.grid.cells.CheckBox",_1._Widget,{widgetClass:dijit.form.Chec
 return this.widget.checked;
 },setValue:function(_29,_2a){
 if(this.widget&&this.widget.attributeMap.checked){
-this.widget.attr("checked",_2a);
+this.widget.set("checked",_2a);
 }else{
 this.inherited(arguments);
 }
@@ -161,7 +165,7 @@ dojo.place(e.toolbar.domNode,e.editingArea,"before");
 }
 }
 },populateEditor:function(){
-this.widget.attr("value",this.content);
+this.widget.set("value",this.content);
 this.widget.placeCursorAtEnd();
 }});
 _1.Editor.markupFactory=function(_38,_39){

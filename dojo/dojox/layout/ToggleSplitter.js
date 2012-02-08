@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -10,7 +10,7 @@ dojo._hasResource["dojox.layout.ToggleSplitter"]=true;
 dojo.provide("dojox.layout.ToggleSplitter");
 dojo.experimental("dojox.layout.ToggleSplitter");
 dojo.require("dijit.layout.BorderContainer");
-dojo.declare("dojox.layout.ToggleSplitter",[dijit.layout._Splitter],{open:true,closedThreshold:5,openSize:"",_closedSize:"0",templateString:"<div class=\"dijitSplitter dojoxToggleSplitter\" dojoAttachEvent=\"onkeypress:_onKeyPress,onmousedown:_onMouseDown\" tabIndex=\"0\" waiRole=\"separator\"><div dojoAttachPoint=\"toggleNode\" class=\"dijitSplitterThumb dojoxToggleSplitterIcon\"></div></div>",postCreate:function(){
+dojo.declare("dojox.layout.ToggleSplitter",[dijit.layout._Splitter],{open:true,closedThreshold:5,openSize:"",_closedSize:"0",templateString:"<div class=\"dijitSplitter dojoxToggleSplitter\" dojoAttachEvent=\"onkeypress:_onKeyPress,onmousedown:_onMouseDown\" tabIndex=\"0\" role=\"separator\"><div dojoAttachPoint=\"toggleNode\" class=\"dijitSplitterThumb dojoxToggleSplitterIcon\"></div></div>",postCreate:function(){
 this._started=false;
 this.inherited(arguments);
 var _1=this.region;
@@ -31,7 +31,7 @@ this.openSize=(this.open)?_3+"px":"75px";
 }
 this._openStyleProps=this._getStyleProps(_2,true);
 this._started=true;
-this.attr("open",this.open);
+this.set("open",this.open);
 return this;
 },_onMouseUp:function(_6){
 dojo.disconnect(this._onMoveHandle);
@@ -123,7 +123,7 @@ this[evt](this.child);
 if(evt){
 dojo.stopEvent(evt);
 }
-this.attr("open",!this.open);
+this.set("open",!this.open);
 },_onKeyPress:function(e){
 this.inherited(arguments);
 }});

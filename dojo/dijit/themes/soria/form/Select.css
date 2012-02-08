@@ -1,12 +1,5 @@
-
-.soria .dijitSelectDisabled * {
-    cursor: not-allowed !important;
-}
-.soria .dijitSelectReadOnly * {
-    cursor: default !important;
-}
 .soria .dijitSelect .dijitButtonNode {
-	padding: 0px;
+	padding: 0;
 }
 .soria .dijitSelect .dijitButtonContents {
 	padding-top: 1px;
@@ -21,7 +14,10 @@
 	background: transparent none;
 }
 .dj_ie .soria .dijitSelect .dijitButtonContents {
-	padding-top: 0px;
+	padding-top: 0;
+}
+.soria .dijitSelect .dijitArrowButton {
+	padding: 0 2px;
 }
 .soria .dijitSelectDisabled .dijitButtonNode {
     border-color: #b9bbdd #b9bbdd #b9bbdd #b9bbdd;
@@ -40,11 +36,7 @@
     background: #91b4e5 url("../images/buttonActive.png") top left repeat-x;
 }
 .soria .dijitSelectMenu td {
-	padding: 0em;
-}
-.soria .dijitSelectMenu .dijitMenuItemIcon {
-	margin: 0.1em 0.2em;
-	display: none;
+	padding: 0;
 }
 .soria .dijitSelectMenu .dijitMenuItemLabel,
 .soria .dijitSelectMenu .dijitMenuArrowCell {

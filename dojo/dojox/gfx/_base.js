@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -31,26 +31,12 @@ var _a={"1em":0,"1ex":0,"100%":0,"12pt":0,"16px":0,"xx-small":0,"x-small":0,"sma
 if(dojo.isIE){
 dojo.doc.documentElement.style.fontSize="100%";
 }
-var _b=dojo.doc.createElement("div");
-var s=_b.style;
-s.position="absolute";
-s.left="-100px";
-s.top="0px";
-s.width="30px";
-s.height="1000em";
-s.border="0px";
-s.margin="0px";
-s.padding="0px";
-s.outline="none";
-s.lineHeight="1";
-s.overflow="hidden";
-dojo.body().appendChild(_b);
+var _b=dojo.create("div",{style:{position:"absolute",left:"0",top:"-100px",width:"30px",height:"1000em",borderWidth:"0",margin:"0",padding:"0",outline:"none",lineHeight:"1",overflow:"hidden"}},dojo.body());
 for(var p in _a){
 _b.style.fontSize=p;
 _a[p]=Math.round(_b.offsetHeight*12/16)*16/12/1000;
 }
 dojo.body().removeChild(_b);
-_b=null;
 return _a;
 };
 var _c=null;
@@ -64,18 +50,12 @@ var _e=null,_f={};
 b._getTextBox=function(_10,_11,_12){
 var m,s,al=arguments.length;
 if(!_e){
-m=_e=dojo.doc.createElement("div");
-s=m.style;
-s.position="absolute";
-s.left="-10000px";
-s.top="0";
-dojo.body().appendChild(m);
-}else{
-m=_e;
-s=m.style;
+_e=dojo.create("div",{style:{position:"absolute",top:"-10000px",left:"0"}},dojo.body());
 }
+m=_e;
 m.className="";
-s.border="0";
+s=m.style;
+s.borderWidth="0";
 s.margin="0";
 s.padding="0";
 s.outline="0";
@@ -215,5 +195,12 @@ return val*dojox.gfx.cm_in_pt*_21;
 return parseFloat(len);
 },pathVmlRegExp:/([A-Za-z]+)|(\d+(\.\d+)?)|(\.\d+)|(-\d+(\.\d+)?)|(-\.\d+)/g,pathSvgRegExp:/([A-Za-z])|(\d+(\.\d+)?)|(\.\d+)|(-\d+(\.\d+)?)|(-\.\d+)/g,equalSources:function(a,b){
 return a&&b&&a==b;
+},switchTo:function(_22){
+var ns=dojox.gfx[_22];
+if(ns){
+dojo.forEach(["Group","Rect","Ellipse","Circle","Line","Polyline","Image","Text","Path","TextPath","Surface","createSurface"],function(_23){
+dojox.gfx[_23]=ns[_23];
+});
+}
 }});
 }

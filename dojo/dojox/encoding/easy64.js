@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojox.encoding.easy64"]){
 dojo._hasResource["dojox.encoding.easy64"]=true;
 dojo.provide("dojox.encoding.easy64");
+dojo.getObject("encoding.easy64",true,dojox);
 (function(){
 var c=function(_1,_2,_3){
 for(var i=0;i<_2;i+=3){

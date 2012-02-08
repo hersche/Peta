@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -166,8 +166,7 @@ dojo.stopEvent(e);
 },_changeState:function(_11,_12){
 var _13="dojoDnd"+_11;
 var _14=_11.toLowerCase()+"State";
-dojo.removeClass(this.node,_13+this[_14]);
-dojo.addClass(this.node,_13+_12);
+dojo.replaceClass(this.node,_13+_12,_13+this[_14]);
 this[_14]=_12;
 },_addItemClass:function(_15,_16){
 dojo.addClass(_15,"dojoDndItem"+_16);
@@ -226,7 +225,9 @@ _24=(_23&&_21.data)?_21.data:_21;
 _25=(_23&&_21.type)?_21.type:["text"];
 n=(_22=="avatar"?dojo.dnd._createSpan:c)(String(_24));
 }
+if(!n.id){
 n.id=dojo.dnd.getUniqueId();
+}
 return {node:n,data:_24,type:_25};
 };
 };

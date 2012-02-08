@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,6 +8,7 @@
 if(!dojo._hasResource["dojo.io.script"]){
 dojo._hasResource["dojo.io.script"]=true;
 dojo.provide("dojo.io.script");
+dojo.getObject("io",true,dojo);
 (function(){
 var _1=dojo.isIE?"onreadystatechange":"load",_2=/complete|loaded/;
 dojo.io.script={get:function(_3){

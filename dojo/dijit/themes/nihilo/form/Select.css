@@ -1,12 +1,5 @@
-
-.nihilo .dijitSelectDisabled * {
-    cursor: not-allowed !important;
-}
-.nihilo .dijitSelectReadOnly * {
-    cursor: default !important;
-}
 .nihilo .dijitSelect .dijitButtonNode {
-	padding: 0px;
+	padding: 0;
 }
 .nihilo .dijitSelect .dijitButtonContents {
 	padding-top: 1px;
@@ -21,7 +14,10 @@
 	background: transparent none;
 }
 .dj_ie .nihilo .dijitSelect .dijitButtonContents {
-	padding-top: 0px;
+	padding-top: 0;
+}
+.nihilo .dijitSelect .dijitArrowButton {
+	padding: 0 2px;
 }
 .nihilo .dijitSelectDisabled .dijitButtonNode {
     border-color: #dedede;
@@ -40,11 +36,7 @@
     background: #f5f5f5 url("../images/buttonActive.png") top left repeat-x;
 }
 .nihilo .dijitSelectMenu td {
-	padding: 0em;
-}
-.nihilo .dijitSelectMenu .dijitMenuItemIcon {
-	margin: 0.1em 0.2em;
-	display: none;
+	padding: 0;
 }
 .nihilo .dijitSelectMenu .dijitMenuItemLabel,
 .nihilo .dijitSelectMenu .dijitMenuArrowCell {

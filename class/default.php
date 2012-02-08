@@ -2,11 +2,17 @@
 /**
  * Code for the most sites for the beginning...
  */
+
 require_once 'config.php';
+date_default_timezone_set($GLOBALS["timezone"]);
 require_once 'class/user.php';
+require_once 'class/plugin.php';
 require_once 'class/smarty/Smarty.class.php';
 $messages = array();
+$allcss = array();
 $template = new Smarty();
+$jsscripts = array();
+$dojorequire = array();
 session_start();
 try
 {

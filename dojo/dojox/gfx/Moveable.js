@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -19,8 +19,7 @@ dojo.forEach(this.events,this.shape.disconnect,this.shape);
 this.events=this.shape=null;
 },onMouseDown:function(e){
 if(this.delay){
-this.events.push(this.shape.connect("onmousemove",this,"onMouseMove"));
-this.events.push(this.shape.connect("onmouseup",this,"onMouseUp"));
+this.events.push(this.shape.connect("onmousemove",this,"onMouseMove"),this.shape.connect("onmouseup",this,"onMouseUp"));
 this._lastX=e.clientX;
 this._lastY=e.clientY;
 }else{

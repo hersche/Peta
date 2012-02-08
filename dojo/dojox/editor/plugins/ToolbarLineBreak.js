@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -11,7 +11,10 @@ dojo.provide("dojox.editor.plugins.ToolbarLineBreak");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 dojo.require("dijit._editor._Plugin");
-dojo.declare("dojox.editor.plugins._ToolbarLineBreak",[dijit._Widget,dijit._Templated],{templateString:"<span class='dijit dijitReset'><br></span>",postCreate:function(){
+dojo.require("dijit._Widget");
+dojo.require("dijit._Templated");
+dojo.require("dijit._editor._Plugin");
+dojo.declare("dojox.editor.plugins.ToolbarLineBreak",[dijit._Widget,dijit._Templated],{templateString:"<span class='dijit dijitReset'><br></span>",postCreate:function(){
 dojo.setSelectable(this.domNode,false);
 },isFocusable:function(){
 return false;
@@ -22,7 +25,9 @@ return;
 }
 var _1=o.args.name.toLowerCase();
 if(_1==="||"||_1==="toolbarlinebreak"){
-o.plugin=new dijit._editor._Plugin({button:new dojox.editor.plugins._ToolbarLineBreak()});
+o.plugin=new dijit._editor._Plugin({button:new dojox.editor.plugins.ToolbarLineBreak(),setEditor:function(_2){
+this.editor=_2;
+}});
 }
 });
 }

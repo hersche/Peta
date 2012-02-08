@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -9,6 +9,7 @@ if(!dojo._hasResource["dojo.html"]){
 dojo._hasResource["dojo.html"]=true;
 dojo.provide("dojo.html");
 dojo.require("dojo.parser");
+dojo.getObject("html",true,dojo);
 (function(){
 var _1=0,d=dojo;
 dojo.html._secureForInnerHtml=function(_2){
@@ -31,14 +32,11 @@ d.place(_4,_3,"last");
 }
 return _3;
 };
-dojo.declare("dojo.html._ContentSetter",null,{node:"",content:"",id:"",cleanContent:false,extractContent:false,parseContent:false,constructor:function(_6,_7){
+dojo.declare("dojo.html._ContentSetter",null,{node:"",content:"",id:"",cleanContent:false,extractContent:false,parseContent:false,parserScope:dojo._scopeName,startup:true,constructor:function(_6,_7){
 dojo.mixin(this,_6||{});
 _7=this.node=dojo.byId(this.node||_7);
 if(!this.id){
 this.id=["Setter",(_7)?_7.id||_7.tagName:"",_1++].join("_");
-}
-if(!(this.node||_7)){
-new Error(this.declaredClass+": no node provided to "+this.id);
 }
 },set:function(_8,_9){
 if(undefined!==_8){
@@ -54,7 +52,7 @@ return this.node;
 },setContent:function(){
 var _a=this.node;
 if(!_a){
-console.error("setContent given no node");
+throw new Error(this.declaredClass+": setContent given no node");
 }
 try{
 _a=dojo.html._setNodeContent(_a,this.content);
@@ -117,30 +115,36 @@ this[key]=_f[key];
 },_parse:function(){
 var _11=this.node;
 try{
-this.parseResults=dojo.parser.parse(_11,true);
+var _12={};
+dojo.forEach(["dir","lang","textDir"],function(_13){
+if(this[_13]){
+_12[_13]=this[_13];
+}
+},this);
+this.parseResults=dojo.parser.parse({rootNode:_11,noStart:!this.startup,inherited:_12,scope:this.parserScope});
 }
 catch(e){
 this._onError("Content",e,"Error parsing in _ContentSetter#"+this.id);
 }
-},_onError:function(_12,err,_13){
-var _14=this["on"+_12+"Error"].call(this,err);
-if(_13){
-console.error(_13,err);
+},_onError:function(_14,err,_15){
+var _16=this["on"+_14+"Error"].call(this,err);
+if(_15){
+console.error(_15,err);
 }else{
-if(_14){
-dojo.html._setNodeContent(this.node,_14,true);
+if(_16){
+dojo.html._setNodeContent(this.node,_16,true);
 }
 }
 }});
-dojo.html.set=function(_15,_16,_17){
-if(undefined==_16){
+dojo.html.set=function(_17,_18,_19){
+if(undefined==_18){
 console.warn("dojo.html.set: no cont argument provided, using empty string");
-_16="";
+_18="";
 }
-if(!_17){
-return dojo.html._setNodeContent(_15,_16,true);
+if(!_19){
+return dojo.html._setNodeContent(_17,_18,true);
 }else{
-var op=new dojo.html._ContentSetter(dojo.mixin(_17,{content:_16,node:_15}));
+var op=new dojo.html._ContentSetter(dojo.mixin(_19,{content:_18,node:_17}));
 return op.set();
 }
 };

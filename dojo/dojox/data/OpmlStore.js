@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,8 +8,8 @@
 if(!dojo._hasResource["dojox.data.OpmlStore"]){
 dojo._hasResource["dojox.data.OpmlStore"]=true;
 dojo.provide("dojox.data.OpmlStore");
-dojo.require("dojo.data.util.filter");
 dojo.require("dojo.data.util.simpleFetch");
+dojo.require("dojo.data.util.filter");
 dojo.declare("dojox.data.OpmlStore",null,{constructor:function(_1){
 this._xmlData=null;
 this._arrayOfTopLevelItems=[];

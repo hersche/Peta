@@ -18,25 +18,21 @@
 }
 
 .subThreads {
-	background-color: red;
+	width: 60%;
+	margin-bottom: 100px;
 }
 
 body {
-	border-style: groove;
-	border-width: thin;
-	width: 800px;
-	height: 100%;
-	padding: 0px, 0px, 0px, 0px,;
-	position: relative;
-	left: 25%;
-	right: 25%;
+
+	width: 80%;
+	height: 90%;
 }
 
 .menu {
 	border-style: dashed;
 	border-width: thin 0px thin 0px;
 	width: 100%;
-	height: 30px;
+	height: 50px;
 	padding: 0px, 0px, 0px, 0px,;
 	background-color: #DBF7A2;
 }

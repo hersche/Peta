@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -14,7 +14,7 @@ dojo.declare("dijit.layout._TabContainerBase",[dijit.layout.StackContainer,dijit
 this.baseClass+=this.tabPosition.charAt(0).toUpperCase()+this.tabPosition.substr(1).replace(/-.*/,"");
 this.srcNodeRef&&dojo.style(this.srcNodeRef,"visibility","hidden");
 this.inherited(arguments);
-},postCreate:function(){
+},buildRendering:function(){
 this.inherited(arguments);
 this.tablist=this._makeController(this.tablistNode);
 if(!this.doLayout){
@@ -41,22 +41,27 @@ this.inherited(arguments);
 if(!this._contentBox||typeof (this._contentBox.l)=="undefined"){
 return;
 }
+var sc=this.selectedChildWidget;
 if(this.doLayout){
 var _2=this.tabPosition.replace(/-h/,"");
 this.tablist.layoutAlign=_2;
 var _3=[this.tablist,{domNode:this.tablistSpacer,layoutAlign:_2},{domNode:this.containerNode,layoutAlign:"client"}];
 dijit.layout.layoutChildren(this.domNode,this._contentBox,_3);
 this._containerContentBox=dijit.layout.marginBox2contentBox(this.containerNode,_3[2]);
-if(this.selectedChildWidget){
-if(this.selectedChildWidget.resize){
-this.selectedChildWidget.resize(this._containerContentBox);
-}
+if(sc&&sc.resize){
+sc.resize(this._containerContentBox);
 }
 }else{
 if(this.tablist.resize){
-this.tablist.resize({w:dojo.contentBox(this.domNode).w});
+var s=this.tablist.domNode.style;
+s.width="0";
+var _4=dojo.contentBox(this.domNode).w;
+s.width="";
+this.tablist.resize({w:_4});
 }
-this.selectedChildWidget.resize();
+if(sc&&sc.resize){
+sc.resize();
+}
 }
 },destroy:function(){
 if(this.tablist){

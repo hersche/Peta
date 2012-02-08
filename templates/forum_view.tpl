@@ -1,10 +1,11 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
 {include file="menu.tpl"} {include file="forum_menu.tpl"}
 <h1>Forum</h1>
-<div class="mainThread">
+<div class="example-right" style="margin-bottom:100px; >
 <table border="1">
 <tr><td colspan="2"><h3>{$threadTitle}</h3></td >{if (($admin)||($ownuserid eq $userid))}<td><h3><a href="forum.php?action=editthread&amp;threadid={$threadid}"> (edit)</a></h3></td>{/if}</tr>
 <tr><td colspan="3">{$threadText}</td></tr>
+<hr />
 <tr><td>Posted by <a href="profile.php?userid={$userid}">{$username}</a></td><td><a href="forum.php?action=reply&amp;threadid={$threadid}">Reply to this
 topic!</a></td><td>Last change on {$threadage}</td></tr>
 </table>
@@ -12,9 +13,9 @@ topic!</a></td><td>Last change on {$threadage}</td></tr>
 </div>
 <div class="subThreads">
 {section name=id loop=$subthreads}
-<div class="subThread"
-	style="margin-left: {$subthreads[id]->getPosition()}px; margin-top: 20px">
-<table border="1">
+<div class="example-commentheading"
+	style="margin-left: {$subthreads[id]->getPosition()}px; margin-top: 20px;">
+<table border="2">
 	<tr>
 		{if $subthreads[id]->getTitle() neq ""}<td colspan="2"><h3>{$subthreads[id]->getTitle()}</h3></td>{/if}
 		{if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))}<td> <a

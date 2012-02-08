@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -476,20 +476,34 @@ return dojox.grid.DataGrid.prototype.getItem.call(this,idx);
 }
 var s=this.store;
 var itm=dojox.grid.DataGrid.prototype.getItem.call(this,idx[0]);
-var cf;
+var cf,i,j;
 if(this.aggregator){
 cf=this.aggregator.childFields||[];
-}else{
-if(this.treeModel){
-cf=this.treeModel.childrenAttrs||[];
-}
-}
 if(cf){
-for(var i=0;i<idx.length-1&&itm;i++){
+for(i=0;i<idx.length-1&&itm;i++){
 if(cf[i]){
 itm=(s.getValues(itm,cf[i])||[])[idx[i+1]];
 }else{
 itm=null;
+}
+}
+}
+}else{
+if(this.treeModel){
+cf=this.treeModel.childrenAttrs||[];
+if(cf&&itm){
+for(i=1,il=idx.length;(i<il)&&itm;i++){
+for(j=0,jl=cf.length;j<jl;j++){
+if(cf[j]){
+itm=(s.getValues(itm,cf[j])||[])[idx[i]];
+}else{
+itm=null;
+}
+if(itm){
+break;
+}
+}
+}
 }
 }
 }

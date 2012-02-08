@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2004-2009, The Dojo Foundation All Rights Reserved.
+	Copyright (c) 2004-2011, The Dojo Foundation All Rights Reserved.
 	Available via Academic Free License >= 2.1 OR the modified BSD license.
 	see: http://dojotoolkit.org/license for details
 */
@@ -8,284 +8,362 @@
 if(!dojo._hasResource["dojox.grid.enhanced.plugins.IndirectSelection"]){
 dojo._hasResource["dojox.grid.enhanced.plugins.IndirectSelection"]=true;
 dojo.provide("dojox.grid.enhanced.plugins.IndirectSelection");
+dojo.require("dojo.string");
 dojo.require("dojox.grid.cells.dijit");
-dojo.require("dojox.grid.cells._base");
-dojo.declare("dojox.grid.enhanced.plugins.IndirectSelection",null,{constructor:function(_1){
-this.grid=_1;
-dojo.connect(_1.layout,"setStructure",dojo.hitch(_1.layout,this.addRowSelectCell));
-},addRowSelectCell:function(){
+dojo.require("dojox.grid.enhanced._Plugin");
+dojo.declare("dojox.grid.enhanced.plugins.IndirectSelection",dojox.grid.enhanced._Plugin,{name:"indirectSelection",constructor:function(){
+var _1=this.grid.layout;
+this.connect(_1,"setStructure",dojo.hitch(_1,this.addRowSelectCell,this.option));
+},addRowSelectCell:function(_2){
 if(!this.grid.indirectSelection||this.grid.selectionMode=="none"){
 return;
 }
-var _2=false,_3=["get","formatter","field","fields"],_4={type:dojox.grid.cells.DijitMultipleRowSelector,name:"",editable:true,width:"30px",styles:"text-align: center;"};
-dojo.forEach(this.structure,dojo.hitch(this,function(_5){
-var _6=_5.cells;
-if(_6&&_6.length>0&&!_2){
-var _7=_6[0];
-if(_7[0]&&_7[0]["isRowSelector"]){
-_2=true;
+var _3=false,_4=["get","formatter","field","fields"],_5={type:dojox.grid.cells.MultipleRowSelector,name:"",width:"30px",styles:"text-align: center;"};
+if(_2.headerSelector){
+_2.name="";
+}
+if(this.grid.rowSelectCell){
+this.grid.rowSelectCell.destroy();
+}
+dojo.forEach(this.structure,function(_6){
+var _7=_6.cells;
+if(_7&&_7.length>0&&!_3){
+var _8=_7[0];
+if(_8[0]&&_8[0].isRowSelector){
+_3=true;
 return;
 }
-var _8,_9=this.grid.selectionMode=="single"?dojox.grid.cells.DijitSingleRowSelector:dojox.grid.cells.DijitMultipleRowSelector;
-if(!dojo.isObject(this.grid.indirectSelection)){
-_8=dojo.mixin(_4,{type:_9});
-}else{
-_8=dojo.mixin(_4,this.grid.indirectSelection,{type:_9,editable:true});
-dojo.forEach(_3,function(_a){
-if(_a in _8){
-delete _8[_a];
+var _9,_a=this.grid.selectionMode=="single"?dojox.grid.cells.SingleRowSelector:dojox.grid.cells.MultipleRowSelector;
+_9=dojo.mixin(_5,_2,{type:_a,editable:false,notselectable:true,filterable:false,navigatable:true,nosort:true});
+dojo.forEach(_4,function(_b){
+if(_b in _9){
+delete _9[_b];
 }
 });
+if(_7.length>1){
+_9.rowSpan=_7.length;
 }
-_6.length>1&&(_8["rowSpan"]=_6.length);
-dojo.forEach(this.cells,function(_b,i){
-if(_b.index>=0){
-_b.index+=1;
+dojo.forEach(this.cells,function(_c,i){
+if(_c.index>=0){
+_c.index+=1;
 }else{
+console.warn("Error:IndirectSelection.addRowSelectCell()-  cell "+i+" has no index!");
 }
 });
-var _c=this.addCellDef(0,0,_8);
-_c.index=0;
-_7.unshift(_c);
-this.cells.unshift(_c);
-this.grid.rowSelectCell=_c;
-_2=true;
+var _d=this.addCellDef(0,0,_9);
+_d.index=0;
+_8.unshift(_d);
+this.cells.unshift(_d);
+this.grid.rowSelectCell=_d;
+_3=true;
+}
+},this);
+this.cellCount=this.cells.length;
+},destroy:function(){
+this.grid.rowSelectCell.destroy();
+delete this.grid.rowSelectCell;
+this.inherited(arguments);
+}});
+dojo.declare("dojox.grid.cells.RowSelector",dojox.grid.cells._Widget,{inputType:"",map:null,disabledMap:null,isRowSelector:true,_connects:null,_subscribes:null,checkedText:"&#8730;",unCheckedText:"O",constructor:function(){
+this.map={};
+this.disabledMap={},this.disabledCount=0;
+this._connects=[];
+this._subscribes=[];
+this.inA11YMode=dojo.hasClass(dojo.body(),"dijit_a11y");
+this.baseClass="dojoxGridRowSelector dijitReset dijitInline dijit"+this.inputType;
+this.checkedClass=" dijit"+this.inputType+"Checked";
+this.disabledClass=" dijit"+this.inputType+"Disabled";
+this.checkedDisabledClass=" dijit"+this.inputType+"CheckedDisabled";
+this.statusTextClass=" dojoxGridRowSelectorStatusText";
+this._connects.push(dojo.connect(this.grid,"dokeyup",this,"_dokeyup"));
+this._connects.push(dojo.connect(this.grid.selection,"onSelected",this,"_onSelected"));
+this._connects.push(dojo.connect(this.grid.selection,"onDeselected",this,"_onDeselected"));
+this._connects.push(dojo.connect(this.grid.scroller,"invalidatePageNode",this,"_pageDestroyed"));
+this._connects.push(dojo.connect(this.grid,"onCellClick",this,"_onClick"));
+this._connects.push(dojo.connect(this.grid,"updateRow",this,"_onUpdateRow"));
+},formatter:function(_e,_f){
+var _10=this.baseClass;
+var _11=this.getValue(_f);
+var _12=!!this.disabledMap[_f];
+if(_11){
+_10+=this.checkedClass;
+if(_12){
+_10+=this.checkedDisabledClass;
+}
+}else{
+if(_12){
+_10+=this.disabledClass;
+}
+}
+return ["<div tabindex = -1 ","id = '"+this.grid.id+"_rowSelector_"+_f+"' ","name = '"+this.grid.id+"_rowSelector' class = '"+_10+"' ","role = 'presentation' aria-pressed = '"+_11+"' aria-disabled = '"+_12+"' aria-label = '"+dojo.string.substitute(this.grid._nls["indirectSelection"+this.inputType],[_f+1])+"'>","<span class = '"+this.statusTextClass+"'>"+(_11?this.checkedText:this.unCheckedText)+"</span>","</div>"].join("");
+},setValue:function(_13,_14){
+},getValue:function(_15){
+return this.grid.selection.isSelected(_15);
+},toggleRow:function(_16,_17){
+this._nativeSelect(_16,_17);
+},setDisabled:function(_18,_19){
+if(_18<0){
+return;
+}
+this._toggleDisabledStyle(_18,_19);
+},disabled:function(_1a){
+return !!this.disabledMap[_1a];
+},_onClick:function(e){
+if(e.cell===this){
+this._selectRow(e);
+}
+},_dokeyup:function(e){
+if(e.cellIndex==this.index&&e.rowIndex>=0&&e.keyCode==dojo.keys.SPACE){
+this._selectRow(e);
+}
+},focus:function(_1b){
+var _1c=this.map[_1b];
+if(_1c){
+_1c.focus();
+}
+},_focusEndingCell:function(_1d,_1e){
+var _1f=this.grid.getCell(_1e);
+this.grid.focus.setFocusCell(_1f,_1d);
+},_nativeSelect:function(_20,_21){
+this.grid.selection[_21?"select":"deselect"](_20);
+},_onSelected:function(_22){
+this._toggleCheckedStyle(_22,true);
+},_onDeselected:function(_23){
+this._toggleCheckedStyle(_23,false);
+},_onUpdateRow:function(_24){
+delete this.map[_24];
+},_toggleCheckedStyle:function(_25,_26){
+var _27=this._getSelector(_25);
+if(_27){
+dojo.toggleClass(_27,this.checkedClass,_26);
+if(this.disabledMap[_25]){
+dojo.toggleClass(_27,this.checkedDisabledClass,_26);
+}
+dijit.setWaiState(_27,"pressed",_26);
+if(this.inA11YMode){
+dojo.attr(_27.firstChild,"innerHTML",_26?this.checkedText:this.unCheckedText);
+}
+}
+},_toggleDisabledStyle:function(_28,_29){
+var _2a=this._getSelector(_28);
+if(_2a){
+dojo.toggleClass(_2a,this.disabledClass,_29);
+if(this.getValue(_28)){
+dojo.toggleClass(_2a,this.checkedDisabledClass,_29);
+}
+dijit.setWaiState(_2a,"disabled",_29);
+}
+this.disabledMap[_28]=_29;
+if(_28>=0){
+this.disabledCount+=_29?1:-1;
+}
+},_getSelector:function(_2b){
+var _2c=this.map[_2b];
+if(!_2c){
+var _2d=this.view.rowNodes[_2b];
+if(_2d){
+_2c=dojo.query(".dojoxGridRowSelector",_2d)[0];
+if(_2c){
+this.map[_2b]=_2c;
+}
+}
+}
+return _2c;
+},_pageDestroyed:function(_2e){
+var _2f=this.grid.scroller.rowsPerPage;
+var _30=_2e*_2f,end=_30+_2f-1;
+for(var i=_30;i<=end;i++){
+if(!this.map[i]){
+continue;
+}
+dojo.destroy(this.map[i]);
+delete this.map[i];
+}
+},destroy:function(){
+for(var i in this.map){
+dojo.destroy(this.map[i]);
+delete this.map[i];
+}
+for(i in this.disabledMap){
+delete this.disabledMap[i];
+}
+dojo.forEach(this._connects,dojo.disconnect);
+dojo.forEach(this._subscribes,dojo.unsubscribe);
+delete this._connects;
+delete this._subscribes;
+}});
+dojo.declare("dojox.grid.cells.SingleRowSelector",dojox.grid.cells.RowSelector,{inputType:"Radio",_selectRow:function(e){
+var _31=e.rowIndex;
+if(this.disabledMap[_31]){
+return;
+}
+this._focusEndingCell(_31,0);
+this._nativeSelect(_31,!this.grid.selection.selected[_31]);
+}});
+dojo.declare("dojox.grid.cells.MultipleRowSelector",dojox.grid.cells.RowSelector,{inputType:"CheckBox",swipeStartRowIndex:-1,swipeMinRowIndex:-1,swipeMaxRowIndex:-1,toSelect:false,lastClickRowIdx:-1,toggleAllTrigerred:false,unCheckedText:"&#9633;",constructor:function(){
+this._connects.push(dojo.connect(dojo.doc,"onmouseup",this,"_domouseup"));
+this._connects.push(dojo.connect(this.grid,"onRowMouseOver",this,"_onRowMouseOver"));
+this._connects.push(dojo.connect(this.grid.focus,"move",this,"_swipeByKey"));
+this._connects.push(dojo.connect(this.grid,"onCellMouseDown",this,"_onMouseDown"));
+if(this.headerSelector){
+this._connects.push(dojo.connect(this.grid.views,"render",this,"_addHeaderSelector"));
+this._connects.push(dojo.connect(this.grid,"onSelectionChanged",this,"_onSelectionChanged"));
+this._connects.push(dojo.connect(this.grid,"onKeyDown",this,function(e){
+if(e.rowIndex==-1&&e.cellIndex==this.index&&e.keyCode==dojo.keys.SPACE){
+this._toggletHeader();
 }
 }));
-this.cellCount=this.cells.length;
-}});
-dojo.declare("dojox.grid.cells._SingleRowSelectorMixin",null,{alwaysEditing:true,widgetMap:{},widget:null,isRowSelector:true,defaultValue:false,formatEditing:function(_d,_e){
-this.needFormatNode(_d,_e);
-},_formatNode:function(_f,_10){
-this.formatNode(_f,_10);
-},setValue:function(_11,_12){
-return;
-},get:function(_13){
-var _14=this.widgetMap[this.view.id]?this.widgetMap[this.view.id][_13]:null;
-var _15=_14?_14.attr("checked"):"";
-return _15;
-},_fireSelectionChanged:function(){
-dojo.publish(this.grid.rowSelectionChangedTopic,[this]);
-},_selectionChanged:function(obj){
-if(obj==this){
-return;
 }
-for(var i in this.widgetMap[this.view.id]){
-var idx=new Number(i);
-var _16=this.widgetMap[this.view.id][idx];
-var _17=!!this.grid.selection.selected[idx];
-_16.attr("checked",_17);
+},toggleAllSelection:function(_32){
+var _33=this.grid,_34=_33.selection;
+if(_32){
+_34.selectRange(0,_33.rowCount-1);
+}else{
+_34.deselectAll();
 }
-this.defaultValue=false;
-this.grid.edit.isEditing()&&this.grid.edit.apply();
-},_toggleSingleRow:function(idx,_18){
-var _19;
-dojo.hitch(this.grid.selection,dojox.grid.Selection.prototype[_18?"addToSelection":"deselect"])(idx);
-if(this.widgetMap[this.view.id]&&(_19=this.widgetMap[this.view.id][idx])){
-_19.attr("checked",_18);
-}
-this._fireSelectionChanged();
-},inIndirectSelectionMode:function(){
-},toggleAllSelection:function(){
-}});
-dojo.declare("dojox.grid.cells._MultipleRowSelectorMixin",null,{swipeStartRowIndex:-1,swipeMinRowIndex:-1,swipeMaxRowIndex:-1,toSelect:false,lastClickRowIdx:-1,toggleAllTrigerred:false,_inDndSelection:false,domousedown:function(e){
-if(e.target.tagName=="INPUT"){
+this.toggleAllTrigerred=true;
+},_onMouseDown:function(e){
+if(e.cell==this){
 this._startSelection(e.rowIndex);
-}
 dojo.stopEvent(e);
-},domousemove:function(e){
-this._updateSelection(e,0);
-},onRowMouseOver:function(e){
-this._updateSelection(e,0);
-if(this.grid.dnd){
-this._inDndSelection=this.grid.select.isInSelectingMode("row");
 }
-},domouseup:function(e){
-dojo.isIE&&this.view.content.decorateEvent(e);
-var _1a=e.cellIndex>=0&&(this.inIndirectSelectionMode()||this._inDndSelection)&&!this.grid.edit.isEditRow(e.rowIndex);
-_1a&&this._focusEndingCell(e.rowIndex,e.cellIndex);
-this._finisheSelect();
-},dokeyup:function(e){
+},_onRowMouseOver:function(e){
+this._updateSelection(e,0);
+},_domouseup:function(e){
+if(dojo.isIE){
+this.view.content.decorateEvent(e);
+}
+var _35=e.cellIndex>=0&&this.inSwipeSelection()&&!this.grid.edit.isEditRow(e.rowIndex);
+if(_35){
+this._focusEndingCell(e.rowIndex,e.cellIndex);
+}
+this._finishSelect();
+},_dokeyup:function(e){
+this.inherited(arguments);
 if(!e.shiftKey){
-this._finisheSelect();
+this._finishSelect();
 }
-},_startSelection:function(_1b){
-this.swipeStartRowIndex=this.swipeMinRowIndex=this.swipeMaxRowIndex=_1b;
-this.toSelect=!this.widgetMap[this.view.id][_1b].attr("checked");
-},_updateSelection:function(e,_1c){
-if(this.swipeStartRowIndex<0){
+},_startSelection:function(_36){
+this.swipeStartRowIndex=this.swipeMinRowIndex=this.swipeMaxRowIndex=_36;
+this.toSelect=!this.getValue(_36);
+},_updateSelection:function(e,_37){
+if(!this.inSwipeSelection()){
 return;
 }
-var _1d=_1c!=0;
-var _1e=e.rowIndex-this.swipeStartRowIndex+_1c;
-_1e>0&&(this.swipeMaxRowIndex<e.rowIndex+_1c)&&(this.swipeMaxRowIndex=e.rowIndex+_1c);
-_1e<0&&(this.swipeMinRowIndex>e.rowIndex+_1c)&&(this.swipeMinRowIndex=e.rowIndex+_1c);
-if(this.swipeMinRowIndex!=this.swipeMaxRowIndex){
-for(var i in this.widgetMap[this.view.id]){
-var idx=new Number(i);
-var _1f=(idx>=(_1e>0?this.swipeStartRowIndex:e.rowIndex+_1c)&&idx<=(_1e>0?e.rowIndex+_1c:this.swipeStartRowIndex));
-var _20=(idx>=this.swipeMinRowIndex&&idx<=this.swipeMaxRowIndex);
-if(_1f&&!(_1e==0&&!this.toSelect)){
-(this.widgetMap[this.view.id][idx]).attr("checked",this.toSelect);
-dojo.hitch(this.grid.selection,dojox.grid.Selection.prototype[this.toSelect?"addToSelection":"deselect"])(idx);
+var _38=_37!==0;
+var _39=e.rowIndex,_3a=_39-this.swipeStartRowIndex+_37;
+if(_3a>0&&this.swipeMaxRowIndex<_39+_37){
+this.swipeMaxRowIndex=_39+_37;
+}
+if(_3a<0&&this.swipeMinRowIndex>_39+_37){
+this.swipeMinRowIndex=_39+_37;
+}
+var min=_3a>0?this.swipeStartRowIndex:_39+_37;
+var max=_3a>0?_39+_37:this.swipeStartRowIndex;
+for(var i=this.swipeMinRowIndex;i<=this.swipeMaxRowIndex;i++){
+if(this.disabledMap[i]||i<0){
+continue;
+}
+if(i>=min&&i<=max){
+this._nativeSelect(i,this.toSelect);
 }else{
-if(_20&&!_1d){
-(this.widgetMap[this.view.id][idx]).attr("checked",!this.toSelect);
-dojo.hitch(this.grid.selection,dojox.grid.Selection.prototype[!this.toSelect?"addToSelection":"deselect"])(idx);
+if(!_38){
+this._nativeSelect(i,!this.toSelect);
 }
 }
 }
+},_swipeByKey:function(_3b,_3c,e){
+if(!e||_3b===0||!e.shiftKey||e.cellIndex!=this.index||this.grid.focus.rowIndex<0){
+return;
 }
-this._fireSelectionChanged();
-},swipeSelectionByKey:function(e,_21){
+var _3d=e.rowIndex;
 if(this.swipeStartRowIndex<0){
-this.swipeStartRowIndex=e.rowIndex;
-if(_21>0){
-this.swipeMaxRowIndex=e.rowIndex+_21;
-this.swipeMinRowIndex=e.rowIndex;
+this.swipeStartRowIndex=_3d;
+if(_3b>0){
+this.swipeMaxRowIndex=_3d+_3b;
+this.swipeMinRowIndex=_3d;
 }else{
-this.swipeMinRowIndex=e.rowIndex+_21;
-this.swipeMaxRowIndex=e.rowIndex;
+this.swipeMinRowIndex=_3d+_3b;
+this.swipeMaxRowIndex=_3d;
 }
-this.toSelect=this.widgetMap[this.view.id][e.rowIndex].attr("checked");
+this.toSelect=this.getValue(_3d);
 }
-this._updateSelection(e,_21);
-},_finisheSelect:function(){
+this._updateSelection(e,_3b);
+},_finishSelect:function(){
 this.swipeStartRowIndex=-1;
 this.swipeMinRowIndex=-1;
 this.swipeMaxRowIndex=-1;
 this.toSelect=false;
-},inIndirectSelectionMode:function(){
+},inSwipeSelection:function(){
 return this.swipeStartRowIndex>=0;
-},toggleAllSelection:function(_22){
-for(var i in this.widgetMap[this.view.id]){
-var idx=new Number(i);
-var _23=this.widgetMap[this.view.id][idx];
-_23.attr("checked",_22);
-dojo.hitch(this.grid.selection,dojox.grid.Selection.prototype[_22?"addToSelection":"deselect"])(idx);
-}
-!_22&&this.grid.selection.deselectAll();
-this.defaultValue=_22;
-this.toggleAllTrigerred=true;
-this._fireSelectionChanged();
-}});
-dojo.declare("dojox.grid.cells.DijitSingleRowSelector",[dojox.grid.cells._Widget,dojox.grid.cells._SingleRowSelectorMixin],{widgetClass:dijit.form.RadioButton,constructor:function(){
-dojo.subscribe(this.grid.rowSelectionChangedTopic,this,this._selectionChanged);
-dojo.subscribe(this.grid.sortRowSelectionChangedTopic,this,this._selectionChanged);
-this.grid.indirectSelector=this;
-},formatNode:function(_24,_25){
-if(!this.widgetClass){
-return _24;
-}
-!this.widgetMap[this.view.id]&&(this.widgetMap[this.view.id]={});
-var _26=this.widgetMap[this.view.id][_25];
-var _27=this.getNode(_25);
-if(!_27){
-return;
-}
-var _28=!_27.firstChild||(_26&&_26.domNode!=_27.firstChild);
-var _29=_28&&!_27.firstChild?_27.appendChild(dojo.create("div")):_27.firstChild;
-if(!_26||dojo.isIE){
-!this.widgetProps&&(this.widgetProps={});
-this.widgetProps.name="select_"+this.view.id;
-var _2a=this.getDefaultValue(_26,_25);
-this.widget=_26=this.createWidget(_29,_24,_25);
-this.widgetMap[this.view.id][_25]=_26;
-this.widget.attr("checked",_2a);
-dojo.connect(_26,"_onClick",dojo.hitch(this,function(e){
-this._selectRow(e,_25);
-}));
-dojo.connect(_26.domNode,"onkeyup",dojo.hitch(this,function(e){
-e.keyCode==dojo.keys.SPACE&&this._selectRow(e,_25,true);
-}));
-dojo.hitch(this.grid.selection,dojox.grid.Selection.prototype[_2a?"addToSelection":"deselect"])(_25);
-}else{
-this.widget=_26;
-dojo.addClass(this.widget.domNode,"dojoxGridWidgetHidden");
-_28&&this.attachWidget(_29,_24,_25);
-}
-this.grid.rowHeightChanged(_25);
-dojo.removeClass(this.widget.domNode,"dojoxGridWidgetHidden");
-(_25==this.grid.lastRenderingRowIdx)&&dojo.removeClass(this.grid.domNode,"dojoxGridSortInProgress");
-},getDefaultValue:function(_2b,_2c){
-var _2d=_2b?_2b.attr("checked"):this.defaultValue;
-if(!_2b){
-if(this.grid.nestedSorting){
-_2d=_2d||this.grid.getStoreSelectedValue(_2c);
-}
-_2d=this.grid.selection.isSelected(_2c)?true:_2d;
-}
-return _2d;
-},focus:function(_2e){
-var _2f=this.widgetMap[this.view.id][_2e];
-if(_2f){
-setTimeout(dojo.hitch(_2f,function(){
-dojox.grid.util.fire(this,"focus");
-}),0);
-}
-},_focusEndingCell:function(_30,_31){
-var _32=this.grid.getCell(_31);
-this.grid.focus.setFocusCell(_32,_30);
-this.grid.isDndSelectEnable&&this.grid.focus._blurRowBar();
-},_selectRow:function(e,_33,_34){
-if(dojo.isMoz&&_34){
+},_nativeSelect:function(_3e,_3f){
+this.grid.selection[_3f?"addToSelection":"deselect"](_3e);
+},_selectRow:function(e){
+var _40=e.rowIndex;
+if(this.disabledMap[_40]){
 return;
 }
 dojo.stopEvent(e);
-this._focusEndingCell(_33,0);
-var _35=!this.grid.selection.selected[_33];
-this.grid.selection.deselectAll();
-this.grid.selection.addToSelection(_33);
-if(!dojo.isMoz){
-var _36=this.widgetMap[this.view.id][_33];
-_36.attr("checked",true);
-}
-this._fireSelectionChanged();
-},toggleRow:function(idx,_37){
-var _38=dojo.hitch(this.grid.selection,dojox.grid.Selection.prototype.getFirstSelected)();
-if(idx!=_38&&!_37||idx==_38&&_37){
-return;
-}
-var _39;
-if(idx!=_38&&_37&&this.widgetMap[this.view.id]&&(_39=this.widgetMap[this.view.id][_38])){
-_39.attr("checked",false);
-}
-this.grid.selection.deselectAll();
-this._toggleSingleRow(idx,_37);
-},setDisabled:function(idx,_3a){
-if(this.widgetMap[this.view.id]){
-var _3b=this.widgetMap[this.view.id][idx];
-_3b&&_3b.attr("disabled",_3a);
-}
-}});
-dojo.declare("dojox.grid.cells.DijitMultipleRowSelector",[dojox.grid.cells.DijitSingleRowSelector,dojox.grid.cells._MultipleRowSelectorMixin],{widgetClass:dijit.form.CheckBox,constructor:function(){
-dojo.connect(dojo.doc,"onmouseup",this,"domouseup");
-this.grid.indirectSelector=this;
-},_selectRow:function(e,_3c,_3d){
-dojo.stopEvent(e);
-this._focusEndingCell(_3c,0);
-var _3e=_3c-this.lastClickRowIdx;
+this._focusEndingCell(_40,0);
+var _41=_40-this.lastClickRowIdx;
+var _42=!this.grid.selection.selected[_40];
 if(this.lastClickRowIdx>=0&&!e.ctrlKey&&!e.altKey&&e.shiftKey){
-var _3f=this.widgetMap[this.view.id][_3c].attr("checked");
-_3f=_3d?!_3f:_3f;
-for(var i in this.widgetMap[this.view.id]){
-var idx=new Number(i);
-var _40=(idx>=(_3e>0?this.lastClickRowIdx:_3c)&&idx<=(_3e>0?_3c:this.lastClickRowIdx));
-if(_40){
-var _41=this.widgetMap[this.view.id][idx];
-_41.attr("checked",_3f);
-dojo.hitch(this.grid.selection,dojox.grid.Selection.prototype[_3f?"addToSelection":"deselect"])(idx);
-}
+var min=_41>0?this.lastClickRowIdx:_40;
+var max=_41>0?_40:this.lastClickRowIdx;
+for(var i=min;i>=0&&i<=max;i++){
+this._nativeSelect(i,_42);
 }
 }else{
-var _42=!this.grid.selection.selected[_3c];
-var _41=this.widgetMap[this.view.id][_3c];
-_41.attr("checked",_42);
-dojo.hitch(this.grid.selection,dojox.grid.Selection.prototype[_42?"addToSelection":"deselect"])(_3c);
+this._nativeSelect(_40,_42);
 }
-this.lastClickRowIdx=_3c;
-this._fireSelectionChanged();
-},toggleRow:function(idx,_43){
-this._toggleSingleRow(idx,_43);
+this.lastClickRowIdx=_40;
+},getValue:function(_43){
+if(_43==-1){
+var g=this.grid;
+return g.rowCount>0&&g.rowCount<=g.selection.getSelectedCount();
+}
+return this.inherited(arguments);
+},_addHeaderSelector:function(){
+var _44=this.view.getHeaderCellNode(this.index);
+if(!_44){
+return;
+}
+dojo.empty(_44);
+var g=this.grid;
+var _45=_44.appendChild(dojo.create("div",{"tabindex":-1,"id":g.id+"_rowSelector_-1","class":this.baseClass,"role":"presentation","innerHTML":"<span class = '"+this.statusTextClass+"'></span><span style='height: 0; width: 0; overflow: hidden; display: block;'>"+g._nls["selectAll"]+"</span>"}));
+this.map[-1]=_45;
+var idx=this._headerSelectorConnectIdx;
+if(idx!==undefined){
+dojo.disconnect(this._connects[idx]);
+this._connects.splice(idx,1);
+}
+this._headerSelectorConnectIdx=this._connects.length;
+this._connects.push(dojo.connect(_45,"onclick",this,"_toggletHeader"));
+this._onSelectionChanged();
+},_toggletHeader:function(){
+if(!!this.disabledMap[-1]){
+return;
+}
+this.grid._selectingRange=true;
+this.toggleAllSelection(!this.getValue(-1));
+this._onSelectionChanged();
+this.grid._selectingRange=false;
+},_onSelectionChanged:function(){
+var g=this.grid;
+if(!this.map[-1]||g._selectingRange){
+return;
+}
+this._toggleCheckedStyle(-1,this.getValue(-1));
+},_toggleDisabledStyle:function(_46,_47){
+this.inherited(arguments);
+if(this.headerSelector){
+var _48=(this.grid.rowCount==this.disabledCount);
+if(_48!=!!this.disabledMap[-1]){
+arguments[0]=-1;
+arguments[1]=_48;
+this.inherited(arguments);
+}
+}
 }});
+dojox.grid.EnhancedGrid.registerPlugin(dojox.grid.enhanced.plugins.IndirectSelection,{"preInit":true});
 }
