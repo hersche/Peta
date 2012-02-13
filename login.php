@@ -6,7 +6,6 @@ if((isset($_SESSION['user']))&&($_SESSION['user']->isValid())){
 switch($_GET['action']) {
 	case "register":
 		if(!empty($_POST)){
-			$_POST['role'] = "admin";
 			$userResult = usertools::registerUser($_POST, $connection);
 			if($userResult=="0"){
 				array_push($messages, $userResult);
@@ -38,7 +37,10 @@ switch($_GET['action']) {
 		if((!empty($_POST['username']))&&(!empty($_POST['password']))){
 			$user = new user($_POST['username'], $_POST['password'], $connection);
 			if((isset($_SESSION["user"]))&&($user->isValid())){
-				header("Location: index.php");
+				array_push($messages, $user->getUrow());
+				$template->assign("messages", $messages);
+				$template->display('index.tpl');
+				break;
 			}
 			else{
 				array_push($messages, _("Wrong Password or user"));

@@ -2,13 +2,14 @@
 file="messagebox.tpl"}
 <table>
 	<form method="POST" action="login.php?action=register">
-	<tr>
-		<td>Name:</td>
-		<td><input type="text" name="name" /></td>
-	</tr>
+
 	<tr>
 		<td>Username:</td>
 		<td><input type="text" name="username" /></td>
+	</tr>
+	<tr>
+		<td>E-Mail:</td>
+		<td><input type="text" name="email" /></td>
 	</tr>
 	<tr>
 		<td>Password:</td>
