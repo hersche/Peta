@@ -116,7 +116,7 @@ class user extends abstractUser{
 	}
 
 	public function removeCustomfield($id){
-	  $connection->exec('DROP-Command');
+	  $connection->exec('DELETE FROM `meta`.`user_customfields` WHERE `user_customfields`.`cf_id` = '.$id.';');
 	}
 	
 
