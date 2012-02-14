@@ -24,8 +24,13 @@ class user extends abstractUser{
 	private $roles = array();
 	private $customfields = array();
 	private $password;
+	public $urow;
 	// private $connection;
 
+	
+	public function getUrow(){
+		return $this->urow;
+	}
 	/**
 	 * This do the login
 	 * @param String $username is the username
@@ -34,41 +39,52 @@ class user extends abstractUser{
 	 */
 	public function __construct($username, $password, $connection){
 		if((!empty($username))&&(!empty($password))){
-			$firstRound = true;
 			$password = hash($GLOBALS["password_hash"], $password);
 
-			foreach($connection->query('SELECT * FROM fullUser WHERE username="'.$username.'" AND password="'.$password.'";') as $userrow){
-				if($firstRound){
-					$this->id = $userrow['id'];
-					$this->name = $userrow['name'];
+			$userstatement = $connection->query('SELECT * FROM user WHERE username="'.$username.'" AND password="'.$password.'"  LIMIT 1;');
+			$userrow = $userstatement->fetch(PDO::FETCH_ASSOC);
+			if(sizeof($userrow)==5){
+					$this->id = $userrow['uid'];
 					$this->username = $userrow['username'];
 					$this->currentip = getenv('REMOTE_ADDR');
 					$this->lastip = $userrow['lastip'];
 					$this->lastlogin = $userrow['lastlogin'];
 					$this->password = $userrow['password'];
-					array_push($this->roles, $userrow["role"]);
-
 					$datetime = new DateTime($GLOBALS["timezone"]);
-					$this->currentlogin = $datetime->format("Y-m-d");
+					$this->currentlogin = $datetime->format("Y-m-d h:s");
 					$connection->exec('UPDATE users SET lastlogin="'.$this->currentlogin.'", lastip="'.$this->currentip.'" WHERE username="'.$this->username.' AND password="'.$this->password.'";');
 					$_SESSION["user"] = $this;
-					$firstRound = false;
-				}
-				else{
-					array_push($this->roles, $userrow["role"]);
+
+			//Hole alle Rollen-ID's des Users
+			$tmpRids = array();
+			foreach($connection->query('SELECT * FROM user_role WHERE ur_uid="'.$this->id.'";') as $tmpRid){	
+				array_push($tmpRids, $tmpRid['ur_rid']);
+			}
+			$roleSQL = "SELECT * FROM role WHERE ";
+			for($tmpRids; $i < sizeof($tmpRids) ; $i++){	
+				$roleSQL .= "rid=".$tmpRid;
+				if($i != sizeof($tmpRids)){
+					 $roleSQL .= " OR ";
 				}
 			}
-
+			$roleSQL .= ";";
+			foreach($connection->query($roleSQL) AS $roleRow){
+				array_push($roles, $roleRow['role']);
+			}
 		}
+		else{
+			throw new Exception("No user found");
+		}
+	}
 	}
 
 	public function getCustomfields(){
 		if($this->customfields==Null){
-			foreach($connection->query('SELECT * FROM user_customfields WHERE user_id="'.$this->id.'";') as $customfieldrow){
+			foreach($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'";') as $customfieldrow){
 			$customfield = new customfield();
-			$customfield->setId($customfieldrow[id]);
-			$customfield->setKey($customfieldrow[key]);
-			$customfield->setValue($customfieldrow[value]);
+			$customfield->setId($customfieldrow[cf_id]);
+			$customfield->setKey($customfieldrow[cf_key]);
+			$customfield->setValue($customfieldrow[cf_value]);
 			array_push($this->customfields, $$customfield);
 			}
 		}
@@ -320,17 +336,20 @@ class usertools{
 	 */
 	public static function registerUser($post, $connection){
 		if(!empty($post)){
-			if(($post['password']==$post['password2'])&&(usertools::passwordRequirements($post['password'], $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"]))){
+			if(($post['password']==$post['password2'])&&(!empty($post['email']))&&(usertools::passwordRequirements($post['password'], $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"]))){
 				if(!usertools::userExists($post['username'], $connection)){
 					try{
-						$roleid = usertools::getIdFromRole($post['role'], $connection);
+						
 						$password = hash($GLOBALS["password_hash"], $post['password']);
 						// TODO check for specialchars!
 						$datetime = new DateTime($GLOBALS["timezone"]);
-						$connection->exec("INSERT INTO users (`username`, `password`, `lastlogin`, `lastip`) VALUES ('".$post['username']."', '".$password."', '".$datetime->format('Y-m-d')."', '".getenv('REMOTE_ADDR')."');");
+						$connection->exec("INSERT INTO user (`username`, `password`, `lastlogin`, `lastip`) VALUES ('".$post['username']."', '".$password."', '".$datetime->format('Y-m-d h:s')."', '".getenv('REMOTE_ADDR')."');");
 						$userid = $connection->lastInsertId();
-						$connection->exec("INSERT INTO users_profile (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES ('".$userid."', '".$post['name']."', '', '', '', '');");
-						$connection->exec("INSERT INTO userrole (`buserid`, `broleid`) VALUES ('".$userid."', '".$roleid."');");
+						$connection->exec("INSERT INTO user_customfields (`cf_uid`, `cf_key`, `cf_value`) VALUES ('".$userid."', 'E-Mail', '".$post[email]."');");
+						if(!empty($GLOBALS["defaultRole"])){
+							$roleid = usertools::getIdFromRole($GLOBALS["defaultRole"], $connection);
+							$connection->exec("INSERT INTO user_role (`ur_uid`, `ur_rid`) VALUES ('".$userid."', '".$roleid."');");
+						}
 						return "0";
 					}
 					catch (Exception $e){
@@ -388,7 +407,7 @@ class usertools{
 	 * @param unknown_type $connection
 	 */
 	static public function userExists($username, $connection){
-		foreach($connection->query('SELECT * FROM fullUser WHERE username="'.$username.'";') as $userrow){
+		foreach($connection->query('SELECT * FROM user WHERE username="'.$username.'";') as $userrow){
 			return true;
 		}
 		return false;
@@ -399,7 +418,7 @@ class usertools{
 	 * @param unknown_type $connection
 	 */
 	static public function userIdExists($id, $connection){
-		foreach($connection->query('SELECT * FROM fullUser WHERE id='.$id.';') as $userrow){
+		foreach($connection->query('SELECT * FROM user WHERE id='.$id.';') as $userrow){
 			return true;
 		}
 		return false;
@@ -520,12 +539,12 @@ class usertools{
 	static public function setRole($userid, $oldRole, $newRole, $connection){
 		$oldId = usertools::getIdFromRole($oldRole, $connection);
 		$newId = usertools::getIdFromRole($newRole,$connection);
-		$connection->exec('UPDATE userrole SET broleid="'.$newId.'" WHERE buserid="'.$userid.'" AND broleid="'.$oldId.'";');
+		$connection->exec('UPDATE user_role SET ur_rid="'.$newId.'" WHERE ur_uid="'.$userid.'" AND ur_rid="'.$oldId.'";');
 	}
 
 	public static function getIdFromRole($role, $connection){
 		foreach($connection->query('SELECT * FROM role WHERE role="'.$role.'" LIMIT 1;') as $rolerow){
-			return $rolerow['roleid'];
+			return $rolerow['rid'];
 		}
 	}
 	/**
