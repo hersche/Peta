@@ -252,7 +252,7 @@ class alienuser extends abstractUser{
 	private $id;
 	private $password;
 	private $lastlogin;
-	private $role;
+	private $roles = array();
 
 	public function getUsername(){
 		return $this->username;
@@ -266,12 +266,16 @@ class alienuser extends abstractUser{
 		return $this->password;
 	}
 
-	public function getRole(){
-		return $this->role;
+	public function getRoles(){
+		return $this->roles;
 	}
 
-	public function setRole($role){
-		$this->role = $role;
+	public function setRoles($roles){
+		$this->roles = $roles;
+	}
+
+	public function addRole($role){
+	  $roles[] = $role;
 	}
 
 	public function setPassword($password){
@@ -521,7 +525,7 @@ class usertools{
 			$changes = false;
 			$changeSQL = array();
 
-			if((!empty($editUser['role']))&&($fakeOldUser->getName()!=$editUser['name'])){
+			if((!empty($editUser['role']))&&($fakeOldUser->getUsername()!=$editUser['username'])){
 				array_push($changeSQL, ' name="'.$editUser['name'].'"');
 				if($_SESSION['user']->getId()==$oldUserId){
 					$_SESSION['user']->setName($editUser['name']);
@@ -532,11 +536,13 @@ class usertools{
 				$password = hash($GLOBALS["password_hash"], $editUser['password']);
 				if($fakeOldUser->getPassword()!=$password){
 					usertools::setPassword($fakeOldUser->getUsername(), $editUser['password'], $connection);
+					$changes = true;
 				}
 			}
 			//TODO for more than one role?
-			if($fakeOldUser->getRole()!=$editUser['role']){
-				usertools::setRole($fakeOldUser->getId(), $fakeOldUser->getRole(), $editUser['role'], $connection);
+			if($fakeOldUser->getRoles()!=$editUser['roles']){
+				usertools::setRole($fakeOldUser->getId(), $fakeOldUser->getRoles(), $editUser['roles'], $connection);
+				$changes = true;
 			}
 			if($changes){
 				$SQLUpdate = "UPDATE users_profile SET";
