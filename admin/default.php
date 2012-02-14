@@ -4,7 +4,7 @@ require_once '../class/user.php';
 require_once 'class/admin.php';
 session_start();
 
-
+date_default_timezone_set($GLOBALS["timezone"]);
 if((!isset($_SESSION["user"]))&&(basename($_SERVER['PHP_SELF'])!="login.php")){
 	header("Location: ../login.php");
 }

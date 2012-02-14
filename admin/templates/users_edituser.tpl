@@ -24,9 +24,9 @@ file="menu.tpl"} {include file="messagebox.tpl"}
 		{section name=role loop=$roles} 
 		  {section name=srole loop=$selectedRoles}
 		    {if $selectedRoles[srole] eq $roles[role]}
-		<option selected>{$roles[role]}</option>
+		<option selected value="{$roles[role]->getId()}">{$roles[role]->getRole()}</option>
 		{else}
-		<option>{$roles[role]}</option>
+		<option value="{$roles[role]->getId()}>{$roles[role]->getRole()}</option>
 		{/if} {/section} {/section}
 	</select>
 

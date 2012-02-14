@@ -68,6 +68,7 @@ class user extends abstractUser{
 	public static function initialiseRoles($userId, $connection){
 	  			//Hole alle Rollen-ID's des Users
 			$tmpRids = array();
+			echo "uddd??? ".$userId;
 			foreach($connection->query('SELECT * FROM user_role WHERE ur_uid="'.$userId.'";') as $tmpRid){
 				$tmpRids[] = $tmpRid['ur_rid'];
 			}
@@ -80,6 +81,7 @@ class user extends abstractUser{
 				}
 			}
 			$roleSQL .= ";";
+			echo($roleSQL);
 			$returnArray = array();
 			foreach($connection->query($roleSQL) AS $roleRow){
 				$returnArray[] = $roleRow;
@@ -256,7 +258,6 @@ class customfield{
  */
 class alienuser extends abstractUser{
 	private $username;
-	private $name;
 	private $id;
 	private $password;
 	private $lastlogin;
@@ -290,13 +291,6 @@ class alienuser extends abstractUser{
 		$this->password = $password;
 	}
 
-	public function getName(){
-		return $this->name;
-	}
-
-	public function setName($name){
-		$this->name = $name;
-	}
 
 	public function getId(){
 		return $this->id;
@@ -421,15 +415,15 @@ class usertools{
 	}
 	static public function getAlienUserbyUsername($username, $connection){
 		$alien = new alienuser();
-		foreach($connection->query('SELECT * FROM fullUser WHERE username="'.$username.'" LIMIT 1;') as $userrow){
-			$alien->setId($userrow['id']);
+		foreach($connection->query('SELECT * FROM user WHERE username="'.$username.'" LIMIT 1;') as $userrow){
+			$alien->setId($userrow['uid']);
 			$alien->setLastlogin($userrow['lastlogin']);
-			$alien->setName($userrow['name']);
 			$alien->setUsername($userrow['username']);
 			$alien->setPassword($userrow['password']);
-			$alien->setRole($userrow['role']);
-			return $alien;
+			$alien->setRoles(usertools::mkRoleObjects(user::initialiseRoles($userrow['uid'], $connection)));
 		}
+		echo $alien->getId();
+		return $alien;
 	}
 	/**
 	 * Check, if a user exists (with name)
@@ -470,11 +464,12 @@ class usertools{
 	 * contain the user one of the necessary roles? use getRoles of the user-object!
 	 * @param $roles
 	 * @param $userRoles
+	 * @TODO use $roles the same way as userRoles (change in default.php)
 	 */
 	static public function containRoles($roles, $userRoles){
 		foreach($roles as $role){
 			foreach($userRoles as $userRole){
-				if($role==$userRole){
+				if($role==$userRole->getRole()){
 					return true;
 				}
 			}

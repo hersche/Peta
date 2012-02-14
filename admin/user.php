@@ -6,14 +6,18 @@ require_once 'default.php';
 switch($_GET['action']){
 	case "edituser":
 		if(!empty($_POST['editusername'])){
-			$editUser = usertools::getAlienUserbyUsername($_POST["editusername"], $connection);
-		}
-		$template->assign("roles", admin::mkRoleObjects(admin::getRoles($connection)));
-		$template->assign("selectedRoles", user::initialiseRoles($editUser->getId());
+		  
+		$messages[] = $_POST['editusername'];
+		$editUser = usertools::getAlienUserbyUsername($_POST["editusername"], $connection);
+		$template->assign("roles", usertools::mkRoleObjects(admin::getRoles($connection)));
+		echo("uid ".$editUser->getId()."<br />");
+		$template->assign("selectedRoles", $editUser->getRoles());
 		$template->assign("username", $editUser->getUsername());
 		$template->assign("userid", $editUser->getId());
+		
 		$template->assign("messages", $messages);
 		$template->display('users_edituser.tpl');
+		}
 		break;
 	case "deleteuser":
 
