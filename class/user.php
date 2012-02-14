@@ -59,17 +59,17 @@ class user extends abstractUser{
 			foreach($connection->query('SELECT * FROM user_role WHERE ur_uid="'.$this->id.'";') as $tmpRid){
 				array_push($tmpRids, $tmpRid['ur_rid']);
 			}
+			// Create the SQL-Command
 			$roleSQL = "SELECT * FROM role WHERE ";
 			for($i = 0; $i < sizeof($tmpRids) ; $i++){	
 				$roleSQL .= "rid=".$tmpRids[$i];
-				echo("indexed: ".$tmpRids[$i]);
 				if($i != sizeof($tmpRids)-1){
 					 $roleSQL .= " OR ";
 				}
 			}
 			$roleSQL .= ";";
 			foreach($connection->query($roleSQL) AS $roleRow){
-				array_push($this->roles, $roleRow['role']);
+				$this->roles[] = $roleRow['role'];
 			}
 		}
 		else{
@@ -85,7 +85,7 @@ class user extends abstractUser{
 			$customfield->setId($customfieldrow[cf_id]);
 			$customfield->setKey($customfieldrow[cf_key]);
 			$customfield->setValue($customfieldrow[cf_value]);
-			array_push($this->customfields, $customfield);
+			$this->customfields[] = $customfield;
 			}
 	}
 	public function getCustomfields(){
@@ -101,7 +101,7 @@ class user extends abstractUser{
 	    $cf->setId($connection->lastInsertId());
 	    $cf->setKey($key);
 	    $cf->setValue($value);
-	    array_push($this->customfields, $cf);
+	    $this->customfields[] = $cf;
 	}
 
 	public function getCustomfieldByKey($key){
