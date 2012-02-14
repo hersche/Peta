@@ -68,7 +68,6 @@ class user extends abstractUser{
 	public static function initialiseRoles($userId, $connection){
 	  			//Hole alle Rollen-ID's des Users
 			$tmpRids = array();
-			echo "uddd??? ".$userId;
 			foreach($connection->query('SELECT * FROM user_role WHERE ur_uid="'.$userId.'";') as $tmpRid){
 				$tmpRids[] = $tmpRid['ur_rid'];
 			}
@@ -81,7 +80,6 @@ class user extends abstractUser{
 				}
 			}
 			$roleSQL .= ";";
-			echo($roleSQL);
 			$returnArray = array();
 			foreach($connection->query($roleSQL) AS $roleRow){
 				$returnArray[] = $roleRow;
@@ -399,14 +397,15 @@ class usertools{
 	static public function getAlienUserbyId($id, $connection){
 		try{
 			$alien = new alienuser();
-			foreach($connection->query('SELECT * FROM user WHERE id='.$id.' LIMIT 1;') as $userrow){
-				$alien->setId($userrow['id']);
+			foreach($connection->query('SELECT * FROM user WHERE uid='.$id.' LIMIT 1;') as $userrow){
+				$alien->setId($userrow['uid']);
 				$alien->setLastlogin($userrow['lastlogin']);
 				$alien->setUsername($userrow['username']);
 				$alien->setPassword($userrow['password']);
-				$alien->setRole($userrow['role']);
-				return $alien;
+				$alien->setRoles(usertools::mkRoleObjects(user::initialiseRoles($userrow['uid'], $connection)));
+				
 			}
+			return $alien;
 		}
 		catch (Exception $e) {
 			return 'Exception abgefangen: '.  $e->getMessage();
@@ -422,7 +421,7 @@ class usertools{
 			$alien->setPassword($userrow['password']);
 			$alien->setRoles(usertools::mkRoleObjects(user::initialiseRoles($userrow['uid'], $connection)));
 		}
-		echo $alien->getId();
+		
 		return $alien;
 	}
 	/**

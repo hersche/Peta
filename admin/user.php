@@ -10,7 +10,6 @@ switch($_GET['action']){
 		$messages[] = $_POST['editusername'];
 		$editUser = usertools::getAlienUserbyUsername($_POST["editusername"], $connection);
 		$template->assign("roles", usertools::mkRoleObjects(admin::getRoles($connection)));
-		echo("uid ".$editUser->getId()."<br />");
 		$template->assign("selectedRoles", $editUser->getRoles());
 		$template->assign("username", $editUser->getUsername());
 		$template->assign("userid", $editUser->getId());
