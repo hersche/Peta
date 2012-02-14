@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+
+# Schaltet das Rewrite ein
+	RewriteEngine on
+#Einzelne Zeile rewriten
+	# RewriteRule dateiname.html$ contact.php
+	
+#ist es keine Datei...
+	RewriteCond   %{REQUEST_FILENAME} !-f
+#ist es kein Ordner...
+	RewriteCond   %{REQUEST_FILENAME} !-d
+#speichere alles nach der url auf verzeichnis in Variable page
+	RewriteRule ^(.*)$ index.php?rewrite=$1 [L,QSA]
+
+
+	# RewriteRule ^/[*]$ /index.php?page=$1
+	# RewriteRule ^pages/([^.]+)/?$ /index.php?v_folder=$1 [L]
+
+# Spambots nach User_agent aussperren
+	RewriteCond %{HTTP_USER_AGENT} ^.*Whacker.*$ [OR] 
+	RewriteCond %{HTTP_USER_AGENT} ^EmailCollector [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^EmailSiphon [OR] 
+	RewriteCond %{HTTP_USER_AGENT} ^EmailWolf [OR] 
+	RewriteCond %{HTTP_USER_AGENT} ^.*FileHound.*$ [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^.*TurnitinBot.*$ [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^.*JoBo.*$ [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^.*adressendeutschland.*$
+	RewriteRule ^.* - [F]
+
+
+	
+	
+</IfModule>
