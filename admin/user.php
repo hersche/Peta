@@ -8,9 +8,8 @@ switch($_GET['action']){
 		if(!empty($_POST['editusername'])){
 			$editUser = usertools::getAlienUserbyUsername($_POST["editusername"], $connection);
 		}
-		$template->assign("name", $editUser->getName());
-		$template->assign("roles", admin::extractFromArray(admin::getRoles($connection), "role"));
-		$template->assign("selectRole", $editUser->getRole());
+		$template->assign("roles", admin::mkRoleObjects(admin::getRoles($connection)));
+		$template->assign("selectedRoles", user::initialiseRoles($editUser->getId());
 		$template->assign("username", $editUser->getUsername());
 		$template->assign("userid", $editUser->getId());
 		$template->assign("messages", $messages);

@@ -53,11 +53,23 @@ class user extends abstractUser{
 					$this->currentlogin = $datetime->format("Y-m-d h:s");
 					$connection->exec('UPDATE users SET lastlogin="'.$this->currentlogin.'", lastip="'.$this->currentip.'" WHERE username="'.$this->username.' AND password="'.$this->password.'";');
 					$_SESSION["user"] = $this;
+					$this->roles = usertools::mkRoleObjects(user::initialiseRoles($this->id, $connection));
 
-			//Hole alle Rollen-ID's des Users
+
+		}
+		else{
+			throw new Exception("No user found");
+		}
+	}
+	}
+	/**
+	* Temporary method to use it also in alienuser..
+	**/
+	public static function initialiseRoles($userId, $connection){
+	  			//Hole alle Rollen-ID's des Users
 			$tmpRids = array();
-			foreach($connection->query('SELECT * FROM user_role WHERE ur_uid="'.$this->id.'";') as $tmpRid){
-				array_push($tmpRids, $tmpRid['ur_rid']);
+			foreach($connection->query('SELECT * FROM user_role WHERE ur_uid="'.$userId.'";') as $tmpRid){
+				$tmpRids[] = $tmpRid['ur_rid'];
 			}
 			// Create the SQL-Command
 			$roleSQL = "SELECT * FROM role WHERE ";
@@ -68,16 +80,12 @@ class user extends abstractUser{
 				}
 			}
 			$roleSQL .= ";";
+			$returnArray = array();
 			foreach($connection->query($roleSQL) AS $roleRow){
-				$this->roles[] = $roleRow['role'];
+				$returnArray[] = $roleRow;
 			}
-		}
-		else{
-			throw new Exception("No user found");
-		}
+			return $returnArray;
 	}
-	}
-
 
 	private function initialiseCustomfields(){
 	  	foreach($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'";') as $customfieldrow){
@@ -397,10 +405,9 @@ class usertools{
 	static public function getAlienUserbyId($id, $connection){
 		try{
 			$alien = new alienuser();
-			foreach($connection->query('SELECT * FROM fullUser WHERE id='.$id.' LIMIT 1;') as $userrow){
+			foreach($connection->query('SELECT * FROM user WHERE id='.$id.' LIMIT 1;') as $userrow){
 				$alien->setId($userrow['id']);
 				$alien->setLastlogin($userrow['lastlogin']);
-				$alien->setName($userrow['name']);
 				$alien->setUsername($userrow['username']);
 				$alien->setPassword($userrow['password']);
 				$alien->setRole($userrow['role']);
@@ -567,6 +574,18 @@ class usertools{
 		$connection->exec('UPDATE user_role SET ur_rid="'.$newId.'" WHERE ur_uid="'.$userid.'" AND ur_rid="'.$oldId.'";');
 	}
 
+	public static function mkRoleObjects($dbRoles){
+	  $roleObjects = array();
+	  foreach($dbRoles AS $dbRole){
+	    $roleObject = new role();
+	    $roleObject->setId($dbRole['rid']);
+	    $roleObject->setRole($dbRole['role']);
+	    $roleObject->setAdmin($dbRole['r_admin']);
+	    $roleObjects[] = $roleObject;
+	  }
+	  return $roleObjects;
+	}
+
 	public static function getIdFromRole($role, $connection){
 		foreach($connection->query('SELECT * FROM role WHERE role="'.$role.'" LIMIT 1;') as $rolerow){
 			return $rolerow['rid'];
@@ -591,9 +610,41 @@ class usertools{
 	 * @param unknown_type $connection
 	 */
 	static public function getUsernameById($userid, $connection){
-		foreach($connection->query('SELECT * FROM fullUser WHERE id="'.$userid.'";') as $userrow){
+		foreach($connection->query('SELECT * FROM user WHERE uid="'.$userid.'";') as $userrow){
 			return $userrow['username'];
 		}
 	}
+}
+
+class role{
+  private $id;
+  private $role;
+  private $admin;
+  public function getId(){
+    return $this->id;
+  }
+  public function getRole(){
+    return $this->role;
+  }
+  public function getAdmin(){
+    return $this->admin;
+  }
+  public function setId($id){
+    $this->id = $id;
+  }
+  public function setRole($role){
+    $this->role = $role;
+  }
+  public function setAdmin($admin){
+    if($admin==0){
+      $this->admin = false;
+    }
+    else if($admin==1){
+      $this->admin = true;
+    }
+    else{
+      $this->admin = $admin;
+    }
+  }
 }
 ?>

@@ -2,7 +2,7 @@
 require_once 'class/default.php';
 
 if($user->getWelcome()){
-	$messages[] = "Welkome ".$user->getUsername().'. Your last Login was at '.$user->getLastLogin().' from adress '.$user->getLastIp());
+	$messages[] = "Welkome ".$user->getUsername().'. Your last Login was at '.$user->getLastLogin().' from adress '.$user->getLastIp();
 	$user->disableWelcome();
 }
 

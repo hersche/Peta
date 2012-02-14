@@ -6,7 +6,7 @@
 <p>Your roles:</p>
 <ul>
 		{section name=role loop=$roles} 
-		<li>{$roles[role]}</li>
+		<li>{$roles[role]->getRole()} with id {$roles[role]->getId()}</li>
 		 {/section}
 </ul>
 <h2><a href="profile.php?action=edit">Edit</a></h2>

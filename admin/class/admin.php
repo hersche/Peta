@@ -1,4 +1,6 @@
 <?php
+
+
 class admin{
 
 	/**
@@ -6,8 +8,8 @@ class admin{
 	 * @param PDO $connection
 	 */
 	public static function getUsers($connection){
-		$tmp = $connection->query("SELECT * FROM fullUser;");
-		return $tmp->fetchAll();
+		return $connection->query("SELECT * FROM user;");
+		// return $tmp->fetchAll();
 	}
 	
 	/**
@@ -32,6 +34,11 @@ class admin{
 		return $tmp->fetchAll();
 	}
 	
+
+
+	/**
+	* Extract a specific column from a 3d-array
+	**/
 	public static function extractFromArray($array, $item){
 		$tmp = array();
 		foreach($array as $single){
