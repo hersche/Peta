@@ -3,7 +3,6 @@
 abstract class abstractUser{
 	abstract public function getId();
 	abstract public function getUsername();
-	abstract public function getName();
 }
 /**
  * This class is a logged in user..
@@ -57,19 +56,20 @@ class user extends abstractUser{
 
 			//Hole alle Rollen-ID's des Users
 			$tmpRids = array();
-			foreach($connection->query('SELECT * FROM user_role WHERE ur_uid="'.$this->id.'";') as $tmpRid){	
+			foreach($connection->query('SELECT * FROM user_role WHERE ur_uid="'.$this->id.'";') as $tmpRid){
 				array_push($tmpRids, $tmpRid['ur_rid']);
 			}
 			$roleSQL = "SELECT * FROM role WHERE ";
-			for($tmpRids; $i < sizeof($tmpRids) ; $i++){	
-				$roleSQL .= "rid=".$tmpRid;
-				if($i != sizeof($tmpRids)){
+			for($i = 0; $i < sizeof($tmpRids) ; $i++){	
+				$roleSQL .= "rid=".$tmpRids[$i];
+				echo("indexed: ".$tmpRids[$i]);
+				if($i != sizeof($tmpRids)-1){
 					 $roleSQL .= " OR ";
 				}
 			}
 			$roleSQL .= ";";
 			foreach($connection->query($roleSQL) AS $roleRow){
-				array_push($roles, $roleRow['role']);
+				array_push($this->roles, $roleRow['role']);
 			}
 		}
 		else{
@@ -124,9 +124,6 @@ class user extends abstractUser{
 		return $this->welcome;
 	}
 
-	public function setName($name){
-		$this->name=$name;
-	}
 
 	/**
 	 * Get the id
@@ -156,12 +153,6 @@ class user extends abstractUser{
 		return $this->username;
 	}
 
-	/**
-	 * get the real name
-	 */
-	public function getName(){
-		return $this->name;
-	}
 
 	/**
 	 * get the lastLogin as a date

@@ -3,8 +3,8 @@ require_once 'class/default.php';
 switch($_GET['action']){
 	case "edit":
 		usertools::editUser($user->getId(), $_POST, $connection);
-		$template->assign("name", $user->getName());
 		$template->assign("username", $user->getUsername());
+		
 		$template->assign("roles", $user->getRoles());
 		$template->display('profile_edit.tpl');
 		break;
@@ -16,7 +16,6 @@ switch($_GET['action']){
 			$template->assign("own", true);
 			$template->assign("roles", $user->getRoles());
 		}
-		$template->assign("name", $user->getName());
 		$template->assign("username", $user->getUsername());
 		$template->display("profile.tpl");
 		break;
