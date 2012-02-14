@@ -4,10 +4,6 @@
 <h1>Profile</h1>
 <table>
 	<tr>
-		<td>Name:</td>
-		<td><input TYPE="text" SIZE="40" NAME="name" value="{$name}" /></td>
-	</tr>
-	<tr>
 		<td>Username:</td>
 		<td><input TYPE="text" SIZE="40" NAME="username" readonly="readonly"
 			value="{$username}" /></td>

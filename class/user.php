@@ -78,17 +78,45 @@ class user extends abstractUser{
 	}
 	}
 
-	public function getCustomfields(){
-		if($this->customfields==Null){
-			foreach($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'";') as $customfieldrow){
+
+	private function initialiseCustomfields(){
+	  	foreach($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'";') as $customfieldrow){
 			$customfield = new customfield();
 			$customfield->setId($customfieldrow[cf_id]);
 			$customfield->setKey($customfieldrow[cf_key]);
 			$customfield->setValue($customfieldrow[cf_value]);
-			array_push($this->customfields, $$customfield);
+			array_push($this->customfields, $customfield);
 			}
+	}
+	public function getCustomfields(){
+		if($this->customfields==Null){
+		  $this->initialiseCustomfields();
 		}
 		return $this->customfields;
+	}
+
+	public function addCustomfield($key, $value){
+	    $connection->exec('INSERT INTO user_customfields (cf_uid, cf_key, cf_value) VALUES ('.$this->id.', "'.$key.'", "'.$value.'";');
+	    $cf = new customfield();
+	    $cf->setId($connection->lastInsertId());
+	    $cf->setKey($key);
+	    $cf->setValue($value);
+	    array_push($this->customfields, $cf);
+	}
+
+	public function getCustomfieldByKey($key){
+	if($this->customfields==Null){
+	   $this->initialiseCustomfields();
+	}
+	  foreach($this->customfields AS $cf){
+	    if($cf->getKey()==$key){
+	      return $cf;
+	    }
+	  }
+	}
+
+	public function removeCustomfield($id){
+	  $connection->exec('DROP-Command');
 	}
 	
 
