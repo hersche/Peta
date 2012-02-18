@@ -4,7 +4,6 @@ switch($_GET['action']){
 	case "edit":
 		usertools::editUser($user->getId(), $_POST, $connection);
 		$template->assign("username", $user->getUsername());
-		
 		$template->assign("roles", $user->getRoles());
 		$template->display('profile_edit.tpl');
 		break;

@@ -2,10 +2,7 @@
 file="menu.tpl"} {include file="messagebox.tpl"}
 <form action="user.php?action=mkedit&userid={$userid}" method="post">
 <table>
-	<tr>
-		<td>Name:</td>
-		<td><input TYPE="text" SIZE="40" NAME="name" value="{$name}" /></td>
-	</tr>
+
 	<tr>
 		<td>Username:</td>
 		<td><input TYPE="text" SIZE="40" NAME="username" readonly="readonly"
@@ -20,14 +17,14 @@ file="menu.tpl"} {include file="messagebox.tpl"}
 		<td><input TYPE="password" SIZE="40" NAME="password2" /></td>
 	</tr>
 	<td>Userrole: </td>
-	<td><select name="role" size="5">
-		{section name=role loop=$roles} 
-		  {section name=srole loop=$selectedRoles}
-		    {if $selectedRoles[srole] eq $roles[role]}
-		<option selected value="{$roles[role]->getId()}">{$roles[role]->getRole()}</option>
-		{else}
-		<option value="{$roles[role]->getId()}>{$roles[role]->getRole()}</option>
-		{/if} {/section} {/section}
+	<td><ul>
+{section name=role loop=$roles}
+{section name=srole loop=$selectedRoles}
+{if $selectedRoles[srole] eq $roles[role]}
+<li>{$roles[role]->getRole()}<input type="checkbox" name="role_{$roles[role]->getId()}" value="{$roles[role]->getId()}" checked="checked"></li>
+{else}
+<li>{$roles[role]->getRole()}<input type="checkbox" name="role_{$roles[role]->getId()}" value="{$roles[role]->getId()}"></li>
+{/if} {/section} {/section}
 	</select>
 
 	</tr>

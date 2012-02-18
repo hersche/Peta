@@ -6,7 +6,7 @@ require_once 'default.php';
 switch($_GET['action']){
 	case "edituser":
 		if(!empty($_POST['editusername'])){
-		  
+		
 		$messages[] = $_POST['editusername'];
 		$editUser = usertools::getAlienUserbyUsername($_POST["editusername"], $connection);
 		$template->assign("roles", usertools::mkRoleObjects(admin::getRoles($connection)));
@@ -28,13 +28,28 @@ switch($_GET['action']){
 		break;
 
 	case "mkedit":
+		//echo $_POST['role'];
+		//print_r(array_keys($_POST));
+		$getUsedRoles = array();
+		foreach(array_keys($_POST) as $key){
+			if(substr($key, 0, 5)=="role_"){
+				//echo "FOUND! ".$key;
+				$getUsedRoles[] = $_POST[$key];
+							}
+		}
+		foreach($getUsedRoles AS $rolerole){
+			echo "active roles: ".$rolerole;
+		}
+		break;
 		if($_POST['sure']=="on"){
+			 echo $_POST['role'];
+			
 			if($_POST['password']==$_POST['password2']){
 				usertools::editUser($_GET['userid'], $_POST, $connection);
-				array_push($messages, "Changes where successfull for user ".$_SESSION['editUser']['username']);
+				$messages[] = "Changes where successfull for user ".$_SESSION['editUser']['username'];
 			}
 			else{
-				array_push($messages, "Passwords don't match!");
+				$messages[] = "Passwords don't match!";
 			}
 		}
 		break;
@@ -51,7 +66,7 @@ switch($_GET['action']){
 //			}
 //		}
 
-		array_push($messages, usertools::registerUser($_POST, $connection));
+		$messages[] = usertools::registerUser($_POST, $connection);
 		break;
 
 

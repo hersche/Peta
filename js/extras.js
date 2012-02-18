@@ -12,5 +12,8 @@
         }
         dojo.connect(dijit.byId("messageboxclosebutton"), "onClick", wipeIt);
     }
+    function addLine(targetElement){
+    	
+    }
     dojo.addOnLoad(basicWipeinSetup);
 

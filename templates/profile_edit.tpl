@@ -22,7 +22,7 @@
 <p>Your roles:</p>
 <ul>
 		{section name=role loop=$roles} 
-		<li>{$roles[role]}</li>
+		<li>{$roles[role]->getRole()}</li>
 		 {/section}
 </ul>
 <h2><a href="profile.php">View Profile</a></h2>
