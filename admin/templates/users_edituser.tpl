@@ -21,9 +21,9 @@ file="menu.tpl"} {include file="messagebox.tpl"}
 {section name=role loop=$roles}
 {section name=srole loop=$selectedRoles}
 {if $selectedRoles[srole] eq $roles[role]}
-<li>{$roles[role]->getRole()}<input type="checkbox" name="role_{$roles[role]->getId()}" value="{$roles[role]->getId()}" checked="checked"></li>
+<li>{$roles[role]->getRole()} DEBUG-ID's:{$roles[role]->getId()}<input type="checkbox" name="role_{$roles[role]->getId()}" value="{$roles[role]->getId()}" checked="checked"></li>
 {else}
-<li>{$roles[role]->getRole()}<input type="checkbox" name="role_{$roles[role]->getId()}" value="{$roles[role]->getId()}"></li>
+<li>{$roles[role]->getRole()}  DEBUG-ID's:{$roles[role]->getId()}<input type="checkbox" name="role_{$roles[role]->getId()}" value="{$roles[role]->getId()}"></li>
 {/if} {/section} {/section}
 	</select>
 
