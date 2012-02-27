@@ -408,7 +408,7 @@ class usertools {
 						$password = hash($GLOBALS["password_hash"], $post['password']);
 						// TODO check for specialchars!
 						$datetime = new DateTime($GLOBALS["timezone"]);
-						$connection -> exec("INSERT INTO user (`username`, `password`, `lastlogin`, `lastip`) VALUES ('" . $post['username'] . "', '" . $password . "', '" . $datetime -> format('Y-m-d h:s') . "', '" . getenv('REMOTE_ADDR') . "');");
+						$connection -> exec("INSERT INTO user (`username`, `password`, `lastlogin`, `lastip`) VALUES ('" . $post['username'] . "', '" . $password . "', '" . $datetime -> format('Y-m-d ') . "', '" . getenv('REMOTE_ADDR') . "');");
 						$userid = $connection -> lastInsertId();
 						$connection -> exec("INSERT INTO user_customfields (`cf_uid`, `cf_key`, `cf_value`) VALUES ('" . $userid . "', 'E-Mail', '" . $post[email] . "');");
 						if (!empty($GLOBALS["defaultRole"])) {

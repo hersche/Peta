@@ -1,0 +1,21 @@
+Notizen CMS
+	-Language
+		-de auf de_DE (Beispiel. standartisieren)
+		-Standartsprache in config-file, Benutzersprache in db. Db bevorzugt, wenn gesetzt.
+		-Sprache per Browser automatisch erkennen
+		-config-lang ist fallback
+		
+	-Plugin
+		-Plugin-Ordner mit Scann für PHP und Zip
+		-wenn zip, entpacken und zip verschieben (als sicherung, zum einfacheren upload bei forms)
+		-Manifest-datei: config.manifest.php 
+		-plugins werden in db
+		-plugin bringt template (content) mit. wenn eine datei mit dem namen t."currenttemplatename".tpl oder so vorliegt (ctn steht für das aktuell verwendete template) wird dies geladen, ansonsten das default/fallback-template (fester name, muss immer vorhanden sein!)
+		
+	-Style
+		-Templates in verschiedenen Ordnern, um verschiedene Designs zu nutzen. Werden in DB verwaltet und können /plugin || /user eingestellt werden. CSS wird im Template mitdefiniert
+		-CustomCSS /user && /plugin, um individuelle, grafische veränderungen vorzunehmen
+		
+	-Seitenaufbau
+		-Tabelle "pages" enthält name, titel, welches menu, elternteil etc. (siehe db)
+		-Tabelle "element" enthält verweis, für welche seite welche elemente existieren und in welcher reihenfolge. Es gibt auch an welche element welches plugin benötigt

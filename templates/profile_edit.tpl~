@@ -1,0 +1,31 @@
+{include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
+{include file="menu.tpl"}
+<form action="profile.php?action=edit" method="post">
+<h1>Profile</h1>
+<table>
+	<tr>
+		<td>Username:</td>
+		<td><input TYPE="text" SIZE="40" NAME="username" readonly="readonly"
+			value="{$username}" /></td>
+	</tr>
+	<tr>
+		<td>Password (blank = no change):</td>
+		<td><input TYPE="password" SIZE="40" NAME="password" /></td>
+	</tr>
+	<tr>
+		<td>Password validation:</td>
+		<td><input TYPE="password" SIZE="40" NAME="password2" /></td>
+	</tr>
+</table>
+<input type="submit" value="Edit now!" />
+</form>
+<p>Your roles:</p>
+ <select name="top5" size="5" multiple>
+		{section name=role loop=$roles} 
+		<option value="{$roles[role]->Id()}" >{$roles[role]->getRole()}</option>
+		 {/section}
+</select>
+
+<h2><a href="profile.php">View Profile</a></h2>
+
+{include file="footer.tpl"}
