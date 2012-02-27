@@ -15,5 +15,8 @@
     function addLine(targetElement){
     	
     }
+        function showHide(elementId){
+	 $('#'+elementId).toggle();
+    }
     dojo.addOnLoad(basicWipeinSetup);
 
