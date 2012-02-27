@@ -1,8 +1,6 @@
 ******Livedemo***********
-A Livedemo could be found here.. actually, there are some debug-messages, but it should work.
-https://death-head.ch/testing-area/learncards/login.php
-Access works just over ssl. You should install the cacert-certificate (http://cacert.org) then it's a trusted source :)
-Remember: You are admin, if you're registered. Please respect other users. Thanks! (it will be changed for productive systems, of course!)
+NEW LIVEDEMO
+https://meta.death-head.ch (cert will be broken, updates from git recently)
 *************************
 
 If you want to use this project from source, you have to do some little work.

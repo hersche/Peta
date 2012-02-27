@@ -20,5 +20,5 @@
 	</form>
 </table>
 <a href="login.php?action=register">Register</a>
-
+<a href="README">See details</a>
 {include file="footer.tpl"}

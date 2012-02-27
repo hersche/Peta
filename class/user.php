@@ -123,6 +123,18 @@ class user extends abstractUser {
 			}
 		}
 	}
+	public function addRole($roleid){
+		$yesorno = true;
+		foreach ($this->getRolesIds() as $key => $value) {
+			if($value==$roleid){
+				$yesorno = false;
+			}
+		}
+		if($yesorno){
+			//Inject SQL, 
+			
+		}
+	}
 
 	public function removeCustomfield($id) {
 		$connection -> exec('DELETE FROM `meta`.`user_customfields` WHERE `user_customfields`.`cf_id` = ' . $id . ';');
