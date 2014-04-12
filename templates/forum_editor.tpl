@@ -10,7 +10,7 @@
 		<td>Text</td>
 		<td>
 		<div style="border: 1px solid #ccc"><textarea dojoType="dijit.Editor"
-			styleSheets="dojo/dojo/resources/dojo.css" name="topictext">{$text}
+			styleSheets="js/dojo/dojo/resources/dojo.css" name="topictext">{$text}
   </textarea></div>
 		</td>
 	</tr>
