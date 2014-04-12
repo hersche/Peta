@@ -6,6 +6,10 @@
 plattform may be "stable" (it's a alpha), but there's no support if,i.E,
 db-structure changes. I wish you much fun for testing! Look on "about
 me" if you're interessted, who makes the code!</p>
-
+<ul>
+{section name=p loop=$plugins}
+<li>{$plugins[p]->start()}</li>
+{/section}
+</ul>
 {$content}
 {include file="footer.tpl"}

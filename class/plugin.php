@@ -8,6 +8,9 @@
  */
 abstract class plugin {
 	private $id;
+	private $currentUser;
+	private $templateObject;
+	private $connection;
 	/**
 	 *
 	 * Constructor
@@ -16,7 +19,12 @@ abstract class plugin {
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
 	 */
-	abstract function __construct($post, $get, $currentUser, $templateObject, $connection);
+	public function __construct($currentUser, $templateObject, $connection) {
+		$this -> currentUser = $currentUser;
+		$this -> templateObject = $templateObject;
+		$this -> connection = $connection;
+	}
+
 	abstract function getPluginName();
 	abstract function getDependensies();
 	abstract function start();
@@ -36,7 +44,7 @@ class pluginmanager {
 	private $hooks;
 	private $pluginlist = array();
 	private $counter = 0;
-	function __construct($post, $get, $currentUser, $connection) {
+	function __construct($currentUser,$template,$connection) {
 		$this -> plugins = array();
 		$this -> hooks = array();
 		// Get a list of hte plugins from the plugin folder
@@ -49,15 +57,15 @@ class pluginmanager {
 
 		while ($PlugFolder = readdir($pluginsList)) {
 			if ($PlugFolder != '.' && $PlugFolder != '..') {
-				
-				if ((is_file($plugin_dir.$PlugFolder)) && strtolower(substr($PlugFolder, strlen($PlugFolder) - 4)) == '.php') {
-					
+
+				if ((is_file($plugin_dir . $PlugFolder)) && strtolower(substr($PlugFolder, strlen($PlugFolder) - 4)) == '.php') {
+
 					$Code = file_get_contents($plugin_dir . $PlugFolder);
 					preg_match_all('/^class\s+(\w+)\s+extends\s+plugin/im', $Code, $matching);
 					if (!empty($matching[1][0])) {
 						try {
 							require_once $plugin_dir . '/' . $PlugFolder;
-							$class = new $matching[1][0]($post, $get, $currentUser, $template, $connection);
+							$class = new $matching[1][0]($currentUser, $template, $connection);
 							$class -> setId($this -> counter);
 							$this -> counter += 1;
 							array_push($this -> pluginlist, $class);
