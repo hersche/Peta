@@ -1,10 +1,10 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
 {include file="menu.tpl"} {include file="cards_menu.tpl"}
-<h1>{$cardsettitle}</h1>
+<h1>{$cardsettitle}</h1> &nbsp; <a href="cards.php?action=editcardset&setid={$setid}"><img alt="Edit questionset" src="img/edit.png" /></a>
+&nbsp;
+<a href="cards.php?action=deletecardset&setid={$setid}"><img "alt="Delete questionset" src="img/delete.png" /></a>
 <a href="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random=yes" >Random start</a>
 <a href="cards.php?action=singlecardset&amp;setid={$setid}&amp;nextquestion={$nextquestion}&amp;random=no" >Random stop</a>
-<h2><a href="cards.php?action=editcardset&setid={$setid}">(edit)</a></h2>
-<h2><a href="cards.php?action=deletecardset&setid={$setid}">(delete)</a></h2>
 <p>{$cardsetdescription}</p>
 
 <form
@@ -12,14 +12,15 @@
 	method="post">
 <table>
 	<tr>
-		<td>{$question}<a
-			href="cards.php?action=editquestion&amp;setid={$setid}&amp;questionid={$questionid}">(edit)</a><a
-			href="cards.php?action=deletequestion&setid={$setid}&questionid={$questionid}">(delete)</a></td>
+		<td>{$question}</td>
 		<td><input TYPE="text" SIZE="40" NAME="answer" value="" /></td>
 	</tr>
 
 	<tr>
-		<td><input type="submit" value="{t}Give me a answer!{/t}" /></td>
+		<td><input type="submit" value="Give me a answer!" /></td>
+		<td><a
+			href="cards.php?action=editquestion&amp;setid={$setid}&amp;questionid={$questionid}"><img alt="Edit question" src="img/edit.png" /></a><a
+			href="cards.php?action=deletequestion&setid={$setid}&questionid={$questionid}"><img "alt="Delete question" src="img/delete.png" /></a></td>
 	</tr>
 
 </table>
