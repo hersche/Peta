@@ -2,6 +2,9 @@
 templates_c/%%*
 admin/template_c/%%*
 
+templates_c/*.php
+admin/template_c/*.php
+
 *.php~
 
 js/dojo/dijit
