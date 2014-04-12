@@ -4,3 +4,7 @@ admin/template_c/%%*
 
 *.php~
 
+dojo/dijit
+dojo/dojo
+dojo/dojox
+dojo/build-report.txt
