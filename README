@@ -1,11 +1,10 @@
-******Livedemo***********
-NEW LIVEDEMO
-https://meta.death-head.ch (cert will be broken, updates from git recently)
-*************************
+## learncards-web 
 
-If you want to use this project from source, you have to do some little work.
-1. Create 2 directorys in the folder; templates_c and admin/templates_c . These must be writeable!
-2. Execute the SQL/testing_mysql.sql into your database. It should work on mysql, others aren't tested (may they work?)
-3. Configure the config.php-file. Not every option is used now, but the databasesettings are!
-4. There are securityleaks and there could also be changes in the structure which make old datas unusable - be shure about that and do NOT USE IT for productive systems (as example: every new user is a admin - i use that if my other users got some problems..)
-5. Test and enjoy :)
+In time, the name learncards-web gets deprecated. This project was used in my education-time as developer for my own, and i used it like a framework for diffrent projects in scool.
+One example which will not be updated is <a href="https://github.com/skamster/death-guestbook">death-guestbook</a>, which is written in one day and is fully working with users and roles.
+
+### Setup
+Import install+sample.sql into a valid database and edit config.php the right way. Valid users will be test and test2 (admin), with password 123456 .
+
+### Status
+There are many improvements needed since i was in a restructering with a friend (see fullUser in <a href="https://github.com/skamster/death-guestbook">dg</a>). 
