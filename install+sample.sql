@@ -123,11 +123,6 @@ INSERT INTO `forum_threads` (`forumid`, `userid`, `title`, `text`, `timestamp`, 
 
 -- --------------------------------------------------------
 
---
--- Tabellenstruktur für Tabelle `fullquestionset`
---
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `learncards`.`fullquestionset` AS select `qs`.`setid` AS `setid`,`qs`.`setname` AS `setname`,`qs`.`setdescription` AS `setdescription`,`qs`.`ownerid` AS `ownerid`,`qs`.`editcount` AS `editcount`,`qs`.`lasttimestamp` AS `lasttimestamp`,`qs`.`createtimestamp` AS `createtimestamp`,`qs`.`firstowner` AS `firstowner`,`qs`.`tagsid` AS `tagsid`,`user`.`id` AS `id`,`user`.`username` AS `username`,`user`.`password` AS `password`,`user`.`lastlogin` AS `lastlogin`,`user`.`lastip` AS `lastip`,`qq`.`questionid` AS `questionid`,`qq`.`set` AS `set`,`qq`.`question` AS `question`,`qq`.`mode` AS `mode`,`qq`.`rightAnswered` AS `rightAnswered`,`qq`.`wrongAnswered` AS `wrongAnswered`,`qa`.`answerid` AS `answerid`,`qa`.`ownerquestion` AS `ownerquestion`,`qa`.`answertext` AS `answertext` from (`learncards`.`question_set` `qs` left join ((`learncards`.`users` `user` join `learncards`.`question_question` `qq`) join `learncards`.`question_answer` `qa`) on(((`user`.`id` = `qs`.`ownerid`) and (`qq`.`set` = `qs`.`setid`) and (`qq`.`questionid` = `qa`.`ownerquestion`))));
 
 --
 -- Daten für Tabelle `fullquestionset`
@@ -436,9 +431,4 @@ INSERT INTO `user_role` (`ur_uid`, `ur_rid`) VALUES
 
 -- --------------------------------------------------------
 
---
--- Struktur des Views `fulluser`
---
-DROP TABLE IF EXISTS `fulluser`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `fulluser` AS select `user`.`uid` AS `uid`,`user`.`username` AS `username`,`user`.`password` AS `password`,`user`.`lastlogin` AS `lastlogin`,`user`.`lastip` AS `lastip`,`user_role`.`ur_uid` AS `ur_uid`,`user_role`.`ur_rid` AS `ur_rid`,`role`.`rid` AS `rid`,`role`.`role` AS `role`,`role`.`r_admin` AS `r_admin`,`user_customfields`.`cf_id` AS `cf_id`,`user_customfields`.`cf_uid` AS `cf_uid`,`user_customfields`.`cf_key` AS `cf_key`,`user_customfields`.`cf_value` AS `cf_value` from (`user` join ((`user_role` join `role`) join `user_customfields`) on(((`user`.`uid` = `user_role`.`ur_uid`) and (`user_role`.`ur_rid` = `role`.`rid`) and (`user`.`uid` = `user_customfields`.`cf_uid`))));
