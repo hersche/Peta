@@ -2,7 +2,7 @@
 <link rel="stylesheet" type="text/css" href="{$folder}css/speech.css" />
 <div class="example-right" style="margin-bottom:100px;" >
 <table border="1">
-<tr><td colspan="2"><h3>{$threadTitle}</h3></td >{if (($admin)||($ownuserid eq $userid))}<td><h3><a href="forum.php?action=editthread&amp;threadid={$threadid}"> <img src="img/edit.png" /></a></h3></td>{/if}</tr>
+<tr><td colspan="2"><h3>{$threadTitle}</h3></td >{if (($admin)||($ownuserid eq $userid))}<td><h3><a  class="button edit" href="forum.php?action=editthread&amp;threadid={$threadid}">Edit</a></h3></td>{/if}</tr>
 <tr><td colspan="3">{$threadText}</td></tr>
 <hr />
 <tr><td>Posted by <a href="profile.php?userid={$userid}">{$username}</a></td><td><a href="plugin.php?plugin={$pluginId}&amp;action=reply&amp;threadid={$threadid}">Reply to this
@@ -17,9 +17,9 @@ topic!</a></td><td>Last change on {$threadage}</td></tr>
 <table border="2">
 	<tr>
 		{if $subthreads[id]->getTitle() neq ""}<td colspan="2"><h3>{$subthreads[id]->getTitle()}</h3></td>{/if}
-		{if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))}<td> <a
+		{if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))}<td> <a class="button edit"
 			href="plugin.php?plugin={$pluginId}&amp;action=editthread&amp;threadid={$subthreads[id]->getId()}">
-		(edit)</a> </td>{/if}
+		Edit</a> </td>{/if}
 	</tr>
 	<tr>
 		<td colspan="3">{$subthreads[id]->getText()}</td>
