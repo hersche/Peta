@@ -34,7 +34,7 @@ class forum extends plugin {
 		$template = $this -> templateObject;
 		$template->addTemplateDir($this->folder."forum/");
 		$connection = $this -> connection;
-		$template -> assign("allcss", $this->folder."forum/css/speech.css");
+		// $template -> assign("allcss", $this->folder."forum/css/sprrtrteech.css");
 		$template -> assign("pluginId",$_GET['plugin']);
 		$template -> assign("folder",$this->folder);
 		$template->assign("ownuserid",$this->currentUser->getId());
@@ -60,7 +60,7 @@ class forum extends plugin {
 			case "editthread" :
 				$thread = $threads -> getThreadById($_GET['threadid']);
 				if (!is_null($thread)) {
-					if (($thread -> getUserId() == $user -> getId()) || (usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"] -> getRoles()))) {
+					if (($thread -> getUserId() == $this -> currentUser -> getId()) || (usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"] -> getRoles()))) {
 						$dojorequire = array("dijit.Editor", "dojo.parser");
 						$template -> assign("dojorequire", $dojorequire);
 						$template -> assign("threadid", $thread -> getId());
@@ -93,6 +93,7 @@ class forum extends plugin {
 							// threadid means here the topthreadid
 							$threads -> createNewThread($_POST['topictitle'], $_POST['topictext'], $_GET['threadid']);
 						} else if ($_GET['savemethod'] == "edit") {
+							var_dump($threads);
 							$threads -> editThread($_POST['topictitle'], $_POST['topictext'], $thread -> getEditCounter() + 1, $_GET['threadid']);
 							$threads -> changeThreadState($thread -> getId(), $_POST['state']);
 						}

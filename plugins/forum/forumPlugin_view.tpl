@@ -1,5 +1,5 @@
 {include file="{$folder}forumPlugin_menu.tpl"}
-<link rel="stylesheet" type="text/css" href="css/speech.css" />
+<link rel="stylesheet" type="text/css" href="{$folder}css/speech.css" />
 <div class="example-right" style="margin-bottom:100px;" >
 <table border="1">
 <tr><td colspan="2"><h3>{$threadTitle}</h3></td >{if (($admin)||($ownuserid eq $userid))}<td><h3><a href="forum.php?action=editthread&amp;threadid={$threadid}"> <img src="img/edit.png" /></a></h3></td>{/if}</tr>

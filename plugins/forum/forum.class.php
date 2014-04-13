@@ -146,7 +146,7 @@ class allThreads {
 	}
 
 	public function editThread($title, $text, $editcounter, $threadid) {
-		$this -> connect -> exec("UPDATE `learncards`.`forum_threads` SET `title` =  '" . $title . "', `text` =  '" . $text . "', `editcounter` =  " . $editcounter . "   WHERE `forum_threads`.`forumid` =" . $threadid . " LIMIT 1 ;");
+		$this -> connect -> exec("UPDATE `forum_threads` SET `title` =  '" . $title . "', `text` =  '" . $text . "', `editcounter` =  " . $editcounter . "   WHERE `forum_threads`.`forumid` =" . $threadid . " LIMIT 1 ;");
 	}
 
 	public function changeThreadState($threadid, $newState, $recursive = false) {
@@ -158,7 +158,7 @@ class allThreads {
 			}
 		}
 
-		$this -> connect -> exec("UPDATE `learncards`.`forum_threads` SET `threadstate` =  '" . $newState . "' WHERE `forum_threads`.`forumid` =" . $threadid . " LIMIT 1 ;");
+		$this -> connect -> exec("UPDATE `forum_threads` SET `threadstate` =  '" . $newState . "' WHERE `forum_threads`.`forumid` =" . $threadid . " LIMIT 1 ;");
 	}
 
 }
