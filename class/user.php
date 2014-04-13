@@ -149,20 +149,26 @@ class user extends abstractUser {
 	}
 
 	public function addRole($roleid) {
+		print_r("called addRole");
 		$yesorno = true;
 		foreach ($this->getRolesIds() as $key => $value) {
+			print_r($value." vs ".$roleid."<br />");
 			if ($value == $roleid) {
 				$yesorno = false;
 			}
 		}
 		if ($yesorno) {
-			//Inject SQL,
-
+			$connection -> exec('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', "' . $roleid. '";');
+			$this -> roles = usertools::mkRoleObjects(user::initialiseRoles($this -> id, $connection));
 		}
 	}
 
+	public function delRole($roleid){
+		$connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $this->id . ' and ur_rid='.$roleid.';');
+	}
+
 	public function removeCustomfield($id) {
-		$connection -> exec('DELETE FROM `meta`.`user_customfields` WHERE `user_customfields`.`cf_id` = ' . $id . ';');
+		$connection -> exec('DELETE FROM `user_customfields` WHERE `user_customfields`.`cf_id` = ' . $id . ';');
 	}
 
 	/**
@@ -346,8 +352,24 @@ class alienuser extends abstractUser {
 		$this -> roles = $roles;
 	}
 
-	public function addRole($role) {
-		$roles[] = $role;
+	public function delRole($roleid,$connection){
+		$connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $this->id . ' and ur_rid='.$roleid.';');
+	}
+
+	public function addRole($roleid, $connection) {
+		print_r("called addRole");
+		$yesorno = true;
+		foreach ($this->getRolesIds() as $key => $value) {
+			print_r($value." vs ".$roleid."<br />");
+			if ($value == $roleid) {
+				$yesorno = false;
+			}
+		}
+		if ($yesorno) {
+			print_r('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', ' . $roleid. ');');
+			$connection -> exec('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', ' . $roleid. ');');
+			$this -> roles = usertools::mkRoleObjects(user::initialiseRoles($this -> id, $connection));
+		}
 	}
 
 	public function setPassword($password) {
@@ -507,17 +529,6 @@ class usertools {
 		return false;
 	}
 
-	/**
-	 * check, if a user exists (with id)
-	 * @param unknown_type $id
-	 * @param unknown_type $connection
-	 */
-	static public function userIdExists($id, $connection) {
-		foreach ($connection->query('SELECT * FROM user WHERE id='.$id.';') as $userrow) {
-			return true;
-		}
-		return false;
-	}
 
 	/**
 	 * What's required for a password? is the password strong enough?
@@ -625,9 +636,10 @@ class usertools {
 					$changes = true;
 				}
 			}
-			if (sizeof(array_diff($getUsedRoles, $userRoleIds)) != 0) {
+			//if (sizeof(array_diff($getUsedRoles, $userRoleIds)) != 0) {
+				var_dump(sizeof(array_diff($getUsedRoles, $userRoleIds)));
 				usertools::setRole2($fakeOldUser, $getUsedRoles, $connection);
-			}
+			//}
 			// usertools::setRole($fakeOldUser -> getId(), $fakeOldUser -> getRoles(), $editUser['roles'], $connection);
 			$changes = true;
 		}
@@ -657,25 +669,15 @@ class usertools {
 
 	//new roles = getusedroles
 	static public function setRole2($user, $newRoles, $connection) {
-		echo "diff: ";
-		print_r(array_diff($user -> getRolesIds(), $newRoles));
-		echo "<br />u-roles: ";
-		print_r($user -> getRolesIds());
 		if (sizeof($newRoles) != 0) {
 			$removeRoles = array_diff($user -> getRolesIds(), $newRoles);
 		}
-		echo "<br />new used roles: ";
-		print_r($newRoles);
-		echo "<br />remove roles: ";
-		print_r($removeRoles);
+		foreach($newRoles as $addRole){
+			$user->addRole($addRole,$connection);
+		}
 		foreach ($removeRoles AS $rRole) {
-			echo "<br />remove? " . $rRole . "<br />";
+			$user->delRole($rRole,$connection);
 		}
-		foreach ($newRoles AS $role) {
-			echo "add? " . $role . "<br />";
-			//$connection -> exec('INSERT INTO user_role (ur_uid , ur_rid) VALUES ('.$user->getId().', '.$role.');');
-		}
-
 	}
 
 	public static function mkRoleObjects($dbRoles) {
@@ -715,6 +717,16 @@ class usertools {
 	 * @param unknown_type $connection
 	 */
 	static public function getUsernameById($userid, $connection) {
+		foreach ($connection->query('SELECT * FROM user WHERE uid="'.$userid.'";') as $userrow) {
+			return $userrow['username'];
+		}
+	}
+		/**
+	 * Resolve a username with a id..
+	 * @param unknown_type $userid
+	 * @param unknown_type $connection
+	 */
+	static public function getUserById($userid, $connection) {
 		foreach ($connection->query('SELECT * FROM user WHERE uid="'.$userid.'";') as $userrow) {
 			return $userrow['username'];
 		}

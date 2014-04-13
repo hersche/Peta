@@ -9,11 +9,23 @@ switch($_GET['action']) {
 
 			$messages[] = $_POST['editusername'];
 			$editUser = usertools::getAlienUserbyUsername($_POST["editusername"], $connection);
-			$template -> assign("roles", usertools::mkRoleObjects(admin::getRoles($connection)));
 			$template -> assign("selectedRoles", $editUser -> getRoles());
 			$template -> assign("username", $editUser -> getUsername());
 			$template -> assign("userid", $editUser -> getId());
-
+			$restRoles = array();
+			foreach(usertools::mkRoleObjects(admin::getRoles($connection)) as $role){
+				$notFound = True;
+				foreach($editUser -> getRoles() as $userrole){
+					if($userrole->getId()==$role->getId()){
+						$notFound = False;
+					}
+					//print_f($role->getId());
+				}
+				if($notFound){
+					array_push($restRoles, $role);
+				}
+			}
+			$template -> assign("restRoles", $restRoles);
 			$template -> assign("messages", $messages);
 			$template -> display('users_edituser.tpl');
 		}
