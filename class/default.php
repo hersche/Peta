@@ -11,6 +11,7 @@ require_once 'class/smarty/Smarty.class.php';
 $messages = array();
 $allcss = array();
 $template = new Smarty();
+$template->addTemplateDir("plugins/");
 $jsscripts = array();
 $dojorequire = array();
 session_start();

@@ -7,11 +7,8 @@
 </span>
 <h1>Welcome to the plugin-stuff</h1>
 {if ($plugin) } 
-<ul><li>Name: {$plugin->getPluginName()}</li>
-<li>Start/Content: {$plugin->start()}</li>
-<li>Deps: {$plugin->getDependensies()}</li>
-</ul>
+
+{$plugin->start()}
  {/if}
-</ul>
 {$content}
 {include file="footer.tpl"}

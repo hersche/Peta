@@ -44,7 +44,7 @@ dojo.require("{$dojorequire[dojo]}");
 	</script>
 <link rel="stylesheet" type="text/css" href="css/default.css" />
 <link rel="stylesheet" type="text/css" href="css/button.css" />
-	<link rel="stylesheet" type="text/css" href="dojo/dijit/themes/tundra/tundra.css" />
+	<link rel="stylesheet" type="text/css" href="js/dojo/dijit/themes/tundra/tundra.css" />
 {section name=css loop=$allcss}
 <link title="{$allcss[css]}" rel="stylesheet" type="text/css"
 	href="{$allcss[css]}" />

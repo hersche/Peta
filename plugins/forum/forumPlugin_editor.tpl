@@ -1,6 +1,12 @@
+<script type="text/javascript">
+{section name=dojo loop=$dojorequire}
+dojo.require("{$dojorequire[dojo]}");
+{/section}
+</script>
+
 <table>
 	<form
-		action="forum.php?action=savethread&amp;savemethod={$savemethod}&amp;threadid={$threadid}"
+		action="plugin.php?plugin={$pluginId}&amp;action=savethread&amp;savemethod={$savemethod}&amp;threadid={$threadid}"
 		method="post">
 	<tr>
 		<td>Your title</td>
@@ -10,6 +16,7 @@
 		<td>Text</td>
 		<td>
 		<div style="border: 1px solid #ccc"><textarea dojoType="dijit.Editor"
+		lalalal
 			styleSheets="js/dojo/dojo/resources/dojo.css" name="topictext">{$text}
   </textarea></div>
 		</td>

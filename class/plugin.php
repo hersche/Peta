@@ -11,6 +11,7 @@ abstract class plugin {
 	private $currentUser;
 	private $templateObject;
 	private $connection;
+	private $folder;
 	/**
 	 *
 	 * Constructor
@@ -19,10 +20,11 @@ abstract class plugin {
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
 	 */
-	public function __construct($currentUser, $templateObject, $connection) {
+	public function __construct($currentUser, $templateObject,$folder, $connection) {
 		$this -> currentUser = $currentUser;
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
+		$this->folder =$folder;
 	}
 
 	abstract function getPluginName();
@@ -44,7 +46,7 @@ class pluginmanager {
 	private $hooks;
 	private $pluginlist = array();
 	private $counter = 0;
-	function __construct($currentUser,$template,$connection) {
+	function __construct($currentUser, $template, $connection) {
 		$this -> plugins = array();
 		$this -> hooks = array();
 		// Get a list of hte plugins from the plugin folder
@@ -65,7 +67,7 @@ class pluginmanager {
 					if (!empty($matching[1][0])) {
 						try {
 							require_once $plugin_dir . '/' . $PlugFolder;
-							$class = new $matching[1][0]($currentUser, $template, $connection);
+							$class = new $matching[1][0]($currentUser, $template,$plugin_dir, $connection);
 							$class -> setId($this -> counter);
 							$this -> counter += 1;
 							array_push($this -> pluginlist, $class);
@@ -73,21 +75,42 @@ class pluginmanager {
 							echo $e;
 							continue;
 						}
-
-					}
-					// Look for folders of plugins
-					if (is_dir($plugin_dir . $PlugFolder)) {
-
-						// Now we look at the files in the plugin folder
-						$PlugList = opendir($plugin_dir . $PlugFolder);
-						while ($Plug = readdir($PlugList)) {
-							if ($Plug != '.' && $Plug != '..' && strtolower(substr($Plug, strlen($Plug) - 4)) == '.php') {
-								//here we would add a file in plugins/individualPluginstuff/*.php
-							}
-
-						}
 					}
 				}
+				// Look for folders of plugins
+				if (is_dir($plugin_dir . $PlugFolder)) {
+					
+					// Now we look at the files in the plugin folder
+					$PlugList = opendir($plugin_dir . $PlugFolder);
+					while ($Plug = readdir($PlugList)) {
+						if ($Plug != '.' && $Plug != '..' && strtolower(substr($Plug, strlen($Plug) - 4)) == '.php') {
+							
+							if(strtolower(substr($PlugFolder, strlen($PlugFolder) - 1))!="/"){
+								$PlugFolder = $PlugFolder."/";
+							}
+							//here we would add a file in plugins/individualPluginstuff/*.php
+							if ((is_file($plugin_dir . $PlugFolder . $Plug)) && strtolower(substr($Plug, strlen($Plug) - 4)) == '.php') {
+								$folder = $plugin_dir . $PlugFolder;
+								$Code = file_get_contents($folder.$Plug);
+								preg_match_all('/^class\s+(\w+)\s+extends\s+plugin/im', $Code, $matching);
+								if (!empty($matching[1][0])) {
+									try {
+										require_once $folder . '/' . $Plug;
+										$class = new $matching[1][0]($currentUser, $template,$folder, $connection);
+										$class -> setId($this -> counter);
+										$this -> counter += 1;
+										array_push($this -> pluginlist, $class);
+									} catch (Exception $e) {
+										echo $e;
+										continue;
+									}
+								}
+							}
+						}
+
+					}
+				}
+
 			}
 		}
 	}

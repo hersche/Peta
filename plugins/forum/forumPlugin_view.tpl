@@ -1,12 +1,12 @@
-{include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
-{include file="menu.tpl"} {include file="forum_menu.tpl"}
-<h1>Forum</h1>
-<div class="example-right" style="margin-bottom:100px; >
+{include file="{$folder}forumPlugin_menu.tpl"}
+<link rel="stylesheet" type="text/css" href="css/speech.css" />
+<br /><h1>ForumPlugin_view</h1>
+<div class="example-right" style="margin-bottom:100px;" >
 <table border="1">
-<tr><td colspan="2"><h3>{$threadTitle}</h3></td >{if (($admin)||($ownuserid eq $userid))}<td><h3><a href="forum.php?action=editthread&amp;threadid={$threadid}"> (edit)</a></h3></td>{/if}</tr>
+<tr><td colspan="2"><h3>{$threadTitle}</h3></td >{if (($admin)||($ownuserid eq $userid))}<td><h3><a href="forum.php?action=editthread&amp;threadid={$threadid}"> <img src="img/edit.png" /></a></h3></td>{/if}</tr>
 <tr><td colspan="3">{$threadText}</td></tr>
 <hr />
-<tr><td>Posted by <a href="profile.php?userid={$userid}">{$username}</a></td><td><a href="forum.php?action=reply&amp;threadid={$threadid}">Reply to this
+<tr><td>Posted by <a href="profile.php?userid={$userid}">{$username}</a></td><td><a href="plugin.php?plugin={$pluginId}&amp;action=reply&amp;threadid={$threadid}">Reply to this
 topic!</a></td><td>Last change on {$threadage}</td></tr>
 </table>
 
@@ -19,7 +19,7 @@ topic!</a></td><td>Last change on {$threadage}</td></tr>
 	<tr>
 		{if $subthreads[id]->getTitle() neq ""}<td colspan="2"><h3>{$subthreads[id]->getTitle()}</h3></td>{/if}
 		{if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))}<td> <a
-			href="forum.php?action=editthread&amp;threadid={$subthreads[id]->getId()}">
+			href="plugin.php?plugin={$pluginId}&amp;action=editthread&amp;threadid={$subthreads[id]->getId()}">
 		(edit)</a> </td>{/if}
 	</tr>
 	<tr>
@@ -28,7 +28,7 @@ topic!</a></td><td>Last change on {$threadage}</td></tr>
 	<tr>
 		<td>Posted by <a href="profile.php?userid={$subthreads[id]->getUserId()}">{$subthreads[id]->getUsername()}</a></td>
 		<td><a
-			href="forum.php?action=reply&amp;threadid={$subthreads[id]->getId()}">Reply
+			href="plugin.php?plugin={$pluginId}&amp;action=reply&amp;threadid={$subthreads[id]->getId()}">Reply
 		to this post</a></td>
 		<td>{$subthreads[id]->getEditCounter()} times editet!</td>
 	</tr>
@@ -37,4 +37,3 @@ topic!</a></td><td>Last change on {$threadage}</td></tr>
 </div>
 {/section}
 </div>
- {include file="footer.tpl"}

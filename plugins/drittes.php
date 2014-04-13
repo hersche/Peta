@@ -12,7 +12,7 @@ class drittes extends plugin{
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
 	 */
-	public function __construct($currentUser, $templateObject, $connection) {
+	public function __construct($currentUser, $templateObject,$folder, $connection) {
 		$this -> currentUser = $currentUser;
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
