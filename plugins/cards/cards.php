@@ -45,7 +45,7 @@ switch($_GET["action"]){
 		else{
 			$template->assign("nrofquestions", $_GET['nrofquestions']);
 		}
-		$template->display($this->folder.'templates/cards_create.tpl');
+		$template->display($this->folder.'templates/cardPlugin_create.tpl');
 		break;
 	case "mkcreatecardset":
 		if(!empty($_POST["cardsetname"])){
@@ -63,7 +63,7 @@ switch($_GET["action"]){
 			array_push($messages, "Create cardset successfull!");
 			$template->assign("messages", $messages);
 			$template->assign("cardsets", $allSets->getSets());
-			$template->display($this->folder.'templates/cards.tpl');
+			$template->display($this->folder.'templates/cardPlugin.tpl');
 		}
 		break;
 	case "singlecardset":
@@ -138,7 +138,7 @@ switch($_GET["action"]){
 				$template->assign("question","There are no questions!");
 			}
 			$template->assign("messages", $messages);
-			$template->display($this->folder.'templates/cards_singlecardset.tpl');
+			$template->display($this->folder.'templates/cardPlugin_singlecardset.tpl');
 			break;
 		}
 	case "deletecardset":
@@ -160,7 +160,7 @@ switch($_GET["action"]){
 				header("Location: plugin.php?plugin=".$_GET['plugin']);
 			}
 		}
-		$template->display($this->folder.'templates/cards_delete.tpl');
+		$template->display($this->folder.'templates/cardPlugin_delete.tpl');
 		break;
 	case "editcardset":
 		$noCardset = true;
@@ -195,7 +195,7 @@ switch($_GET["action"]){
 		if($noCardset){
 			$template->assign("cardsetname", gettext("There is no set with id ").$_POST["setid"].$_GET["setid"]);
 		}
-		$template->display($this->folder.'templates/cards_editcardset.tpl');
+		$template->display($this->folder.'templates/cardPlugin_editcardset.tpl');
 		break;
 	case "editquestion":
 		$noCardset = true;
@@ -231,7 +231,7 @@ switch($_GET["action"]){
 		if($noCardset){
 			$template->assign("cardsetname", "There is no set with id ".$_POST["setid"].$_GET["setid"]);
 		}
-		$template->display($this->folder.'templates/cards_editquestion.tpl');
+		$template->display($this->folder.'templates/cardPlugin_editquestion.tpl');
 		break;
 	case "deletequestion":
 		$template->assign("setid", $_GET['setid']);
@@ -258,7 +258,7 @@ switch($_GET["action"]){
 				}
 			}
 		}
-		$template->display($this->folder.'templates/cards_delete.tpl');
+		$template->display($this->folder.'templates/cardPlugin_delete.tpl');
 		break;
 	case "addquestion":
 		$template->assign("cardsets", $allSets->getSets());
@@ -274,12 +274,12 @@ switch($_GET["action"]){
 			array_push($messages, "Add question successfull");
 		}
 		$template->assign("messages", $messages);
-		$template->display($this->folder.'templates/cards_modify.tpl');
+		$template->display($this->folder.'templates/cardPlugin_modify.tpl');
 		break;
 	default:
 		$carding = new allCardSets($_SESSION["user"]->getId(), $connection);
 		$template->assign("cardsets", $carding->getSets());
-		$template->display($this->folder.'templates/cards.tpl');
+		$template->display($this->folder.'templates/cardPlugin.tpl');
 		break;
 
 }
