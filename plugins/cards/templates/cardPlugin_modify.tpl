@@ -1,38 +1,47 @@
-{include file="messagebox.tpl"}
-{include file="{$folder}templates/cardPlugin_menu.tpl"}
+{include file="messagebox.tpl"} {include file="{$folder}templates/cardPlugin_menu.tpl"}
 <h1>Modify Cardset</h1>
 <h2>Add question</h2>
 <form action="plugin.php?plugin={$pluginId}&action=addquestion" method="post">
-<table>
-	<tr>
-		<td>Question</td>
-		<td><input TYPE="text" SIZE="40" NAME="question1" value="" /></td>
-	</tr>
-	<tr>
-		<td>Answer</td>
-		<td><input TYPE="text" SIZE="40" NAME="answer1" value="" /></td>
-	</tr>
-	<tr>
-		<td>Add to set</td>
-		<td><select name="cardset" size="1">
-			{section name=set loop=$cardsets}
-			<option value="{$cardsets[set]->getSetId()}">{$cardsets[set]->getSetName()}</option>
-			{/section}
-		</select></td>
-	</tr>
-	<tr>
-		<td><input type="submit" value="Add now!" /></td>
+    <table>
+        <tr>
+            <td>Question</td>
+            <td>
+                <input TYPE="text" SIZE="40" NAME="question1" value="" />
+            </td>
+        </tr>
+        <tr>
+            <td>Answer</td>
+            <td>
+                <input TYPE="text" SIZE="40" NAME="answer1" value="" />
+            </td>
+        </tr>
+        <tr>
+            <td>Add to set</td>
+            <td>
+                <select name="cardset" size="1">
+                    {section name=set loop=$cardsets}
+                    <option value="{$cardsets[set]->getSetId()}">{$cardsets[set]->getSetName()}</option>
+                    {/section}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" value="Add now!" />
+            </td>
 
-</table>
+    </table>
 
 </form>
 
 <h2>Change name & description of a cardset</h2>
-<form action="plugin.php?plugin={$pluginId}&action=editcardset" method="post"><select
-	name="setid" size="1">
-	{section name=set loop=$cardsets}
-	<option value="{$cardsets[set]->getSetId()}">{$cardsets[set]->getSetName()}</option>
-	{/section}
-</select> <input type="submit" value="Edit cardset" /></form>
+<form action="plugin.php?plugin={$pluginId}&action=editcardset" method="post">
+    <select name="setid" size="1">
+        {section name=set loop=$cardsets}
+        <option value="{$cardsets[set]->getSetId()}">{$cardsets[set]->getSetName()}</option>
+        {/section}
+    </select>
+    <input type="submit" value="Edit cardset" />
+</form>
 
 {include file="footer.tpl"}
