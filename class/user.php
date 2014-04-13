@@ -39,8 +39,32 @@ class user extends abstractUser {
 	 */
 	public function __construct($username, $password, $connection) {
 		if ((!empty($username)) && (!empty($password))) {
+			$connection -> exec("CREATE TABLE IF NOT EXISTS `user` (
+  `uid` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(22) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(1026) COLLATE utf8_unicode_ci NOT NULL,
+  `lastlogin` date NOT NULL,
+  `lastip` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`uid`)
+)");
+			$connection -> exec("CREATE TABLE IF NOT EXISTS `user_customfields` (
+  `cf_id` int(16) NOT NULL AUTO_INCREMENT COMMENT 'id 4 customfields',
+  `cf_uid` int(11) DEFAULT NULL,
+  `cf_key` varchar(30) NOT NULL,
+  `cf_value` text NOT NULL,
+  PRIMARY KEY (`cf_id`)
+)");
+			$connection -> exec("CREATE TABLE IF NOT EXISTS `user_role` (
+  `ur_uid` int(11) NOT NULL,
+  `ur_rid` int(11) NOT NULL
+)");
+			$connection -> exec("CREATE TABLE IF NOT EXISTS `role` (
+  `rid` int(11) NOT NULL AUTO_INCREMENT,
+  `role` varchar(22) NOT NULL,
+  `r_admin` tinyint(1) NOT NULL,
+  PRIMARY KEY (`rid`)
+)");
 			$password = hash($GLOBALS["password_hash"], $password);
-
 			$userstatement = $connection -> query('SELECT * FROM user WHERE username="' . $username . '" AND password="' . $password . '"  LIMIT 1;');
 			$userrow = $userstatement -> fetch(PDO::FETCH_ASSOC);
 			if (sizeof($userrow) == 5) {
@@ -123,16 +147,17 @@ class user extends abstractUser {
 			}
 		}
 	}
-	public function addRole($roleid){
+
+	public function addRole($roleid) {
 		$yesorno = true;
 		foreach ($this->getRolesIds() as $key => $value) {
-			if($value==$roleid){
+			if ($value == $roleid) {
 				$yesorno = false;
 			}
 		}
-		if($yesorno){
-			//Inject SQL, 
-			
+		if ($yesorno) {
+			//Inject SQL,
+
 		}
 	}
 
@@ -151,10 +176,11 @@ class user extends abstractUser {
 			usertools::setPassword($this -> username, $newPassword, $connection);
 		}
 	}
-	public function getRolesIds(){
+
+	public function getRolesIds() {
 		$roleIds = array();
-		foreach($this->roles AS $role){
-			$roleIds[] = $role->getId();
+		foreach ($this->roles AS $role) {
+			$roleIds[] = $role -> getId();
 		}
 		return $roleIds;
 	}
@@ -241,6 +267,7 @@ class user extends abstractUser {
 	}
 
 }
+
 /**
  * Customfield represent a customfield (short: cf) which use a key/value-princip to make every profile individual
  */
@@ -252,6 +279,7 @@ class customfield {
 	public function setId($id) {
 		$this -> id = $id;
 	}
+
 	/**
 	 * Get the ID of a cf
 	 * @return int id
@@ -263,6 +291,7 @@ class customfield {
 	public function setKey($key) {
 		$this -> key = $key;
 	}
+
 	/**
 	 * Get the key of a cf
 	 * @return String key
@@ -274,6 +303,7 @@ class customfield {
 	public function setValue($value) {
 		$this -> value = $value;
 	}
+
 	/**
 	 * Return the value of a cf
 	 * @return String value
@@ -349,6 +379,7 @@ class alienuser extends abstractUser {
 	}
 
 }
+
 /**
  * usertools is a little collection of static tools to make a faster developement possible..
  * @author skamster
@@ -572,7 +603,7 @@ class usertools {
 			$getUsedRoles = array();
 			foreach (array_keys($_POST) as $key) {
 				if (substr($key, 0, 5) == "role_") {
-					echo "debug keys: ".$_POST[$key];
+					echo "debug keys: " . $_POST[$key];
 					$getUsedRoles[] = $_POST[$key];
 				}
 			}
@@ -594,7 +625,7 @@ class usertools {
 					$changes = true;
 				}
 			}
-			if (sizeof(array_diff($getUsedRoles, $userRoleIds))!=0) {
+			if (sizeof(array_diff($getUsedRoles, $userRoleIds)) != 0) {
 				usertools::setRole2($fakeOldUser, $getUsedRoles, $connection);
 			}
 			// usertools::setRole($fakeOldUser -> getId(), $fakeOldUser -> getRoles(), $editUser['roles'], $connection);
@@ -623,27 +654,28 @@ class usertools {
 		$newId = usertools::getIdFromRole($newRole, $connection);
 		$connection -> exec('UPDATE user_role SET ur_rid="' . $newId . '" WHERE ur_uid="' . $userid . '" AND ur_rid="' . $oldId . '";');
 	}
-//new roles = getusedroles
+
+	//new roles = getusedroles
 	static public function setRole2($user, $newRoles, $connection) {
 		echo "diff: ";
-		print_r(array_diff($user->getRolesIds(), $newRoles));
+		print_r(array_diff($user -> getRolesIds(), $newRoles));
 		echo "<br />u-roles: ";
-		print_r($user->getRolesIds());
-		if(sizeof($newRoles)!=0){
-		$removeRoles = array_diff($user->getRolesIds(), $newRoles);
+		print_r($user -> getRolesIds());
+		if (sizeof($newRoles) != 0) {
+			$removeRoles = array_diff($user -> getRolesIds(), $newRoles);
 		}
-				echo "<br />new used roles: ";
+		echo "<br />new used roles: ";
 		print_r($newRoles);
-						echo "<br />remove roles: ";
+		echo "<br />remove roles: ";
 		print_r($removeRoles);
-		foreach($removeRoles AS $rRole){
-			echo "<br />remove? ".$rRole."<br />";
+		foreach ($removeRoles AS $rRole) {
+			echo "<br />remove? " . $rRole . "<br />";
 		}
 		foreach ($newRoles AS $role) {
-			echo "add? ".$role."<br />";
+			echo "add? " . $role . "<br />";
 			//$connection -> exec('INSERT INTO user_role (ur_uid , ur_rid) VALUES ('.$user->getId().', '.$role.');');
 		}
-		
+
 	}
 
 	public static function mkRoleObjects($dbRoles) {

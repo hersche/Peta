@@ -5,10 +5,19 @@
 		<a href="plugin.php?plugin={$plugins[id]->getId()}">{$plugins[id]->getPluginName()}</a>
 		 {/section}
 </span>
-<h1>Welcome to the plugin-stuff</h1>
-{if ($plugin) } 
 
+{if ($plugin) } 
+<h1>{$plugin->getPluginName()}</h1>
 {$plugin->start()}
+ {else}
+  <ul>
+ {section name=id loop=$plugins} 
+	<li>	<a href="plugin.php?plugin={$plugins[id]->getId()}">{$plugins[id]->getPluginName()}</a></li>
+		 {/section}
+		  </ul>
  {/if}
+
+
+
 {$content}
 {include file="footer.tpl"}

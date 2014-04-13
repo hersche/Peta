@@ -34,9 +34,10 @@ class forum extends plugin {
 		$template = $this -> templateObject;
 		$template->addTemplateDir($this->folder."forum/");
 		$connection = $this -> connection;
-		$template -> assign("allcss", "css/speech.css");
+		$template -> assign("allcss", $this->folder."forum/css/speech.css");
 		$template -> assign("pluginId",$_GET['plugin']);
 		$template -> assign("folder",$this->folder);
+		$template->assign("ownuserid",$this->currentUser->getId());
 		$threads = new allThreads($connection, $_SESSION["user"]);
 		switch($_GET['action']) {
 			case "createthread" :
