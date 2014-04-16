@@ -10,6 +10,7 @@ $pluginmanager = new pluginmanager($user,$template, $connection);
 $template->assign("plugins", $pluginmanager->getPlugins());
 if (isset($_GET['plugin'])){
 	$plugin = $pluginmanager->getPluginbyid($_GET['plugin']);
+	$template->assign("identifier", $plugin->getIdentifier());
 	$template->assign("plugin", $plugin);
 	// $messages[] = $plugin->getPluginName();
 }

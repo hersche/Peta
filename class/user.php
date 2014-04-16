@@ -149,22 +149,20 @@ class user extends abstractUser {
 	}
 
 	public function addRole($roleid) {
-		print_r("called addRole");
 		$yesorno = true;
 		foreach ($this->getRolesIds() as $key => $value) {
-			print_r($value." vs ".$roleid."<br />");
 			if ($value == $roleid) {
 				$yesorno = false;
 			}
 		}
 		if ($yesorno) {
-			$connection -> exec('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', "' . $roleid. '";');
+			$connection -> exec('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', "' . $roleid . '";');
 			$this -> roles = usertools::mkRoleObjects(user::initialiseRoles($this -> id, $connection));
 		}
 	}
 
-	public function delRole($roleid){
-		$connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $this->id . ' and ur_rid='.$roleid.';');
+	public function delRole($roleid) {
+		$connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $this -> id . ' and ur_rid=' . $roleid . ';');
 	}
 
 	public function removeCustomfield($id) {
@@ -352,22 +350,19 @@ class alienuser extends abstractUser {
 		$this -> roles = $roles;
 	}
 
-	public function delRole($roleid,$connection){
-		$connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $this->id . ' and ur_rid='.$roleid.';');
+	public function delRole($roleid, $connection) {
+		$connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $this -> id . ' and ur_rid=' . $roleid . ';');
 	}
 
 	public function addRole($roleid, $connection) {
-		print_r("called addRole");
 		$yesorno = true;
 		foreach ($this->getRolesIds() as $key => $value) {
-			print_r($value." vs ".$roleid."<br />");
 			if ($value == $roleid) {
 				$yesorno = false;
 			}
 		}
 		if ($yesorno) {
-			print_r('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', ' . $roleid. ');');
-			$connection -> exec('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', ' . $roleid. ');');
+			$connection -> exec('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', ' . $roleid . ');');
 			$this -> roles = usertools::mkRoleObjects(user::initialiseRoles($this -> id, $connection));
 		}
 	}
@@ -529,7 +524,6 @@ class usertools {
 		return false;
 	}
 
-
 	/**
 	 * What's required for a password? is the password strong enough?
 	 * @param unknown_type $password
@@ -614,7 +608,6 @@ class usertools {
 			$getUsedRoles = array();
 			foreach (array_keys($_POST) as $key) {
 				if (substr($key, 0, 5) == "role_") {
-					echo "debug keys: " . $_POST[$key];
 					$getUsedRoles[] = $_POST[$key];
 				}
 			}
@@ -636,10 +629,8 @@ class usertools {
 					$changes = true;
 				}
 			}
-			//if (sizeof(array_diff($getUsedRoles, $userRoleIds)) != 0) {
-				var_dump(sizeof(array_diff($getUsedRoles, $userRoleIds)));
-				usertools::setRole2($fakeOldUser, $getUsedRoles, $connection);
-			//}
+
+			usertools::setRole2($fakeOldUser, $getUsedRoles, $connection);
 			// usertools::setRole($fakeOldUser -> getId(), $fakeOldUser -> getRoles(), $editUser['roles'], $connection);
 			$changes = true;
 		}
@@ -672,11 +663,11 @@ class usertools {
 		if (sizeof($newRoles) != 0) {
 			$removeRoles = array_diff($user -> getRolesIds(), $newRoles);
 		}
-		foreach($newRoles as $addRole){
-			$user->addRole($addRole,$connection);
+		foreach ($newRoles as $addRole) {
+			$user -> addRole($addRole, $connection);
 		}
 		foreach ($removeRoles AS $rRole) {
-			$user->delRole($rRole,$connection);
+			$user -> delRole($rRole, $connection);
 		}
 	}
 
@@ -721,7 +712,8 @@ class usertools {
 			return $userrow['username'];
 		}
 	}
-		/**
+
+	/**
 	 * Resolve a username with a id..
 	 * @param unknown_type $userid
 	 * @param unknown_type $connection

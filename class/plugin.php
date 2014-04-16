@@ -29,6 +29,9 @@ abstract class plugin {
 
 	abstract function getPluginName();
 	abstract function getDependensies();
+	function getIdentifier(){
+		return get_called_class();
+	}
 	abstract function start();
 	public function getId() {
 		return $this -> id;
@@ -69,6 +72,8 @@ class pluginmanager {
 							require_once $plugin_dir . '/' . $PlugFolder;
 							$class = new $matching[1][0]($currentUser, $template,$plugin_dir, $connection);
 							$class -> setId($this -> counter);
+							//staticmethod getIdentifier in pluginclass, vorcheck in db, wenn exist + aktiviert
+							//initialisieren und hinzufügen. voll easy.
 							$this -> counter += 1;
 							array_push($this -> pluginlist, $class);
 						} catch (Exception $e) {
@@ -115,6 +120,10 @@ class pluginmanager {
 		}
 	}
 
+	public function createPlugin(){
+		$connection -> exec("INSERT INTO plugin (`pl_name`,`pl_hash`, `pl_version`,`pl_active`) VALUES ('" . $set -> getSetName() . "', '" . $set -> getSetDescription() . "', " . $userid . ", 1, '2009-00-00 00:00:00', " . $userid . ");");
+	}
+
 	public function getPlugins() {
 		return $this -> pluginlist;
 	}
@@ -122,6 +131,14 @@ class pluginmanager {
 	public function getPluginbyid($id) {
 		foreach ($this->pluginlist as $plugin) {
 			if ($plugin -> getId() == $id) {
+				return $plugin;
+			}
+		}
+	}
+	
+	public function getPluginByIdentifier($identifier){
+		foreach ($this->pluginlist as $plugin) {
+			if ($plugin -> getIdentifier() == $identifier) {
 				return $plugin;
 			}
 		}

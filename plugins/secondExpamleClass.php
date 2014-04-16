@@ -7,7 +7,6 @@ class examplePluginSecond extends plugin{
 	public function getDependensies(){
 		return "blubb";
 	}
-	
 	public function start(){
 		if($_GET["action"]=="test"){
 			return "test-case..";

@@ -6,7 +6,7 @@
 </span>
 
 {if ($plugin) }
-<h1>{$plugin->getPluginName()}</h1>
+<h1>{$plugin->getPluginName()} {$plugin->getIdentifier()}</h1>
 {$plugin->start()} {else}
 <ul>
     {section name=id loop=$plugins}

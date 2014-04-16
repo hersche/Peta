@@ -17,7 +17,9 @@ class drittes extends plugin{
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
 	}
-	
+	function getIdentifier(){
+		return get_called_class();
+	}
 	public function getPluginName(){
 		return "drittes plugin";
 	}
