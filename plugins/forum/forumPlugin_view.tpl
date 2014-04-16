@@ -8,7 +8,7 @@
             </td>{if (($admin)||($ownuserid eq $userid))}
             <td>
                 <h3>
-                    <a class="button edit" href="forum.php?action=editthread&amp;threadid={$threadid}">Edit</a>
+                    <a class="button edit" href="plugin.php?plugin={$pluginId}&amp;action=editthread&amp;threadid={$threadid}">Edit</a>
                 </h3>
             </td>{/if}</tr>
         <tr>
