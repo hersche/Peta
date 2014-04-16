@@ -1,0 +1,13 @@
+.kdev4/
+templates_c/%%*
+admin/template_c/%%*
+
+templates_c/*.php
+admin/template_c/*.php
+config.php
+*.php~
+
+js/dojo/dijit
+js/dojo/dojo
+js/dojo/dojox
+js/dojo/build-report.txt

@@ -1,1 +1,0 @@
-<div class="menu"><a href="forum.php">View</a><a href="forum.php?action=createthread">Create Thread</a>

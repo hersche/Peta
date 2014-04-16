@@ -4,10 +4,6 @@
 <h1>Profile</h1>
 <table>
 	<tr>
-		<td>Name:</td>
-		<td><input TYPE="text" SIZE="40" NAME="name" value="{$name}" /></td>
-	</tr>
-	<tr>
 		<td>Username:</td>
 		<td><input TYPE="text" SIZE="40" NAME="username" readonly="readonly"
 			value="{$username}" /></td>
@@ -26,7 +22,7 @@
 <p>Your roles:</p>
 <ul>
 		{section name=role loop=$roles} 
-		<li>{$roles[role]}</li>
+		<li>{$roles[role]->getRole()}</li>
 		 {/section}
 </ul>
 <h2><a href="profile.php">View Profile</a></h2>
