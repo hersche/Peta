@@ -39,10 +39,11 @@ function checkNoNeedForLogin($url, $connection){
 	}
 	return false;
 }
+//when user is public.. disabled for now.
 if((!isset($_SESSION["user"]))&&(basename($_SERVER['PHP_SELF'])!="login.php")){
-	if(!checkNoNeedForLogin(basename($_SERVER['REQUEST_URI']), $connection)){
+	//if(!checkNoNeedForLogin(basename($_SERVER['REQUEST_URI']), $connection)){
 		header("Location: login.php");
-	}
+	//}
 }
 else{
 	if((isset($_SESSION["user"]))&&(usertools::containRoles($GLOBALS["adminRoles"], $_SESSION["user"]->getRoles()))){
