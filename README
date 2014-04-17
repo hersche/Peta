@@ -4,7 +4,7 @@ In time, the name learncards-web gets deprecated. This project was used in my ed
 One example which will not be updated is <a href="https://github.com/skamster/death-guestbook">death-guestbook</a>, which is written in one day and is fully working with users and roles.
 
 ### Setup
-Import install+sample.sql into a valid database and edit config.php the right way. Valid users will be test and test2 (admin), with password 123456 .
-
+https://github.com/skamster/Peta/wiki/Installation
 ### Status
-There are many improvements needed since i was in a restructering with a friend (see fullUser in <a href="https://github.com/skamster/death-guestbook">dg</a>). 
+Basic plugin-loads are working, no role-stuff yet.. unstable so far!
+<del>There are many improvements needed since i was in a restructering with a friend (see fullUser in <a href="https://github.com/skamster/death-guestbook">dg</a>). </del>
