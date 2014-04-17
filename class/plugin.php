@@ -47,7 +47,7 @@ class pluginmanager {
 	private static $pluginManager;
 	private $plugins;
 	private $hooks;
-	private $pluginlist = array();
+	// private $pluginlist = array();
 	private $rawPluginList = array();
 	private $counter = 0;
 	function __construct($currentUser, $template, $connection) {
@@ -65,59 +65,20 @@ class pluginmanager {
 			if ($PlugFolder != '.' && $PlugFolder != '..') {
 
 				if ((is_file($plugin_dir . $PlugFolder)) && strtolower(substr($PlugFolder, strlen($PlugFolder) - 4)) == '.php') {
-
-					$Code = file_get_contents($plugin_dir . $PlugFolder);
-					preg_match_all('/^class\s+(\w+)\s+extends\s+plugin/im', $Code, $matching);
-					if (!empty($matching[1][0])) {
-						try {
-							require_once $plugin_dir . '/' . $PlugFolder;
-							$class = new $matching[1][0]($currentUser, $template,$plugin_dir, $connection);
-							$class -> setId($this -> counter);
-							//classname + path in db speichern, wenn exist + aktiviert
-							//initialisieren und hinzufügen. voll easy.
-							$this -> counter += 1;
-							$notInitClass = new rawPlugin($matching[1][0],$plugin_dir . '/' . $PlugFolder);
-							array_push($this->rawPluginList, $notInitClass);
-							array_push($this -> pluginlist, $class);
-						} catch (Exception $e) {
-							echo $e;
-							continue;
-						}
-					}
+					$this->checkPHPPlugin($plugin_dir . $PlugFolder);
 				}
 				// Look for folders of plugins
 				if (is_dir($plugin_dir . $PlugFolder)) {
-					
 					// Now we look at the files in the plugin folder
 					$PlugList = opendir($plugin_dir . $PlugFolder);
 					while ($Plug = readdir($PlugList)) {
 						if ($Plug != '.' && $Plug != '..' && strtolower(substr($Plug, strlen($Plug) - 4)) == '.php') {
-							
 							if(strtolower(substr($PlugFolder, strlen($PlugFolder) - 1))!="/"){
 								$PlugFolder = $PlugFolder."/";
 							}
 							//here we would add a file in plugins/individualPluginstuff/*.php
 							if ((is_file($plugin_dir . $PlugFolder . $Plug)) && strtolower(substr($Plug, strlen($Plug) - 4)) == '.php') {
-								$folder = $plugin_dir . $PlugFolder;
-								print_r($folder."<br />");
-								$Code = file_get_contents($folder.$Plug);
-								preg_match_all('/^class\s+(\w+)\s+extends\s+plugin/im', $Code, $matching);
-								if (!empty($matching[1][0])) {
-									try {
-										require_once $folder . '/' . $Plug;
-										$class = new $matching[1][0]($currentUser, $template,$folder, $connection);
-										$class -> setId($this -> counter);
-										//new kind of pluginise
-										$notInitClass = new rawPlugin($matching[1][0], $folder . $Plug);
-										array_push($this->rawPluginList, $notInitClass);
-										
-										$this -> counter += 1;
-										array_push($this -> pluginlist, $class);
-									} catch (Exception $e) {
-										echo $e;
-										continue;
-									}
-								}
+								$this->checkPHPPlugin($plugin_dir . $PlugFolder . $Plug);
 							}
 						}
 
@@ -131,12 +92,24 @@ class pluginmanager {
 	
 	
 
-
+	// deprectated fallback
 	public function getPlugins() {
-		return $this -> pluginlist;
+		return array();
 	}
 	
-	
+	private function checkPHPPlugin($fullPath){
+		$Code = file_get_contents($fullPath);
+		preg_match_all('/^class\s+(\w+)\s+extends\s+plugin/im', $Code, $matching);
+		if (!empty($matching[1][0])) {
+			try {
+				$notInitClass = new rawPlugin($matching[1][0],$fullPath);
+				array_push($this->rawPluginList, $notInitClass);
+			} catch (Exception $e) {
+				echo $e;
+				continue;
+			}
+		}
+	}
 	public function getRawPlugins() {
 		return $this -> rawPluginList;
 	}
@@ -161,8 +134,9 @@ class pluginmanager {
 
 class instancedPluginManager{
 private $instancedPluginList = array();
+private $connection;
 	public function __construct($connection,$template,$currentUser){
-		
+		$this->connection = $connection;
 		// Tableconstructor
 		$connection->query('CREATE TABLE IF NOT EXISTS `plugin` (
 		  `pl_id` int(16) NOT NULL AUTO_INCREMENT,
@@ -178,22 +152,31 @@ private $instancedPluginList = array();
 			array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'], $row['pl_className'],$row['pl_active'],$connection, $template,$currentUser));
 		}
 	}
+	public function getInstancedPlugins(){
+		return $this->instancedPluginList;
+	}
+	public function getInstancedPluginById($id){
 	
-	public function getInstancedPluginByClassName($className){
 		foreach($this->instancedPluginList as $iP){
-			if($iP->getClassName()==$className){
-				print_r($iP);
+			if($iP->getId()==$id){
 				return $iP;
-			}
-			else{
-				print_r($iP);
 			}
 		}
 	}
+	public function getInstancedPluginList($className){
+		$list = array();
+		foreach($this->instancedPluginList as $iP){
+			if($iP->getClassName()==$className){
+				array_push($list, $iP);
+			}
+		}
+		return $list;		
+	}
 	public function createInstancedPlugin($name, $description, $path, $className,$active){
 		
-		$connection -> exec("INSERT INTO plugin (`pl_name`,`pl_description`, `pl_path`,`pl_className`,`pl_active`) VALUES ('" . $name . "', '" . $description . "', " . $path . ", " . $className . ", " . $active . ");");
-		
+		$sql = "INSERT INTO plugin (`pl_name`,`pl_description`, `pl_path`,`pl_className`,`pl_active`) VALUES ('" . $name . "', '" . $description . "', '" . $path . "', '" . $className . "', " . $active . ");";
+		$this->connection -> exec($sql);
+		//var_dump($sql);
 	}
 }
 
@@ -202,6 +185,7 @@ class instancedPlugin{
 	private $name;
 	private $description;
 	private $path;
+	private $file;
 	private $className;
 	private $active;
 	private $connection;
@@ -213,13 +197,19 @@ class instancedPlugin{
 	public function __construct($id,$name, $description, $path, $className,$active,$connection,$template,$currentUser){
 		$this->id=$id;
 		$this->name=$name;
-		$this->description=description;
+		$this->description=$description;
 		$this->path=$path;
+		$this->file=basename($path);
 		$this->className=$className;
 		$this->active=$active;
 		$this->connection=$connection;
 		$this->currentUser = $currentUser;
 		$this->template=$template;
+		
+	}
+	
+	public function getId(){
+		return $this->id;
 	}
 	
 	public function getName(){
@@ -240,23 +230,33 @@ class instancedPlugin{
 	}
 	public function getInstance(){
 		require_once $this->path;
-		$this->pluginObj = new $this->className($currentUser, $template,$rawPlugin->getFolder(), $connection);
+		$this->pluginObj = new $this->className($this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
 		return $this->pluginObj;
 	}
 	
 	public function edit(){
-		$this->setName($_POST['pluginName']);
+		$this->setName($_POST['instancePluginName']);
+		$this->setDescription($_POST['instancePluginDescription']);
+		
 	}
 	
 	private function setName($name){
 		if($name!=$this->name){
 			$this->name=$name;
-			//SQL-UPDATE
+			$this->connection->exec('UPDATE plugin SET pl_name="' . $name . '" WHERE pl_id="' . $this->id. '";');
+		}
+	}
+	
+	private function setDescription($description){
+		if($description!=$this->description){
+			var_dump('UPDATE plugin SET pl_description="' . $description . '" WHERE pl_id="' . $this->id. '";');
+			$this->description=$description;
+			$this->connection->exec('UPDATE plugin SET pl_description="' . $description . '" WHERE pl_id="' . $this->id. '";');
 		}
 	}
 	
 	public function delete(){
-	
+		$this -> connection -> exec("DELETE FROM plugin WHERE pl_id = " . $this->id . "; ");
 	}
 
 }

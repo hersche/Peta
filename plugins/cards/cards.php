@@ -33,7 +33,7 @@ class cards extends plugin {
 		$connection = $this -> connection;
 		$template = $this -> templateObject;
 		$messages = array();
-		$template -> assign("pluginId", $this -> getId());
+		$template -> assign("pluginId", $_GET['plugin']);
 		$template -> assign("folder", $this -> folder);
 		require_once $this -> folder . 'card.class.php';
 		$allSets = new allCardSets($_SESSION["user"] -> getId(), $connection);

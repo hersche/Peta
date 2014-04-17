@@ -15,42 +15,51 @@ foreach($pluginmanager->getRawPlugins() as $rawPlugin){
 }
 $template->assign("rawPluginNames", $tmpPluginNames);
 $template->assign("rawPluginPaths", $tmpPluginPaths);
+$instancedPluginManager = new instancedPluginManager($connection,$template,$user);
+
 
 if(isset($_GET['rawPluginName'])){
-$rawPlugin = $pluginmanager->getRawPluginByName($_GET['rawPluginName']);
-require_once $rawPlugin->getPath();
-$className = $rawPlugin->getName();
-$instancedPluginManager = new instancedPluginManager($connection,$template,$currentUser);
-// var_dump($instancedPluginManager);
-//$instancedPlugin = $instancedPluginManager->getInstancedPluginByClassName($className);
-//$plugin = $instancedPlugin->getInstance();
-$template->assign("instancedPlugin", $instancedPlugin);
-$template->assign("rawPlugin", $rawPlugin);
+	$rawPlugin = $pluginmanager->getRawPluginByName($_GET['rawPluginName']);
+	require_once $rawPlugin->getPath();
+	$className = $rawPlugin->getName();
+	$template->assign("instancedPlugin", $instancedPlugin);
+	$template->assign("instancedPluginList", $instancedPluginManager->getInstancedPluginList($className));
+	$template->assign("rawPlugin", $rawPlugin);
 }
 
 
 $template->assign("plugins", $pluginmanager->getPlugins());
 if (isset($_GET['plugin'])){
-
-	$plugin = $pluginmanager->getPluginbyid($_GET['plugin']);
-	$template->assign("identifier", $plugin->getIdentifier());
+	$pluginInstance = $instancedPluginManager->getInstancedPluginById($_GET['plugin']);
+	$plugin = $pluginInstance->getInstance();
 	$template->assign("plugin", $plugin);
 	// $messages[] = $plugin->getPluginName();
 }
 
-
+if($_GET['action'] == "pluginInstanceDelete"){
+	$pluginInstance = $instancedPluginManager->getInstancedPluginById($_GET['plugId']);
+	$pluginInstance->delete();
+}
 if($_GET['action'] == "getPluginEdit"){
 	// var_dump($rawPlugin);
 	$rawPluginName['name'] = $_GET['rawPluginName'];
 	$rawPlugin = $pluginmanager->getRawPluginByName($_GET['rawPluginName']);
 	$rawPluginName['path'] = $rawPlugin->getPath();
+	$rawPluginName['className'] = $rawPlugin->getName();
 	$template->assign("getPluginEdit", $rawPluginName);
 }
-if(isset($_POST['createInstancedPlugin'])){
-	// $plugin = 
+if($_GET['action'] == "editPluginInstance"){
+	$pluginInstance = $instancedPluginManager->getInstancedPluginById($_GET['pluginId']);
+	$pluginInstance->edit();
+}
+if($_GET['action'] == "createInstancedPlugin"){
+	//var_dump($_GET);
+	$newInstPlugin = $instancedPluginManager->createInstancedPlugin($_GET['name'], $_GET['description'], $_GET['path'], $_GET['className'],$_GET['active']);
+	
 }
 // $var = array("content");
 // $template->_smarty_include("plugins/exampleplugin/templates/content.tpl", $var);
 $template->assign("messages", $messages);
+$template->assign("plugins", $instancedPluginManager->getInstancedPlugins());
 $template->display('plugin.tpl');
 ?>
