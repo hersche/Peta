@@ -3,10 +3,10 @@ templates_c/%%*
 admin/template_c/%%*
 
 templates_c/*.php
-admin/template_c/*.php
-config.php
+admin/templates_c/*.php
 *.php~
 
+config.php
 js/dojo/dijit
 js/dojo/dojo
 js/dojo/dojox
