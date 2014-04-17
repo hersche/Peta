@@ -15,6 +15,30 @@ $template->addTemplateDir("plugins/");
 $jsscripts = array();
 $dojorequire = array();
 session_start();
+
+//SECURE SQL-INJECTION	
+	function sqlsec($value)
+	{
+		$search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
+		$replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
+
+		return str_replace($search, $replace, $value);
+	}
+	
+	//This stops SQL Injection in POST vars 
+   foreach ($_POST as $key => $value) { 
+	 $_POST[$key] = sqlsec($value); 
+   } 
+
+   //This stops SQL Injection in GET vars 
+   foreach ($_GET as $key => $value) { 
+	 $_GET[$key] = sqlsec($value); 
+   }
+	
+
+
+
+
 try
 {
 	$connection = new PDO($GLOBALS["db_type"].':dbname='.$GLOBALS["db_dbname"].';host='.$GLOBALS["db_host"].'', $GLOBALS["db_loginname"], $GLOBALS["db_loginpassword"]);
