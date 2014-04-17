@@ -3,7 +3,7 @@ templates_c/%%*
 admin/template_c/%%*
 
 templates_c/*.php
-admin/template_c/*.php
+admin/templates_c/*.php
 
 *.php~
 
