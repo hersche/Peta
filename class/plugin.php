@@ -160,15 +160,39 @@ class pluginmanager {
 }
 
 class instancedPluginManager{
-private instancedPluginList = array();
+private $instancedPluginList = array();
 	public function __construct($connection,$template,$currentUser){
-		foreach($connection->query('SELECT * FROM `` LIMIT 0 , 30') as $row){
-			array_push($this->instancedPluginList, new instancedPlugin($row['$id'],$row['$name'], $row['$description'], $row['$path'], $row['$className'],$row['$active'],$connection, $template,$currentUser);
+		
+		// Tableconstructor
+		$connection->query('CREATE TABLE IF NOT EXISTS `plugin` (
+		  `pl_id` int(16) NOT NULL AUTO_INCREMENT,
+		  `pl_name` varchar(40) NOT NULL,
+		  `pl_description` varchar(1024) NOT NULL,
+		  `pl_path` varchar(255) NOT NULL,
+		  `pl_className` varchar(128) NOT NULL,
+		  `pl_active` tinyint(1) NOT NULL,
+		  PRIMARY KEY (`pl_id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');
+		
+		foreach($connection->query('SELECT * FROM `plugin` LIMIT 0 , 30') as $row){
+			array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'], $row['pl_className'],$row['pl_active'],$connection, $template,$currentUser));
+		}
+	}
+	
+	public function getInstancedPluginByClassName($className){
+		foreach($this->instancedPluginList as $iP){
+			if($iP->getClassName()==$className){
+				print_r($iP);
+				return $iP;
+			}
+			else{
+				print_r($iP);
+			}
 		}
 	}
 	public function createInstancedPlugin($name, $description, $path, $className,$active){
 		
-		$connection -> exec("INSERT INTO instancedPlugin (`pl_name`,`pl_hash`, `pl_version`,`pl_active`) VALUES ('" . $name . "', '" . $description . "', " . $path . ", " . $className . ", " . $active . ");");
+		$connection -> exec("INSERT INTO plugin (`pl_name`,`pl_description`, `pl_path`,`pl_className`,`pl_active`) VALUES ('" . $name . "', '" . $description . "', " . $path . ", " . $className . ", " . $active . ");");
 		
 	}
 }
@@ -191,7 +215,7 @@ class instancedPlugin{
 		$this->name=$name;
 		$this->description=description;
 		$this->path=$path;
-		this->className=$className;
+		$this->className=$className;
 		$this->active=$active;
 		$this->connection=$connection;
 		$this->currentUser = $currentUser;
@@ -205,10 +229,19 @@ class instancedPlugin{
 	public function getDescription(){
 		return $this->description;
 	}
-	
+	public function getPath(){
+		return $this->path;
+	}
+	public function getClassName(){
+		return $this->className;
+	}
+	public function getActive(){
+		return $this->active;
+	}
 	public function getInstance(){
 		require_once $this->path;
-		$this->pluginObj = new $this->className;
+		$this->pluginObj = new $this->className($currentUser, $template,$rawPlugin->getFolder(), $connection);
+		return $this->pluginObj;
 	}
 	
 	public function edit(){
