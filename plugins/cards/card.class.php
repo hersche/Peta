@@ -6,46 +6,21 @@
  */
 class allCardSets {
 	private $sets = array();
-	public function __construct($userid, $connection) {
-		$connection -> exec("CREATE TABLE IF NOT EXISTS `question_set` (
-  `setid` int(11) NOT NULL AUTO_INCREMENT,
-  `setname` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
-  `setdescription` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
-  `ownerid` int(11) NOT NULL,
-  `editcount` int(11) NOT NULL,
-  `lasttimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `createtimestamp` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `firstowner` int(11) NOT NULL,
-  `tagsid` int(11) NOT NULL,
-  PRIMARY KEY (`setid`)
-)");
-		$connection -> exec("CREATE TABLE IF NOT EXISTS `question_question` (
-  `questionid` int(11) NOT NULL AUTO_INCREMENT,
-  `set` int(11) NOT NULL,
-  `question` varchar(100) NOT NULL,
-  `mode` text NOT NULL,
-  `rightAnswered` int(11) NOT NULL DEFAULT '0',
-  `wrongAnswered` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`questionid`)
-)");
-		$connection -> exec("CREATE TABLE IF NOT EXISTS `question_answer` (
-  `answerid` int(11) NOT NULL AUTO_INCREMENT,
-  `ownerquestion` int(11) NOT NULL,
-  `answertext` varchar(100) NOT NULL,
-  `rightAnswer` tinyint(1) NOT NULL COMMENT 'true if it is the right answer, false if not (for multiple answers)',
-  PRIMARY KEY (`answerid`)
-)");
+	private $dbPrefix;
+	public function __construct($userid, $connection,$dbPrefix) {
+		$GLOBALS["dbPrefix"] = $dbPrefix;
 		$set = null;
 		$setid = -1;
 		$questionid = -1;
 		$answerid = -1;
-		foreach ($connection->query('SELECT * FROM question_set WHERE ownerid="'.$userid.'"') as $setRow) {
-			$set = new cardSet();
+		foreach ($connection->query('SELECT * FROM '.$GLOBALS["dbPrefix"].'question_set WHERE ownerid="'.$userid.'"') as $setRow) {
+			$set = new cardSet(s);
 			$set -> setSetId($setRow['setid']);
 			$setid = $setRow['setid'];
 			$set -> setSetName($setRow['setname']);
 			$set -> setSetDescription($setRow['setdescription']);
-			foreach ($connection->query('SELECT * FROM question_question WHERE question_question.set='.$setid) as $questionRow) {
+			var_dump('SELECT * FROM '.$GLOBALS["dbPrefix"].'question_question WHERE set="'.$setid.'";');
+			foreach ($connection->query('SELECT * FROM '.$GLOBALS["dbPrefix"].'question_question WHERE '.$GLOBALS["dbPrefix"].'question_question.set="'.$setid.'";') as $questionRow) {
 				$question = new question();
 				$question -> setId($questionRow['questionid']);
 				$question -> setQuestion($questionRow['question']);
@@ -53,7 +28,7 @@ class allCardSets {
 				$question -> setRightAnswered($questionRow['rightAnswered']);
 				$question -> setWrongAnswered($questionRow['wrongAnswered']);
 				$questionid = $questionRow['questionid'];
-				foreach ($connection->query('SELECT * FROM question_answer WHERE ownerquestion='.$questionid) as $answerRow) {
+				foreach ($connection->query('SELECT * FROM '.$GLOBALS["dbPrefix"].'question_answer WHERE '.$GLOBALS["dbPrefix"].'question_answer.ownerquestion='.$questionid) as $answerRow) {
 					print($answerRow['answertext']);
 					$answerobj = new answer();
 					$answerobj -> setAnswer($answerRow['answertext']);
@@ -90,7 +65,7 @@ class allCardSets {
 	 * @param PDO $connection
 	 */
 	public function newSet($set, $userid, $connection) {
-		$connection -> exec("INSERT INTO question_set (`setname`,`setdescription`, `ownerid`,  `editcount`, `createtimestamp`, `firstowner`) VALUES ('" . $set -> getSetName() . "', '" . $set -> getSetDescription() . "', " . $userid . ", 1, '2009-00-00 00:00:00', " . $userid . ");");
+		$connection -> exec("INSERT INTO ".$GLOBALS['dbPrefix']."question_set (`setname`,`setdescription`, `ownerid`,  `editcount`, `createtimestamp`, `firstowner`) VALUES ('" . $set -> getSetName() . "', '" . $set -> getSetDescription() . "', " . $userid . ", 1, '2009-00-00 00:00:00', " . $userid . ");");
 		$set -> setSetId($connection -> lastInsertId());
 		array_push($this -> sets, $set);
 	}
@@ -189,7 +164,8 @@ class cardSet {
 	 * @param unknown_type $connection
 	 */
 	public function newQuestion($question, $connection) {
-		$connection -> exec("INSERT INTO `question_question` (`set`, `question`, `mode`) VALUES (" . $this -> setid . ", '" . $question -> getQuestion() . "', '" . $question -> getMode() . "')");
+		var_dump("INSERT INTO `".$GLOBALS['dbPrefix']."question_question` (`set`, `question`, `mode`) VALUES (" . $this -> setid . ", '" . $question -> getQuestion() . "', '" . $question -> getMode() . "')");
+		$connection -> exec("INSERT INTO `".$GLOBALS['dbPrefix']."question_question` (`set`, `question`, `mode`) VALUES (" . $this -> setid . ", '" . $question -> getQuestion() . "', '" . $question -> getMode() . "')");
 		$question -> setId($connection -> lastInsertId());
 		array_push($this -> questions, $question);
 	}
@@ -207,17 +183,17 @@ class cardSet {
 		foreach ($this->questions as $question) {
 			$question -> deleteQuestion($connection);
 		}
-		$connection -> exec("DELETE FROM question_set WHERE `question_set`.`setid` = " . $this -> setid);
+		$connection -> exec("DELETE FROM ".$GLOBALS['dbPrefix']."question_set WHERE `".$GLOBALS['dbPrefix']."question_set`.`setid` = " . $this -> setid);
 	}
 
 	public function updateSetDescription($description, $connection) {
 		$this -> setdescription = $description;
-		$connection -> exec("UPDATE `question_set` SET `setdescription` = '" . $description . "' WHERE `question_set`.`setid` =" . $this -> setid . ";");
+		$connection -> exec("UPDATE `".$GLOBALS['dbPrefix']."question_set` SET `setdescription` = '" . $description . "' WHERE `".$GLOBALS['dbPrefix']."question_set`.`setid` =" . $this -> setid . ";");
 	}
 
 	public function updateSetName($name, $connection) {
 		$this -> setname = $name;
-		$connection -> exec("UPDATE `question_set` SET `setname` = '" . $name . "' WHERE `question_set`.`setid` =" . $this -> setid . ";");
+		$connection -> exec("UPDATE `".$GLOBALS['dbPrefix']."question_set` SET `setname` = '" . $name . "' WHERE `".$GLOBALS['dbPrefix']."question_set`.`setid` =" . $this -> setid . ";");
 	}
 
 }
@@ -282,7 +258,7 @@ class question {
 
 	public function updateQuestion($question, $connection) {
 		$this -> question = $question;
-		$connection -> exec("UPDATE `question_question` SET `question` = '" . $question . "' WHERE `question_question`.`questionid` =" . $this -> questionId . ";");
+		$connection -> exec("UPDATE `".$GLOBALS['dbPrefix']."question_question` SET `question` = '" . $question . "' WHERE `".$GLOBALS['dbPrefix']."question_question`.`questionid` =" . $this -> questionId . ";");
 	}
 
 	public function checkRightAnswer($answertext, $connection) {
@@ -290,17 +266,17 @@ class question {
 			// TODO build in option for diffrent answers!
 			if ($answer -> getAnswer() == $answertext) {
 				$this -> rightAnswered += 1;
-				$connection -> exec("UPDATE `question_question` SET `rightAnswered` = '" . $this -> rightAnswered . "' WHERE `question_question`.`questionid` =" . $this -> questionId . " LIMIT 1 ;");
+				$connection -> exec("UPDATE `".$GLOBALS['dbPrefix']."question_question` SET `rightAnswered` = '" . $this -> rightAnswered . "' WHERE `".$GLOBALS['dbPrefix']."question_question`.`questionid` =" . $this -> questionId . " LIMIT 1 ;");
 				return true;
 			}
 		}
 		$this -> wrongAnswered += 1;
-		$connection -> exec("UPDATE `question_question` SET `wrongAnswered` = '" . $this -> wrongAnswered . "' WHERE `question_question`.`questionid` =" . $this -> questionId . " LIMIT 1 ;");
+		$connection -> exec("UPDATE `".$GLOBALS['dbPrefix']."question_question` SET `wrongAnswered` = '" . $this -> wrongAnswered . "' WHERE `".$GLOBALS['dbPrefix']."question_question`.`questionid` =" . $this -> questionId . " LIMIT 1 ;");
 		return false;
 	}
 
 	public function newAnswer($answer, $connection) {
-		$connection -> exec("INSERT INTO `question_answer` (`ownerquestion`, `answertext`) VALUES ('" . $this -> questionId . "', '" . $answer -> getAnswer() . "');");
+		$connection -> exec("INSERT INTO `".$GLOBALS['dbPrefix']."question_answer` (`ownerquestion`, `answertext`) VALUES ('" . $this -> questionId . "', '" . $answer -> getAnswer() . "');");
 		$answer -> setAnswerId($connection -> lastInsertId());
 		array_push($this -> answers, $answer);
 	}
@@ -309,7 +285,7 @@ class question {
 		foreach ($this->answers as $answer) {
 			$answer -> deleteAnswer($connection);
 		}
-		$connection -> exec("DELETE FROM `question_question` WHERE `question_question`.`questionid` = " . $this -> questionId);
+		$connection -> exec("DELETE FROM `".$GLOBALS['dbPrefix']."question_question` WHERE `".$GLOBALS['dbPrefix']."question_question`.`questionid` = " . $this -> questionId);
 	}
 
 }
@@ -335,7 +311,7 @@ class answer {
 	}
 
 	public function deleteAnswer($connection) {
-		$connection -> exec("DELETE FROM `question_answer` WHERE `question_answer`.`answerid` = " . $this -> answerid);
+		$connection -> exec("DELETE FROM `".$GLOBALS['dbPrefix']."question_answer` WHERE `".$GLOBALS['dbPrefix']."question_answer`.`answerid` = " . $this -> answerid);
 	}
 
 }

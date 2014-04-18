@@ -9,41 +9,60 @@
 abstract class plugin {
 	private $id;
 	private $currentUser;
-	private $templateObject;
+	private $template;
 	private $connection;
 	private $folder;
 	/**
-	 *
 	 * Constructor
 	 * @param array $post all the post-datas..
 	 * @param array $get all the get-datas
-	 * @param unknown_type $currentUser
-	 * @param unknown_type $connection
+	 * @param user $currentUser
+	 * @param PDO $connection
 	 */
-	public function __construct($currentUser, $templateObject,$folder, $connection) {
+	public function __construct($id,$currentUser,$template,$folder, $connection) {
+		$this->id = $id;
 		$this -> currentUser = $currentUser;
-		$this -> templateObject = $templateObject;
+		$this -> template = $template;
 		$this -> connection = $connection;
 		$this->folder =$folder;
 	}
-
+	/**
+	* Get the pluginname, set by each plugin.
+	* Use convention like pluginname.username.v01 or so. Important is a unique pluginname to others exist in web.
+	**/
 	abstract function getPluginName();
-	abstract function getDependensies();
-	function getIdentifier(){
+	
+	/**
+	* Get a description of the plugin-file for admin or user which want to instance a plugin.
+	**/
+	abstract function getPluginDescription();
+	
+	/**
+	* Get the className, which have to be unique too! Don't use points, better something like pluginnameUsername . This isn't so important for the user to show, the pluginName is used for this.
+	**/
+	public function getClassName(){
 		return get_called_class();
 	}
+	
+	/**
+	* For internally use of the plugins, to do unique tables.
+	*/
+	public function getDbPrefix(){
+		return $this->getClassName()."_".$this->getId()."_";
+	}
+	
+	/**
+	* Execute-method of the plugin
+	**/
 	abstract function start();
+	
 	public function getId() {
 		return $this -> id;
 	}
 
-	public function setId($id) {
-		$this -> id = $id;
-	}
-
 }
 
-class pluginmanager {
+class rawIOPluginManager {
 	private static $pluginManager;
 	private $plugins;
 	private $hooks;
@@ -135,7 +154,7 @@ class pluginmanager {
 class instancedPluginManager{
 private $instancedPluginList = array();
 private $connection;
-	public function __construct($connection,$template,$currentUser){
+	public function __construct($user,$template, $connection){
 		$this->connection = $connection;
 		// Tableconstructor
 		$connection->query('CREATE TABLE IF NOT EXISTS `plugin` (
@@ -147,9 +166,8 @@ private $connection;
 		  `pl_active` tinyint(1) NOT NULL,
 		  PRIMARY KEY (`pl_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');
-		
 		foreach($connection->query('SELECT * FROM `plugin` LIMIT 0 , 30') as $row){
-			array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'], $row['pl_className'],$row['pl_active'],$connection, $template,$currentUser));
+			array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'], $row['pl_className'],$row['pl_active'],$connection, $template,$user));
 		}
 	}
 	public function getInstancedPlugins(){
@@ -230,7 +248,7 @@ class instancedPlugin{
 	}
 	public function getInstance(){
 		require_once $this->path;
-		$this->pluginObj = new $this->className($this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
+		$this->pluginObj = new $this->className($this->id,$this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
 		return $this->pluginObj;
 	}
 	
@@ -249,7 +267,6 @@ class instancedPlugin{
 	
 	private function setDescription($description){
 		if($description!=$this->description){
-			var_dump('UPDATE plugin SET pl_description="' . $description . '" WHERE pl_id="' . $this->id. '";');
 			$this->description=$description;
 			$this->connection->exec('UPDATE plugin SET pl_description="' . $description . '" WHERE pl_id="' . $this->id. '";');
 		}

@@ -9,22 +9,12 @@ class allThreads {
 	private $threads = array();
 	private $connect;
 	private $user;
-	public function __construct($connection, $user) {
+	private $dbPrefix;
+	public function __construct($connection, $user, $dbPrefix) {
 		$this -> connect = $connection;
 		$this -> user = $user;
-		$this -> connect -> exec("CREATE TABLE IF NOT EXISTS `forum_threads` (
-  `forumid` int(11) NOT NULL AUTO_INCREMENT,
-  `userid` int(11) NOT NULL,
-  `title` text NOT NULL,
-  `text` text NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `toptopic` int(11) NOT NULL,
-  `threadstate` int(5) NOT NULL DEFAULT '0',
-  `editcounter` int(5) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`forumid`)
-)");
-
-		foreach ($connection->query('SELECT * FROM forum_threads') as $row) {
+		$this->dbPrefix=$dbPrefix;
+		foreach ($connection->query("SELECT * FROM ".$this->dbPrefix."forum_threads;") as $row) {
 			$this -> nrOfThreads += 1;
 			$thread = new thread();
 			$thread -> setId($row['forumid']);
@@ -93,9 +83,9 @@ class allThreads {
 		$thread = $this -> getThreadById($threadid);
 		if (!is_null($thread)) {
 			$subthreads = $this -> getSubThreads($threadid);
-			$this -> connect -> exec("DELETE FROM `" . $GLOBALS["db_dbname"] . "`.`forum_threads` WHERE `forum_threads`.`forumid` = " . $threadid . "; ");
+			$this -> connect -> exec("DELETE FROM `".$this->dbPrefix."forum_threads` WHERE `forumid` = " . $threadid . "; ");
 			foreach ($subthreads as $subthread) {
-				$this -> connect -> exec("DELETE FROM `" . $GLOBALS["db_dbname"] . "`.`forum_threads` WHERE `forum_threads`.`forumid` = " . $subthread -> getId() . "; ");
+				$this -> connect -> exec("DELETE FROM ".$this->dbPrefix."forum_threads WHERE `forumid` = " . $subthread -> getId() . "; ");
 			}
 			$this -> threads = array();
 			$this -> __construct($this -> connect, $this -> user);
@@ -131,7 +121,7 @@ class allThreads {
 	}
 
 	public function createNewThread($title, $text, $toptopic = -1) {
-		$this -> connect -> exec("INSERT INTO `" . $GLOBALS["db_dbname"] . "`.`forum_threads` (`forumid`, `userid`, `title`, `text`, `timestamp`, `toptopic`) VALUES (NULL, '" . $this -> user -> getId() . "', '" . $title . "', '" . $text . "', CURRENT_TIMESTAMP, '" . $toptopic . "');");
+		$this -> connect -> exec("INSERT INTO `".$this->dbPrefix."forum_threads` (`forumid`, `userid`, `title`, `text`, `timestamp`, `toptopic`) VALUES (NULL, '" . $this -> user -> getId() . "', '" . $title . "', '" . $text . "', CURRENT_TIMESTAMP, '" . $toptopic . "');");
 		$this -> nrOfThreads += 1;
 		$thread = new thread();
 		$thread -> setId($this -> connect -> lastInsertId());
@@ -146,7 +136,7 @@ class allThreads {
 	}
 
 	public function editThread($title, $text, $editcounter, $threadid) {
-		$this -> connect -> exec("UPDATE `forum_threads` SET `title` =  '" . $title . "', `text` =  '" . $text . "', `editcounter` =  " . $editcounter . "   WHERE `forum_threads`.`forumid` =" . $threadid . " LIMIT 1 ;");
+		$this -> connect -> exec("UPDATE `".$this->dbPrefix."forum_threads` SET `title` =  '" . $title . "', `text` =  '" . $text . "', `editcounter` =  " . $editcounter . "   WHERE `forumid` =" . $threadid . " LIMIT 1 ;");
 	}
 
 	public function changeThreadState($threadid, $newState, $recursive = false) {
@@ -158,7 +148,7 @@ class allThreads {
 			}
 		}
 
-		$this -> connect -> exec("UPDATE `forum_threads` SET `threadstate` =  '" . $newState . "' WHERE `forum_threads`.`forumid` =" . $threadid . " LIMIT 1 ;");
+		$this -> connect -> exec("UPDATE `".$this->dbPrefix."forum_threads` SET `threadstate` =  '" . $newState . "' WHERE `forumid` =" . $threadid . " LIMIT 1 ;");
 	}
 
 }

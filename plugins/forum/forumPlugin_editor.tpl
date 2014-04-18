@@ -1,9 +1,6 @@
 <script type="text/javascript">
-    {
-        section name = dojo loop = $dojorequire
-    }
-    dojo.require("{$dojorequire[dojo]}"); {
-        /section}
+    {section name = dojo loop = $dojorequire}
+    dojo.require("{$dojorequire[dojo]}"); {/section}
 </script>
 
 <table>
