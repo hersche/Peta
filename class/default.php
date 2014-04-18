@@ -5,6 +5,7 @@
 
 require_once 'config.php';
 date_default_timezone_set($GLOBALS["timezone"]);
+require_once 'class/role.php';
 require_once 'class/user.php';
 require_once 'class/plugin.php';
 require_once 'class/smarty/Smarty.class.php';

@@ -29,21 +29,14 @@ if(isset($_GET['rawPluginName'])){
 	if(isset($instance)){
 		$template->assign("rawPluginDescription",$instance->getPluginDescription());
 	}
-
+	
+	$template->assign("instancedPlugin", $instancedPlugin);
 	$template->assign("instancedPluginList", $instancedPluginManager->getInstancedPluginList($className));
 	$template->assign("rawPlugin", $rawPlugin);
 	
 }
 
-if(isset($_GET['instancePluginId'])){
-	$instancePlugin = $instancedPluginManager->getInstancedPluginById($_GET['instancePluginId']);
-	foreach($instancePlugin->getRestRoles() as $role){
-		var_dump($role->getRole());
-	}
-	$template->assign("usedRoles", $instancePlugin->getUsedRoles());
-	$template->assign("restRoles", $instancePlugin->getRestRoles());
-	$template->assign("getInstancePluginId", $_GET['instancePluginId']);
-}
+
 $template->assign("plugins", $pluginmanager->getPlugins());
 if (isset($_GET['plugin'])){
 	$pluginInstance = $instancedPluginManager->getInstancedPluginById($_GET['plugin']);

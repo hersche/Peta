@@ -8,7 +8,6 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <script type="text/javascript" src="js/dojo/dojo/dojo.js"
 djConfig="parseOnLoad:true"></script>
-<script type="text/javascript" src="js/jquery/jquery-1.6.2.js"></script>
 <script type="text/javascript" src="js/extras.js"></script>
 {section name=js loop=$jsscripts}
 <script type="text/javascript" src="{$jsscripts[js]}"

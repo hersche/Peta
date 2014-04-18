@@ -28,11 +28,14 @@
                     <input type="checkbox" name="role_{$selectedRoles[role]->getId()}" value="{$selectedRoles[role]->getId()}" checked="checked">
                 </li>
                 {/section}
+			</ul>
+			<ul>
                 {section name=rrole loop=$restRoles}
                 <li>{$restRoles[rrole]->getRole()} DEBUG-ID's:{$restRoles[rrole]->getId()}
                     <input type="checkbox" name="role_{$restRoles[rrole]->getId()}" value="{$restRoles[rrole]->getId()}">
                 </li>
 				 {/section} 
+			</ul>
                 </select>
 
                 </tr>

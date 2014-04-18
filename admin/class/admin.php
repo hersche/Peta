@@ -8,8 +8,8 @@ class admin{
 	 * @param PDO $connection
 	 */
 	public static function getUsers($connection){
-		return $connection->query("SELECT * FROM user;");
-		// return $tmp->fetchAll();
+		$tmp = $connection->query("SELECT * FROM user;");
+		return $tmp->fetchAll();
 	}
 	
 	/**

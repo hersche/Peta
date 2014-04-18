@@ -20,7 +20,26 @@ class forum extends plugin {
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
 		$this -> folder = $folder;
-		require_once $folder."forum.class.php";
+	}
+
+	public function getPluginName() {
+		return "forum.skamster";
+	}
+	/**
+		This method will just be executed on instance plugins.
+	**/
+	public function getPluginDescription() {
+		return "This is a forum and a reference for testing the core.";
+	}
+	public function deleteInstanceTables(){
+		$this -> connection -> exec("DROP TABLE IF EXIST `".$this->getDbPrefix()."forum_threads`");
+	}
+	public function getId(){
+		return $this->id;
+	}
+	
+	public function start() {
+		require_once $this->folder."forum.class.php";
 		$this -> connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."forum_threads` (
 			`forumid` int(11) NOT NULL AUTO_INCREMENT,
 			`userid` int(11) NOT NULL,
@@ -32,24 +51,6 @@ class forum extends plugin {
 			`editcounter` int(5) NOT NULL DEFAULT '0',
 			PRIMARY KEY (`forumid`)
 		)");
-		
-	}
-
-	public function getPluginName() {
-		return "forum.skamster";
-	}
-	/**
-		This method will just be executed on instance plugins.
-	**/
-	public function getPluginDescription() {
-		return "A plugindescription for forum.skamster .";
-	}
-
-	public function getId(){
-		return $this->id;
-	}
-	
-	public function start() {
 		$template = $this -> templateObject;
 		$template->addTemplateDir($this->folder."forum/");
 		$connection = $this -> connection;

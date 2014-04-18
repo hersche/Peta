@@ -1,11 +1,10 @@
 <?php
-class skamsterTplExample extends plugin{
+class skamsterSite extends plugin{
 	
 	private $currentUser;
 	private $templateObject;
 	private $connection;
 	private $id;
-	private $folder;
 	/**
 	 *
 	 * Constructor
@@ -19,26 +18,35 @@ class skamsterTplExample extends plugin{
 		$this -> currentUser = $currentUser;
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
-		$this->folder = $folder;
+
 	}
-	
 	public function deleteInstanceTables(){ 
-		//I've no db's
+		$this -> connection -> exec("DROP TABLE IF EXIST `".$this->getDbPrefix()."site`");
 	}
 	
 	public function getPluginName(){
-		return "tplExample.skamster";
+		return "site.skamster";
 	}	
+	
+	public function getId(){
+		return $this->id;
+	}
 	/**
 		This method will just be executed on instance plugins.
 	**/
 	public function getPluginDescription() {
-		return "A plugindescription for tplExample.skamster .";
+		return "This should work as a usual web/info-site .";
 	}
-
+	
 	
 	public function start(){
-		$this->templateObject->display($this->folder.'tplExample.tpl');
+		$this -> connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."site` (
+			`id` int(11) NOT NULL AUTO_INCREMENT,
+			`name` text NOT NULL,
+			`content` text NOT NULL,
+			PRIMARY KEY (`id`)
+		)");
+		$this->templateObject->display('tplExample.tpl');
 	}
 }
 

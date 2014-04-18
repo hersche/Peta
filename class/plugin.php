@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * What's a plugin? This class should define these.. every plugin has to extend this class!
@@ -43,13 +42,17 @@ abstract class plugin {
 	public function getClassName(){
 		return get_called_class();
 	}
-	
+	public function getRequiredDojo(){
+		return Null;
+	}	
 	/**
 	* For internally use of the plugins, to do unique tables.
 	*/
 	public function getDbPrefix(){
 		return $this->getClassName()."_".$this->getId()."_";
 	}
+	
+	public abstract function deleteInstanceTables();
 	
 	/**
 	* Execute-method of the plugin
@@ -181,6 +184,8 @@ private $connection;
 			}
 		}
 	}
+	
+	
 	public function getInstancedPluginList($className){
 		$list = array();
 		foreach($this->instancedPluginList as $iP){
@@ -210,6 +215,9 @@ class instancedPlugin{
 	private $pluginObj;
 	private $currentUser;
 	private $template;
+	private $roles = array();
+	private $restRoles = array();
+	private $allRoles = array();
 	
 	
 	public function __construct($id,$name, $description, $path, $className,$active,$connection,$template,$currentUser){
@@ -223,7 +231,48 @@ class instancedPlugin{
 		$this->connection=$connection;
 		$this->currentUser = $currentUser;
 		$this->template=$template;
+
+		foreach($connection->query("SELECT * FROM role") as $roleRow){
+			$role = new role();
+			$role->setId($roleRow['rid']);
+			$role->setRole($roleRow['role']);
+			array_push($this->allRoles, $role);
+		}
+		$sqlEx = $connection->query("SELECT * FROM pluginrole WHERE pluginId='".$id."';");
+		foreach($sqlEx as $row){
+			foreach($allRoles as $role){
+				if($role->getId()==$row['roleId']){
+					$role->setAccessRights($row['access']);
+					array_push($this->roles, $role);
+				}
+				else{
+					array_push($this->restRoles, $role);
+				}
+			}
+		}
 		
+	}
+	
+	// public function insertRole($roleId + ownid into pluginrole, $conn->lastinsertid mit rechte into roleaccess
+	public function insertRole($roleId, $access){
+		$connection -> exec('INSERT INTO pluginRole (pluginId, roleId,access) VALUES (' . $this -> id . ', ' . $roleId . ', ' . $access . ';');
+	}
+	
+	public function getUsedRoles(){
+		var_dump(sizeof($this->roles));
+		return $this->roles;
+	}
+	
+	public function getRestRoles(){
+		
+		if(sizeof($this->roles)!=0){
+			//var_dump($this->restRoles);
+			return $this->restRoles;
+		}
+		else{
+			//var_dump($this->allRoles);
+			return $this->allRoles;
+		}
 	}
 	
 	public function getId(){
@@ -273,6 +322,8 @@ class instancedPlugin{
 	}
 	
 	public function delete(){
+		$inst = $this->getInstance();
+		$inst->deleteInstanceTables();
 		$this -> connection -> exec("DELETE FROM plugin WHERE pl_id = " . $this->id . "; ");
 	}
 

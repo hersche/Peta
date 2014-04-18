@@ -1,3 +1,4 @@
+*.komodoproject
 .kdev4/
 templates_c/%%*
 admin/template_c/%%*

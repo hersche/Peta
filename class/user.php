@@ -40,30 +40,30 @@ class user extends abstractUser {
 	public function __construct($username, $password, $connection) {
 		if ((!empty($username)) && (!empty($password))) {
 			$connection -> exec("CREATE TABLE IF NOT EXISTS `user` (
-  `uid` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(22) COLLATE utf8_unicode_ci NOT NULL,
-  `password` varchar(1026) COLLATE utf8_unicode_ci NOT NULL,
-  `lastlogin` date NOT NULL,
-  `lastip` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`uid`)
-)");
+				`uid` int(11) NOT NULL AUTO_INCREMENT,
+				`username` varchar(22) COLLATE utf8_unicode_ci NOT NULL,
+				`password` varchar(1026) COLLATE utf8_unicode_ci NOT NULL,
+				`lastlogin` date NOT NULL,
+				`lastip` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
+				PRIMARY KEY (`uid`)
+			)");
 			$connection -> exec("CREATE TABLE IF NOT EXISTS `user_customfields` (
-  `cf_id` int(16) NOT NULL AUTO_INCREMENT COMMENT 'id 4 customfields',
-  `cf_uid` int(11) DEFAULT NULL,
-  `cf_key` varchar(30) NOT NULL,
-  `cf_value` text NOT NULL,
-  PRIMARY KEY (`cf_id`)
-)");
+				`cf_id` int(16) NOT NULL AUTO_INCREMENT COMMENT 'id 4 customfields',
+				`cf_uid` int(11) DEFAULT NULL,
+				`cf_key` varchar(30) NOT NULL,
+				`cf_value` text NOT NULL,
+			PRIMARY KEY (`cf_id`)
+			)");
 			$connection -> exec("CREATE TABLE IF NOT EXISTS `user_role` (
-  `ur_uid` int(11) NOT NULL,
-  `ur_rid` int(11) NOT NULL
-)");
+				`ur_uid` int(11) NOT NULL,
+				`ur_rid` int(11) NOT NULL
+			)");
 			$connection -> exec("CREATE TABLE IF NOT EXISTS `role` (
-  `rid` int(11) NOT NULL AUTO_INCREMENT,
-  `role` varchar(22) NOT NULL,
-  `r_admin` tinyint(1) NOT NULL,
-  PRIMARY KEY (`rid`)
-)");
+				`rid` int(11) NOT NULL AUTO_INCREMENT,
+				`role` varchar(22) NOT NULL,
+				`r_admin` tinyint(1) NOT NULL,
+			PRIMARY KEY (`rid`)
+			)");
 			$password = hash($GLOBALS["password_hash"], $password);
 			$userstatement = $connection -> query('SELECT * FROM user WHERE username="' . $username . '" AND password="' . $password . '"  LIMIT 1;');
 			$userrow = $userstatement -> fetch(PDO::FETCH_ASSOC);
@@ -721,61 +721,6 @@ class usertools {
 	static public function getUserById($userid, $connection) {
 		foreach ($connection->query('SELECT * FROM user WHERE uid="'.$userid.'";') as $userrow) {
 			return $userrow['username'];
-		}
-	}
-
-}
-
-/**
- * Role-Object to make access more easy..
- * it's the same as it is in the db-table
- */
-class role {
-	private $id;
-	private $role;
-	private $admin;
-	/**
-	 * Returns the id of the role
-	 * @return int the role-id
-	 */
-	public function getId() {
-		return $this -> id;
-	}
-
-	/**
-	 * Get the rolename
-	 * @return String the rolename
-	 */
-	public function getRole() {
-		return $this -> role;
-	}
-
-	/**
-	 * Return if it's a adminrole or not
-	 * @return boolean if admin or not
-	 */
-	public function getAdmin() {
-		return $this -> admin;
-	}
-
-	/**
-	 * Set the id (no db!)
-	 */
-	public function setId($id) {
-		$this -> id = $id;
-	}
-
-	public function setRole($role) {
-		$this -> role = $role;
-	}
-
-	public function setAdmin($admin) {
-		if ($admin == 0) {
-			$this -> admin = false;
-		} else if ($admin == 1) {
-			$this -> admin = true;
-		} else {
-			$this -> admin = $admin;
 		}
 	}
 

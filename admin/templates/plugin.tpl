@@ -27,54 +27,16 @@
 					<input type="submit" class="button edit" value="Edit" />
 					<a href="plugin.php?action=pluginInstanceDelete&plugId={$instancedPlugin->getId()}" class="button delete">Delete</a> 
 					<a href="plugin.php?plugin={$instancedPlugin->getId()}" class="button">Show Plug</a>
-					<a href="plugin.php?instancePluginId={$instancedPlugin->getId()}" class="button">Detail edit</a>
+					
 					<br /><label for="description">Description</label><textarea height="40px" name="instancePluginDescription">{$instancedPlugin->getDescription()}</textarea>
 					
 					<hr />
-				</form>	
-				<ul>
-                 {foreach from=$instancedPlugin->getUsedRoles() key=i item=usedRole}
-                <li>{$usedRole->getRole()} DEBUG-ID's:{$usedRole->getId()}
-                    <input type="checkbox" name="role_{$usedRole->getId()}" value="{$usedRole->getId()}" checked="checked">
-                </li>
-                {/foreach}
-				
-			</ul>
-			<ul>
-              {foreach from=$instancedPlugin->getRestRoles() key=i item=restRole}
-                <li>{$restRole->getRole()} DEBUG-ID's:{$restRole->getId()}
-                    <input type="checkbox" name="role_{$restRole->getId()}" value="{$restRole->getId()}">
-                </li>
-				 {/foreach} 
-			</ul>				
-				</li>
-				
+				</form></li>
 			{/foreach}
 		</ul>	
 
 {/if}
 
-
-
-
-{if $getInstancePluginId}
-				<ul>
-                 {foreach from=$usedRoles key=i item=usedRole}
-                <li>{$usedRole->getRole()} DEBUG-ID's:{$usedRole->getId()}
-                    <input type="checkbox" name="role_{$usedRole->getId()}" value="{$usedRole->getId()}" checked="checked">
-                </li>
-                {/foreach}
-				
-			</ul>
-			<ul>
-              {foreach from=$restRoles key=i item=restRole}
-                <li>{$restRole->getRole()} DEBUG-ID's:{$restRole->getId()}
-                    <input type="checkbox" name="role_{$restRole->getId()}" value="{$restRole->getId()}">
-                </li>
-				 {/foreach} 
-			</ul>
-
-{/if}
 
 
 {if $getPluginEdit}
@@ -102,11 +64,4 @@
 	<input type="submit" value="Create instancedPlugin" />
 </form>
 {/if}
-
-
-<div>
-{if ($plugin) }
-<h1>{$plugin->getPluginName()}</h1>
-{$plugin->start()} 
-</div>
 {/if} {$content} {include file="footer.tpl"}

@@ -10,7 +10,9 @@ class skamsterNoSmartyExample extends plugin{
 	public function getPluginDescription() {
 		return "A plugindescription for noSmartyExample.skamster .";
 	}
-
+	public function deleteInstanceTables(){ 
+		//I've no db's
+	}
 	
 	public function start(){
 		if($_GET["action"]=="test"){

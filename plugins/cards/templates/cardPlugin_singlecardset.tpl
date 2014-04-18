@@ -39,21 +39,21 @@
 		{if $rightAnswered != "0.1 " || $wrongAnswered !="0.1 "}
 		<div><b>The answer was {$rightAnswered}  times right answered and
 		{$wrongAnswered} times wrong answered (0.1 means the answer is never answered!)</b></div>
-		<div dojoType="dojox.charting.widget.Chart2D " id="chart4 "
-			theme="dojox.charting.themes.PurpleRain "
-			style="width: 300px; height: 300px; ">
+		<div dojoType="dojox.charting.widget.Chart2D" id="chart4"
+			theme="dojox.charting.themes.PurpleRain"
+			style="width: 300px; height: 300px;">
 
-		<div class="plot " name="default " type="Pie " radius="100 "
-			fontColor="black " labelOffset="-20 "></div>
+		<div class="plot" name="default" type="Pie" radius="100"
+			fontColor="black" labelOffset="-20"></div>
 
-		<div class="series " name="serie1 "
-			data="{$rightAnswered}, {$wrongAnswered} "
-			legend="&lt;em&gt;Custom&lt;/em&gt; legend "></div>
-		<div class="action " type="Tooltip "></div>
-		<div class="action " type="MoveSlice " shift="2 "></div>
+		<div class="series" name="serie1"
+			data="{$rightAnswered}, {$wrongAnswered}"
+			legend="&lt;em&gt;Custom&lt;/em&gt; legend"></div>
+		<div class="action" type="Tooltip"></div>
+		<div class="action" type="MoveSlice" shift="2 "></div>
 		</div>
 		{/if}
-		{if $rightAnswered == "0.1 " && $wrongAnswered =="0.1 "}
+		{if $rightAnswered == "0.1" && $wrongAnswered =="0.1"}
 		<h2>No Question answerd..</h2>
 		{/if}
 
