@@ -20,7 +20,8 @@ abstract class plugin {
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
 	 */
-	public function __construct($currentUser, $templateObject,$folder, $connection) {
+	public function __construct($id,$currentUser, $templateObject,$folder, $connection) {
+		$this->id = $id;
 		$this -> currentUser = $currentUser;
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
@@ -33,12 +34,9 @@ abstract class plugin {
 		return get_called_class();
 	}
 	abstract function start();
+	
 	public function getId() {
 		return $this -> id;
-	}
-
-	public function setId($id) {
-		$this -> id = $id;
 	}
 
 }
@@ -230,7 +228,7 @@ class instancedPlugin{
 	}
 	public function getInstance(){
 		require_once $this->path;
-		$this->pluginObj = new $this->className($this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
+		$this->pluginObj = new $this->className($this->id,$this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
 		return $this->pluginObj;
 	}
 	
