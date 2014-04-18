@@ -25,7 +25,7 @@ if(isset($_GET['rawPluginName'])){
 	$className = $rawPlugin->getName();
 	
 	//Just get the description - for that we have to init one plugin of this kind (empty, NOT START IT!)
-	$instance = new $className("","","","","");
+	$instance = new $className("","","","",$connection);
 	if(isset($instance)){
 		$template->assign("rawPluginDescription",$instance->getPluginDescription());
 	}

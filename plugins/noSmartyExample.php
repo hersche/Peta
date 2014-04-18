@@ -14,7 +14,7 @@ class skamsterNoSmartyExample extends plugin{
 	
 	public function start(){
 		if($_GET["action"]=="test"){
-			return "test-case..";
+			return "<h3>Get a LINKY</h3>";
 		}
 		return "<ul><li>Content of second plugin!</li><li>Secndlistelmnt</li><li></ul>";
 		$htmlCollect = "<h1 style='color: green;'>noSmartyExample says Hello World</h2><br />";

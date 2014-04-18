@@ -21,6 +21,34 @@ class skamsterCards extends plugin {
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
 		$this -> folder = $folder;
+		$connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_set` (
+  `setid` int(11) NOT NULL AUTO_INCREMENT,
+  `setname` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
+  `setdescription` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
+  `ownerid` int(11) NOT NULL,
+  `editcount` int(11) NOT NULL,
+  `lasttimestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `createtimestamp` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `firstowner` int(11) NOT NULL,
+  `tagsid` int(11) NOT NULL,
+  PRIMARY KEY (`setid`)
+)");
+		$connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_question` (
+  `questionid` int(11) NOT NULL AUTO_INCREMENT,
+  `set` int(11) NOT NULL,
+  `question` varchar(100) NOT NULL,
+  `mode` text NOT NULL,
+  `rightAnswered` int(11) NOT NULL DEFAULT '0',
+  `wrongAnswered` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`questionid`)
+)");
+		$connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_answer` (
+  `answerid` int(11) NOT NULL AUTO_INCREMENT,
+  `ownerquestion` int(11) NOT NULL,
+  `answertext` varchar(100) NOT NULL,
+  `rightAnswer` tinyint(1) NOT NULL COMMENT 'true if it is the right answer, false if not (for multiple answers)',
+  PRIMARY KEY (`answerid`)
+)");
 	}
 
 	public function getPluginName() {
@@ -34,6 +62,9 @@ class skamsterCards extends plugin {
 		return "A plugindescription for cards.skamster .";
 	}
 
+	public function getId(){
+		return $this->id;
+	}
 
 	public function start() {
 		$connection = $this -> connection;
@@ -42,7 +73,7 @@ class skamsterCards extends plugin {
 		$template -> assign("pluginId", $_GET['plugin']);
 		$template -> assign("folder", $this -> folder);
 		require_once $this -> folder . 'card.class.php';
-		$allSets = new allCardSets($_SESSION["user"] -> getId(), $connection);
+		$allSets = new allCardSets($_SESSION["user"] -> getId(), $connection,$this->getDbPrefix());
 		switch($_GET["action"]) {
 			case "create" :
 				if (!isset($_GET['nrofquestions'])) {
@@ -281,7 +312,7 @@ class skamsterCards extends plugin {
 				$template -> display($this -> folder . 'templates/cardPlugin_modify.tpl');
 				break;
 			default :
-				$carding = new allCardSets($_SESSION["user"] -> getId(), $connection);
+				$carding = new allCardSets($_SESSION["user"] -> getId(), $connection,$this->getDbPrefix());
 				$template -> assign("cardsets", $carding -> getSets());
 				$template -> display($this -> folder . 'templates/cardPlugin.tpl');
 				break;

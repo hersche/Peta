@@ -48,7 +48,7 @@ abstract class plugin {
 	* For internally use of the plugins, to do unique tables.
 	*/
 	public function getDbPrefix(){
-		return $this->getPluginName().".".$this->id."_";
+		return $this->getClassName()."_".$this->getId()."_";
 	}
 	
 	/**
@@ -267,7 +267,6 @@ class instancedPlugin{
 	
 	private function setDescription($description){
 		if($description!=$this->description){
-			var_dump('UPDATE plugin SET pl_description="' . $description . '" WHERE pl_id="' . $this->id. '";');
 			$this->description=$description;
 			$this->connection->exec('UPDATE plugin SET pl_description="' . $description . '" WHERE pl_id="' . $this->id. '";');
 		}

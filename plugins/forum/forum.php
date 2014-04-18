@@ -21,6 +21,17 @@ class forum extends plugin {
 		$this -> connection = $connection;
 		$this -> folder = $folder;
 		require_once $folder."forum.class.php";
+		$this -> connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."forum_threads` (
+			`forumid` int(11) NOT NULL AUTO_INCREMENT,
+			`userid` int(11) NOT NULL,
+			`title` text NOT NULL,
+			`text` text NOT NULL,
+			`timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			`toptopic` int(11) NOT NULL,
+			`threadstate` int(5) NOT NULL DEFAULT '0',
+			`editcounter` int(5) NOT NULL DEFAULT '0',
+			PRIMARY KEY (`forumid`)
+		)");
 		
 	}
 
@@ -34,6 +45,10 @@ class forum extends plugin {
 		return "A plugindescription for forum.skamster .";
 	}
 
+	public function getId(){
+		return $this->id;
+	}
+	
 	public function start() {
 		$template = $this -> templateObject;
 		$template->addTemplateDir($this->folder."forum/");
@@ -42,7 +57,7 @@ class forum extends plugin {
 		$template -> assign("pluginId",$_GET['plugin']);
 		$template -> assign("folder",$this->folder);
 		$template->assign("ownuserid",$this->currentUser->getId());
-		$threads = new allThreads($connection, $_SESSION["user"]);
+		$threads = new allThreads($connection, $_SESSION["user"],$this->getDbPrefix());
 		switch($_GET['action']) {
 			case "createthread" :
 				$dojorequire = array("dijit.Editor", "dojo.parser");
@@ -97,7 +112,6 @@ class forum extends plugin {
 							// threadid means here the topthreadid
 							$threads -> createNewThread($_POST['topictitle'], $_POST['topictext'], $_GET['threadid']);
 						} else if ($_GET['savemethod'] == "edit") {
-							var_dump($threads);
 							$threads -> editThread($_POST['topictitle'], $_POST['topictext'], $thread -> getEditCounter() + 1, $_GET['threadid']);
 							$threads -> changeThreadState($thread -> getId(), $_POST['state']);
 						}
