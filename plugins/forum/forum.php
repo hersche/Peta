@@ -5,6 +5,7 @@ class forum extends plugin {
 	private $templateObject;
 	private $connection;
 	private $folder;
+	private $id;
 	/**
 	 *
 	 * Constructor
@@ -13,7 +14,8 @@ class forum extends plugin {
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
 	 */
-	public function __construct($currentUser, $templateObject, $folder, $connection) {
+	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
+		$this->id = $id;
 		$this -> currentUser = $currentUser;
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
@@ -23,11 +25,13 @@ class forum extends plugin {
 	}
 
 	public function getPluginName() {
-		return "Forum";
+		return "forum.skamster";
 	}
-
-	public function getDependensies() {
-		return "blubb";
+	/**
+		This method will just be executed on instance plugins.
+	**/
+	public function getPluginDescription() {
+		return "A plugindescription for forum.skamster .";
 	}
 
 	public function start() {

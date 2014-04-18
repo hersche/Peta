@@ -1,11 +1,12 @@
 <?php
 
-class cards extends plugin {
+class skamsterCards extends plugin {
 
 	private $currentUser;
 	private $templateObject;
 	private $connection;
 	private $folder;
+	private $id;
 	/**
 	 *
 	 * Constructor
@@ -14,7 +15,8 @@ class cards extends plugin {
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
 	 */
-	public function __construct($currentUser, $templateObject, $folder, $connection) {
+	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
+		$this->id = $id;
 		$this -> currentUser = $currentUser;
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
@@ -22,12 +24,16 @@ class cards extends plugin {
 	}
 
 	public function getPluginName() {
-		return "Cards";
+		return "cards.skamster";
 	}
 
-	public function getDependensies() {
-		return "blubb";
+	/**
+		This method will just be executed on instance plugins.
+	**/
+	public function getPluginDescription() {
+		return "A plugindescription for cards.skamster .";
 	}
+
 
 	public function start() {
 		$connection = $this -> connection;

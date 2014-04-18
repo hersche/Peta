@@ -42,26 +42,33 @@
 {if $getPluginEdit}
 <h1>Plugin erstellen</h1>
 <form action="plugin.php" method="get">
+		<table>
 		
-		<label for="className">ClassName</label><input value="{$getPluginEdit['className']}" type="text" disabled  /><br />
-		<label for="Path">ClassPath</label><input value="{$getPluginEdit['path']}" type="text" disabled  /><br />
+		<tr><td><label for="className">rawPluginName </label></td><td><input value="{$getPluginEdit['className']}" type="text" disabled  /></td></tr>
+		<tr><td><label for="Path">rawPluginPath </label></td><td><input value="{$getPluginEdit['path']}" type="text" disabled  /></td></tr>
+		<tr><td><label for="description">rawPluginDescription</label></td>
+		<td><textarea name="rawPluginDescription" disabled>{$rawPluginDescription}</textarea></td></tr>
+		
+		</table>
 		<hr />
-		<label for="name">Name</label><input value="{$getPluginEdit['name']}" type="text" name="name" /><br />
+		<table>
+		<tr><td><label for="name">Name</label></td><td><input value="{$getPluginEdit['name']}" type="text" name="name" /></td></tr>
 
-		<label for="Active">Active</label><input value="1" name="active" type="checkbox" checked  /><br />
-		<label for="description">Description</label>
-		<textarea name="description"></textarea>
+		<tr><td><label for="Active">Active</label></td><td><input value="1" name="active" type="checkbox" checked  /></td></tr>
+		<tr><td><label for="description">Description</label></td>
+		<td><textarea name="description"></textarea></td></tr>
+		</table>
 		<input type="hidden" value="createInstancedPlugin" name="action" />
 		<input type="hidden" value="{$getPluginEdit['path']}" name="path" />
 		<input type="hidden" value="{$getPluginEdit['className']}" name="className" />
-	<input type="submit" value="Submit" />
+	<input type="submit" value="Create instancedPlugin" />
 </form>
 {/if}
 
 
 <div>
 {if ($plugin) }
-<h1>{$plugin->getPluginName()} {$plugin->getIdentifier()}</h1>
+<h1>{$plugin->getPluginName()}</h1>
 {$plugin->start()} 
 </div>
 {/if} {$content} {include file="footer.tpl"}

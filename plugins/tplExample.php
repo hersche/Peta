@@ -1,9 +1,10 @@
 <?php
-class drittes extends plugin{
+class skamsterTplExample extends plugin{
 	
 	private $currentUser;
 	private $templateObject;
 	private $connection;
+	private $id;
 	/**
 	 *
 	 * Constructor
@@ -12,7 +13,8 @@ class drittes extends plugin{
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
 	 */
-	public function __construct($currentUser, $templateObject,$folder, $connection) {
+	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
+		$this->id = $id;
 		$this -> currentUser = $currentUser;
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
@@ -21,16 +23,18 @@ class drittes extends plugin{
 		return get_called_class();
 	}
 	public function getPluginName(){
-		return "drittes plugin";
+		return "tplExample.skamster";
+	}	
+	/**
+		This method will just be executed on instance plugins.
+	**/
+	public function getPluginDescription() {
+		return "A plugindescription for tplExample.skamster .";
 	}
-	public function getDependensies(){
-		return "blubb";
-	}
+
 	
 	public function start(){
-		// var_dump($this->templateObject);
-		$this->templateObject->display('drittes.tpl');
-		//return "inhalt drittes";
+		$this->templateObject->display('tplExample.tpl');
 	}
 }
 

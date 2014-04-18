@@ -5,7 +5,8 @@ if($user->getWelcome()){
 	$user->disableWelcome();
 }
 
-$pluginmanager = new pluginmanager($user,$template, $connection);
+$pluginmanager = new rawIOPluginManager($user,$template, $connection);
+$instancedPluginManager = new instancedPluginManager($user,$template, $connection);
 
 $tmpPluginNames = array();
 $tmpPluginPaths = array();
@@ -15,16 +16,24 @@ foreach($pluginmanager->getRawPlugins() as $rawPlugin){
 }
 $template->assign("rawPluginNames", $tmpPluginNames);
 $template->assign("rawPluginPaths", $tmpPluginPaths);
-$instancedPluginManager = new instancedPluginManager($connection,$template,$user);
+
 
 
 if(isset($_GET['rawPluginName'])){
 	$rawPlugin = $pluginmanager->getRawPluginByName($_GET['rawPluginName']);
 	require_once $rawPlugin->getPath();
 	$className = $rawPlugin->getName();
+	
+	//Just get the description - for that we have to init one plugin of this kind (empty, NOT START IT!)
+	$instance = new $className("","","","","");
+	if(isset($instance)){
+		$template->assign("rawPluginDescription",$instance->getPluginDescription());
+	}
+	
 	$template->assign("instancedPlugin", $instancedPlugin);
 	$template->assign("instancedPluginList", $instancedPluginManager->getInstancedPluginList($className));
 	$template->assign("rawPlugin", $rawPlugin);
+	
 }
 
 
