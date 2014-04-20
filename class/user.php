@@ -58,12 +58,7 @@ class user extends abstractUser {
 				`ur_uid` int(11) NOT NULL,
 				`ur_rid` int(11) NOT NULL
 			)");
-			$connection -> exec("CREATE TABLE IF NOT EXISTS `role` (
-				`rid` int(11) NOT NULL AUTO_INCREMENT,
-				`role` varchar(22) NOT NULL,
-				`r_admin` tinyint(1) NOT NULL,
-			PRIMARY KEY (`rid`)
-			)");
+
 			$password = hash($GLOBALS["password_hash"], $password);
 			$userstatement = $connection -> query('SELECT * FROM user WHERE username="' . $username . '" AND password="' . $password . '"  LIMIT 1;');
 			$userrow = $userstatement -> fetch(PDO::FETCH_ASSOC);
@@ -366,7 +361,9 @@ class alienuser extends abstractUser {
 			$this -> roles = usertools::mkRoleObjects(user::initialiseRoles($this -> id, $connection));
 		}
 	}
-
+	public function addRoleToRam($roleObject){
+		array_push($this->roles, $roleObject);
+	}
 	public function setPassword($password) {
 		$this -> password = $password;
 	}
@@ -374,7 +371,9 @@ class alienuser extends abstractUser {
 	public function getId() {
 		return $this -> id;
 	}
-
+	public function getWelcome(){
+		return False;
+	}
 	public function setId($id) {
 		$this -> id = $id;
 	}
@@ -393,6 +392,10 @@ class alienuser extends abstractUser {
 			$roleIds[] = $role -> getId();
 		}
 		return $roleIds;
+	}
+	
+	public function isValid(){
+		return False;
 	}
 
 }

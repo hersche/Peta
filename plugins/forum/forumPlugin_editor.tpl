@@ -1,8 +1,14 @@
 <script type="text/javascript">
-    {section name = dojo loop = $dojorequire}
-    dojo.require("{$dojorequire[dojo]}"); {/section}
+    require([
+    "dojo/parser",
+    "dijit/Editor",
+    "dijit/_editor/plugins/FontChoice", // 'fontName','fontSize','formatBlock'
+    "dijit/_editor/plugins/TextColor", "dijit/_editor/plugins/LinkDialog", "dijit/_editor/plugins/AlwaysShowToolbar"
+]);
 </script>
-
+<style type="text/css">
+@import "js/dojo/dojox/editor/plugins/resources/css/Preview.css";
+</style>
 <table>
     <form action="plugin.php?plugin={$pluginId}&amp;action=savethread&amp;savemethod={$savemethod}&amp;threadid={$threadid}" method="post">
         <tr>
@@ -11,15 +17,15 @@
                 <input type="text" name="topictitle" value="{$title}" />
             </td>
         </tr>
-        <tr>
-            <td>Text</td>
-            <td>
-                <div style="border: 1px solid #ccc">
-                    <textarea dojoType="dijit.Editor" styleSheets="js/dojo/dojo/resources/dojo.css" name="topictext">{$text}
-                    </textarea>
-                </div>
-            </td>
-        </tr>
+     <tr>
+       <td>Text</td>
+       <td>
+		<input type="hidden" name="topictext" id='editorSend' />
+		<div data-dojo-type="dijit/Editor" id="editor"data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink', 					'dijit/_editor/plugins/AlwaysShowToolbar','preview'],onChange:function(){document.getElementById('editorSend').value = this.getValue();}"{/literal}>
+			<p>{$text}</p>
+		</div>
+      </td>
+    </tr>
         {if $admin}
         <tr>
             <td>Forumstate</td>
@@ -34,7 +40,7 @@
         {/if}
         <tr>
             <td>
-                <input type="submit" value="Send it!" />
+                <input type="submit" value="Send it!"/>
             </td>
         </tr>
     </form>

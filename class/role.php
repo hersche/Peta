@@ -36,10 +36,48 @@ class role {
 	public function getAccessRights() {
 		return $this -> accessRights;
 	}
-	public function setAccessRights($ar) {
-		$this -> accessRights = $ar;
+	
+	public function getAccesRightsString(){
+		return $this -> convertAccessToString($this->accessRights);
 	}
 	
+	public function setAccessRights($ar) {
+		$this -> accessRights = $this->convertAccessToInt($ar);
+	}
+	
+	public function convertAccessToInt($access){
+		$access=strtoupper($access);
+		$sqlAccess=0;
+		if($access=="READ"){
+			return 1;
+		}
+		elseif($access=="READWRITE"){
+			return 2;
+		}
+		elseif($access=="ADMIN"){
+			return 3;
+		}
+		if(is_int(intval($access))){
+			return intval($access);
+		}
+		return $sqlAccess;
+	}
+	
+	public function convertAccessToString($intAccess){
+		$sqlAccess="Null";
+		$intAccess = intval($intAccess);
+		
+		if($intAccess==1){
+			return "Read";
+		}
+		elseif($intAccess==2){
+			return "ReadWrite";
+		}
+		elseif($intAccess==3){
+			return "Admin";
+		}
+		return $sqlAccess;
+	}
 	
 	/**
 	 * Set the id (no db!)
@@ -61,7 +99,10 @@ class role {
 			$this -> admin = $admin;
 		}
 	}
-
+	
+	public function getAccessStringList(){
+		return array("Read", "ReadWrite", "Admin");
+	}
 }
 
 ?>

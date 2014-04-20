@@ -25,7 +25,12 @@ class allThreads {
 			$thread -> setTopTopic($row['toptopic']);
 			$thread -> setThreadState($row['threadstate']);
 			$thread -> setEditCounter($row['editcounter']);
-			$thread -> setUsername(usertools::getUsernameById($row['userid'], $connection));
+			if($row['userid']!=-1){
+				$thread -> setUsername(usertools::getUsernameById($row['userid'], $connection));
+			}
+			else{
+				$thread -> setUsername("Public", $connection);
+			}
 			array_push($this -> threads, $thread);
 		}
 		foreach ($this->threads as $thread) {
@@ -130,7 +135,7 @@ class allThreads {
 		$thread -> setTitle($title);
 		$thread -> setUserId($this -> user -> getId());
 		$thread -> setTopTopic($toptopic);
-		$thread -> setUsername(usertools::getUsernameById($this -> user -> getId(), $this -> connect));
+		$thread -> setUsername($this->user-> getUsername(), $this -> connect);
 		array_push($this -> threads, $thread);
 		return $this -> connect -> lastInsertId();
 	}

@@ -6,7 +6,7 @@ admin/template_c/%%*
 templates_c/*.php
 admin/templates_c/*.php
 *.php~
-
+*~
 config.php
 js/dojo/dijit
 js/dojo/dojo

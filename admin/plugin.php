@@ -19,22 +19,7 @@ $template->assign("rawPluginPaths", $tmpPluginPaths);
 
 
 
-if(isset($_GET['rawPluginName'])){
-	$rawPlugin = $pluginmanager->getRawPluginByName($_GET['rawPluginName']);
-	require_once $rawPlugin->getPath();
-	$className = $rawPlugin->getName();
-	
-	//Just get the description - for that we have to init one plugin of this kind (empty, NOT START IT!)
-	$instance = new $className("","","","",$connection);
-	if(isset($instance)){
-		$template->assign("rawPluginDescription",$instance->getPluginDescription());
-	}
-	
-	$template->assign("instancedPlugin", $instancedPlugin);
-	$template->assign("instancedPluginList", $instancedPluginManager->getInstancedPluginList($className));
-	$template->assign("rawPlugin", $rawPlugin);
-	
-}
+
 
 
 $template->assign("plugins", $pluginmanager->getPlugins());
@@ -71,6 +56,24 @@ if($_GET['action'] == "createInstancedPlugin"){
 }
 // $var = array("content");
 // $template->_smarty_include("plugins/exampleplugin/templates/content.tpl", $var);
+
+if(isset($_GET['rawPluginName'])){
+	$rawPlugin = $pluginmanager->getRawPluginByName($_GET['rawPluginName']);
+	require_once $rawPlugin->getPath();
+	$className = $rawPlugin->getName();
+	
+	//Just get the description - for that we have to init one plugin of this kind (empty, NOT START IT!)
+	$instance = new $className("","","","",$connection);
+	if(isset($instance)){
+		$template->assign("rawPluginDescription",$instance->getPluginDescription());
+	}
+	
+	$template->assign("instancedPlugin", $instancedPlugin);
+	$template->assign("instancedPluginList", $instancedPluginManager->getInstancedPluginList($className));
+	$template->assign("rawPlugin", $rawPlugin);
+	
+}
+
 $template->assign("messages", $messages);
 $template->assign("plugins", $instancedPluginManager->getInstancedPlugins());
 $template->display('plugin.tpl');

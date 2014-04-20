@@ -48,7 +48,7 @@ class skamsterCards extends plugin {
 		return Null;
 	}
 	public function start() {
-	$connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_set` (
+	$this->connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_set` (
 		`setid` int(11) NOT NULL AUTO_INCREMENT,
 		`setname` varchar(25) COLLATE utf8_unicode_ci NOT NULL,
 		`setdescription` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
@@ -60,7 +60,7 @@ class skamsterCards extends plugin {
 		`tagsid` int(11) NOT NULL,
 		PRIMARY KEY (`setid`)
 	)");
-	$connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_question` (
+	$this->connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_question` (
 		`questionid` int(11) NOT NULL AUTO_INCREMENT,
 		`set` int(11) NOT NULL,
 		`question` varchar(100) NOT NULL,
@@ -69,7 +69,7 @@ class skamsterCards extends plugin {
 		`wrongAnswered` int(11) NOT NULL DEFAULT '0',
 		PRIMARY KEY (`questionid`)
 	)");
-	$connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_answer` (
+	$this->connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."question_answer` (
 		`answerid` int(11) NOT NULL AUTO_INCREMENT,
 		`ownerquestion` int(11) NOT NULL,
 		`answertext` varchar(100) NOT NULL,

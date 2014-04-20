@@ -1,15 +1,13 @@
 {include file="{$folder}forumPlugin_menu.tpl"}
 <link rel="stylesheet" type="text/css" href="{$folder}css/speech.css" />
 <div class="example-right" style="margin-bottom:100px;">
-    <table border="1">
+    <table border="1" style="width:100%;">
         <tr>
-            <td colspan="2">
+            <td>
                 <h3>{$threadTitle}</h3>
             </td>{if (($admin)||($ownuserid eq $userid))}
-            <td>
-                <h3>
-                    <a class="button edit" href="plugin.php?plugin={$pluginId}&amp;action=editthread&amp;threadid={$threadid}">Edit</a>
-                </h3>
+            <td colspan="2">
+                   <a class="button edit" style="float: right;" href="plugin.php?plugin={$pluginId}&amp;action=editthread&amp;threadid={$threadid}">Edit</a>
             </td>{/if}</tr>
         <tr>
             <td colspan="3">{$threadText}</td>
@@ -20,25 +18,25 @@
                 <a href="profile.php?userid={$userid}">{$username}</a>
             </td>
             <td>
-                <a href="plugin.php?plugin={$pluginId}&amp;action=reply&amp;threadid={$threadid}">Reply to this topic!
+                <a href="plugin.php?plugin={$pluginId}&amp;action=reply&amp;threadid={$threadid}" class="button write">Reply to this topic!
                 </a>
             </td>
-            <td>Last change on {$threadage}</td>
+            <td style="float: right;">Last change on {$threadage}</td>
         </tr>
     </table>
 
 </div>
 <div class="subThreads">
     {section name=id loop=$subthreads}
-    <div class="example-commentheading" style="margin-left: {$subthreads[id]->getPosition()}px; margin-top: 20px;">
-        <table border="2">
+    <div class="rectangle-speech-border " style="margin-left: {$subthreads[id]->getPosition()}px; margin-top: 20px;">
+        <table border="2" style="width:100%;">
             <tr>
                 {if $subthreads[id]->getTitle() neq ""}
-                <td colspan="2">
+                <td>
                     <h3>{$subthreads[id]->getTitle()}</h3>
                 </td>{/if} {if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))}
-                <td>
-                    <a class="button edit" href="plugin.php?plugin={$pluginId}&amp;action=editthread&amp;threadid={$subthreads[id]->getId()}">
+                <td colspan="2">
+                    <a style="float:right;" class="button edit" href="plugin.php?plugin={$pluginId}&amp;action=editthread&amp;threadid={$subthreads[id]->getId()}">
                         Edit</a>
                 </td>{/if}
             </tr>
@@ -50,7 +48,7 @@
                     <a href="profile.php?userid={$subthreads[id]->getUserId()}">{$subthreads[id]->getUsername()}</a>
                 </td>
                 <td>
-                    <a href="plugin.php?plugin={$pluginId}&amp;action=reply&amp;threadid={$subthreads[id]->getId()}">Reply to this post</a>
+                    <a href="plugin.php?plugin={$pluginId}&amp;action=reply&amp;threadid={$subthreads[id]->getId()}" class="button write">Reply to this post</a>
                 </td>
                 <td>{$subthreads[id]->getEditCounter()} times editet!</td>
             </tr>

@@ -37,7 +37,12 @@ class forum extends plugin {
 	public function getId(){
 		return $this->id;
 	}
-	
+	public function getRequiredDojo(){
+		if(($_GET['action']=="reply") or ($_GET['action']=="createthreads") or ($_GET['action']=="editthread")){
+			return array("dijit.Editor","dojox.editor.plugins.Preview");
+		}
+		return Null;
+	}
 	public function start() {
 		require_once $this->folder."forum.class.php";
 		$this -> connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."forum_threads` (
@@ -106,7 +111,7 @@ class forum extends plugin {
 					break;
 				} else if ((!empty($_POST['topictext'])) && (!empty($_GET['threadid']))) {
 					$thread = $threads -> getThreadById($_GET['threadid']);
-					if ((!is_null($thread)) && (($thread -> getThreadState() == forumtools::$THREADACTIVE) || ($admin))) {
+					if ((!is_null($thread)) && (($thread -> getThreadState() == forumtools::$THREADACTIVE) || $admin)|| ($allowedAccess=="Admin")) {
 						if (empty($_POST['topictitle'])) { $_POST['topictitle'] = "";
 						}
 						if ($_GET['savemethod'] == "reply") {
@@ -128,7 +133,7 @@ class forum extends plugin {
 			case "showthread" :
 				if (!empty($_GET['threadid'])) {
 					$thread = $threads -> getThreadById($_GET['threadid']);
-					if ((!is_null($thread)) && (($thread -> getThreadState() != forumtools::$THREADHIDDEN) || $admin)) {
+					if ((!is_null($thread)) && (($thread -> getThreadState() != forumtools::$THREADHIDDEN) || $admin)|| ($allowedAccess=="Admin")) {
 						$template -> assign('threadTitle', $thread -> getTitle());
 						$template -> assign('threadText', $thread -> getText());
 						$template -> assign('threadage', $thread -> getTimestamp());

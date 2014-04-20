@@ -12,8 +12,8 @@
         filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#eeeeee', EndColorStr='#cccccc');
         border: 1px solid #777;
         padding: 0 1.5em;
-        margin: 0.5em;
-        font: bold 1em/2em Arial, Helvetica;
+        margin: 0.2em;
+        font: bold .8em/1.6em Arial, Helvetica;
         text-decoration: none;
         color: #333;
         text-shadow: 0 1px 0 rgba(255,255,255,.8);
@@ -57,11 +57,11 @@
         background: #ccc;
         background: rgba(0,0,0,.1);
         float: left;
-        width: 1em;
+        width: .5em/1em;
         text-align: center;
         font-size: 1.5em;
         margin: 0 1em 0 -1em;
-        padding: 0 .2em;
+        padding: 0 .1em;
         -moz-box-shadow: 1px 0 0 rgba(0,0,0,.5), 2px 0 0 rgba(255,255,255,.5);
         -webkit-box-shadow: 1px 0 0 rgba(0,0,0,.5), 2px 0 0 rgba(255,255,255,.5);
         box-shadow: 1px 0 0 rgba(0,0,0,.5), 2px 0 0 rgba(255,255,255,.5);
@@ -83,16 +83,46 @@
         content: "\270E";
 }
 
+.home:before
+{
+ content: "\2302";
+}
+
 .delete:before
 {
         content: "\2718";
 }
-
+.logout:before
+{
+	content: "\2620";
+}
+.admin:before
+{
+ content: "\2655"
+}
+.profile:before
+{
+ content: "\26C4"
+}
+.close:before
+{
+ content: "\2716"
+}
+.create:before{
+	content:"\2795";
+}
+.view:before
+{
+content: "\1F440";
+}
 .save:before
 {
         content: "\2714";
 }
-
+.write:before
+{
+        content: "\270D";
+}
 .email:before
 {
         content: "\2709";

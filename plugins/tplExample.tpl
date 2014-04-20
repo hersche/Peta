@@ -1,4 +1,4 @@
 
 
-<h1>Drittes Plugin!</h1>
-<p>Some stuff for the 3. plugin. This text is in a tpl!</p>
+<h1>This is the  tplExamplePlugin!</h1>
+<p>All text you see is in tplExample.tpl</p>
