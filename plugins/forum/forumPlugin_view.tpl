@@ -36,8 +36,11 @@
                     <h3>{$subthreads[id]->getTitle()}</h3>
                 </td>{/if} {if (($admin)||($ownuserid eq $subthreads[id]->getUserId()))}
                 <td colspan="2">
+				{if $user->getUsername() neq "Public"}
                     <a style="float:right;" class="button edit" href="plugin.php?plugin={$pluginId}&amp;action=editthread&amp;threadid={$subthreads[id]->getId()}">
                         Edit</a>
+					 <a href="plugin.php?plugin={$pluginId}&amp;action=deletethread&threadid={$subthreads[id]->getId()}" class="button delete" style="float: right;" >Delete</a>
+				{/if}
                 </td>{/if}
             </tr>
             <tr>

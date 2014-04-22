@@ -113,10 +113,10 @@ foreach($instancedPluginManager->getInstancedPlugins() as $pI){
 						if($paccess=="Admin"){
 							$allowedAccess=$paccess;
 						}
-						elseif(($allowedAccess!="Admin")&($paccess=="ReadWrite")){
+						elseif(($allowedAccess!="Admin")&&($paccess=="ReadWrite")){
 							$allowedAccess=$paccess;
 						}
-						elseif(($allowedAccess!="Admin")&($allowedAccess!="ReadWrite")&($paccess=="Read")){
+						elseif(($allowedAccess!="Admin")&&($allowedAccess!="ReadWrite")&&($paccess=="Read")){
 							$allowedAccess=$paccess;
 						}	
 						$allowedAccess=$pRole->getAccesRightsString();

@@ -43,5 +43,3 @@
     </select>
     <input type="submit" value="Edit cardset" />
 </form>
-
-{include file="footer.tpl"}

@@ -2,7 +2,7 @@
 <ul>
     {section name=set loop=$cardsets}
     <li>
-        <a href="plugin.php?plugin={$pluginId}&amp;action=singlecardset&amp;setid={$cardsets[set]->getSetId()}">{$cardsets[set]->getSetName()}</a>
+        <a class="button" href="plugin.php?plugin={$pluginId}&amp;action=singlecardset&amp;setid={$cardsets[set]->getSetId()}">{$cardsets[set]->getSetName()}</a>
     </li>
     {/section}
 </ul>

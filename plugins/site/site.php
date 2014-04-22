@@ -15,6 +15,15 @@ class skamsterSite extends plugin{
 	 * @param array $get all the get-datas
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
+	 
+	 </script>
+<style type="text/css">
+@import "js/dojo/dojox/editor/plugins/resources/css/Preview.css";
+@import "js/dojo/dojox/form/resources/FileUploader.css";
+@import "js/dojo/dojox/editor/plugins/resources/css/LocalImage.css";
+@import "js/dojo/dojox/editor/plugins/resources/css/FindReplace.css";
+</style>
+	 
 	 */
 	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
 		$this->id = $id;
@@ -28,7 +37,9 @@ class skamsterSite extends plugin{
 	public function deleteInstanceTables(){ 
 		$this -> connection -> exec("DROP TABLE IF EXIST `".$this->getDbPrefix()."site`");
 	}
-	
+	public function getRequiredCss(){
+		return array("js/dojo/dojox/editor/plugins/resources/css/Preview.css", "js/dojo/dojox/form/resources/FileUploader.css", "js/dojo/dojox/editor/plugins/resources/css/LocalImage.css","js/dojo/dojox/editor/plugins/resources/css/FindReplace.css");
+		}
 	public function getPluginName(){
 		return "site.skamster";
 	}	
@@ -38,7 +49,7 @@ class skamsterSite extends plugin{
 	}
 	
 	public function getRequiredDojo(){
-			return array("dijit.Editor","dojox.editor.plugins.Preview","dojox.editor.plugins.LocalImage","dojox.editor.plugins.PrettyPrint","dojox.editor.plugins.FindReplace");
+			return array("dijit.Editor","dojox.editor.plugins.Preview","dojox.editor.plugins.LocalImage","dojox.editor.plugins.FindReplace","dojo.dnd.Source");
 	}
 	/**
 		This method will just be executed on instance plugins.
@@ -46,9 +57,11 @@ class skamsterSite extends plugin{
 	public function getPluginDescription() {
 		return "This should work as a usual web/info-site .";
 	}
-	
+	public function getOnLoadCode(){
+		return 'dojo.connect(dragAndDropList,"onDndDrop",function(e){updateList()});';
+	}
 	public function insertSite($name, $content, $order){
-		$this->connection->exec("INSERT INTO `".$this->dbPrefix."site` (`name`, `content`, `order`) VALUES ('" . $name . "', '" . urlencode($content) . "', " . intval($order) . ");");
+		$this->connection->exec("INSERT INTO `".$this->dbPrefix."site` (`name`, `content`, `order`) VALUES ('" . $name . "', '" .base64_encode(str_replace(' ','+',$content)) . "', " . intval($order) . ");");
 	}
 	
 	public function deleteSite($id){
@@ -56,23 +69,25 @@ class skamsterSite extends plugin{
 	}
 	
 	public function editSite($id, $name, $content,$order){
-		
-		$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `name` =  '" . $name . "',`content` =  '" . urlencode($content) . "',`order` =  " . $order . " WHERE `id` =" . $id . " LIMIT 1 ;");
+		$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `name` =  '" . $name . "',`content`='" .base64_encode(str_replace(' ','+',$content)) . "' WHERE `id`=".$id . " LIMIT 1 ;");
 	}
 	
 	public function getSiteById($id){
 		$sites = array();
-		foreach($this->connection->query("SELECT * FROM `".$this->dbPrefix."site` WHERE id=".$id.";") as $row){
-			return new site($row['id'],$row['name'],urldecode($row['content']),$row['order']);
+		foreach($this->siteList as $site){
+			if($site->id==$id){
+				return $site;
+			}
 		}
 	}
 	public function updateSites(){
 		$this->siteList = array();
-		foreach($this->connection->query("SELECT * FROM `".$this->dbPrefix."site`;") as $row){
-			array_push($this->siteList,new site($row['id'],$row['name'],urldecode($row['content']),$row['order']));
+		foreach($this->connection->query("SELECT * FROM `".$this->dbPrefix."site` ORDER BY `order`;") as $row){
+			$tmpCont = str_replace(' ','+',$row['content']);
+			array_push($this->siteList,new site($row['id'],$row['name'],str_replace('+',' ',base64_decode($tmpCont)),$row['order']));
 		}
 	}
-	public function start(){
+	public function start(){	
 		$this -> connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."site` (
 			`id` int(11) NOT NULL AUTO_INCREMENT,
 			`name` text NOT NULL,
@@ -95,6 +110,19 @@ class skamsterSite extends plugin{
 		}
 		elseif(isset($_GET['deleteSiteId'])){
 			$this->deleteSite($_GET['deleteSiteId']);
+		}
+		elseif(isset($_GET['doOrder'])){
+		
+			$order = 1;
+			foreach($_POST['siteOrder'] as $siteId){
+				$id = intval($siteId);
+				//
+				if ((!empty($id))||($id!=0)) {
+					$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `order`=".$order." WHERE `id`=".$id . " LIMIT 1 ;");
+					//throw new Exception("UPDATE `".$this->dbPrefix."site` SET `order`=".$order." WHERE `id`=".$id . " LIMIT 1 ;");
+					$order++;
+				}
+			}
 		}
 		else{
 			$this->template->assign("siteList", $this->siteList);

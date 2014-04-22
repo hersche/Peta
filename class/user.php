@@ -25,6 +25,7 @@ class user extends abstractUser {
 	private $customfields = array();
 	private $password;
 	public $urow;
+	private $connection;
 	// private $connection;
 
 	public function getUrow() {
@@ -52,13 +53,14 @@ class user extends abstractUser {
 				`cf_uid` int(11) DEFAULT NULL,
 				`cf_key` varchar(30) NOT NULL,
 				`cf_value` text NOT NULL,
+				`cf_order` int(11) NOT NULL,
 			PRIMARY KEY (`cf_id`)
 			)");
 			$connection -> exec("CREATE TABLE IF NOT EXISTS `user_role` (
 				`ur_uid` int(11) NOT NULL,
 				`ur_rid` int(11) NOT NULL
 			)");
-
+			
 			$password = hash($GLOBALS["password_hash"], $password);
 			$userstatement = $connection -> query('SELECT * FROM user WHERE username="' . $username . '" AND password="' . $password . '"  LIMIT 1;');
 			$userrow = $userstatement -> fetch(PDO::FETCH_ASSOC);
@@ -78,6 +80,7 @@ class user extends abstractUser {
 			} else {
 				throw new Exception("No user found");
 			}
+		//	$this->connection = $connection;
 		}
 	}
 
@@ -105,9 +108,17 @@ class user extends abstractUser {
 		}
 		return $returnArray;
 	}
-
-	private function initialiseCustomfields() {
-		foreach ($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'";') as $customfieldrow) {
+	public function editCustomfield($id,$key,$value,$connection){
+		//var_dump('UPDATE user_customfields SET cf_key="' . $key . '",cf_value="' . $value . '" WHERE cf_id=' . $id . ';');
+		$connection->exec('UPDATE user_customfields SET cf_key="' . $key . '",cf_value="' . $value . '" WHERE cf_id=' . $id . ';');
+		
+		//if ($this -> customfields == Null) {
+			$this -> customfields = Null;
+			$this -> initialiseCustomfields($connection);
+		//}
+	}
+	private function initialiseCustomfields($connection) {
+		foreach ($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'" ORDER BY `cf_order`;') as $customfieldrow) {
 			$customfield = new customfield();
 			$customfield -> setId($customfieldrow[cf_id]);
 			$customfield -> setKey($customfieldrow[cf_key]);
@@ -115,21 +126,38 @@ class user extends abstractUser {
 			$this -> customfields[] = $customfield;
 		}
 	}
-
-	public function getCustomfields() {
+	public function orderCustomfields($cmOrderList, $connection){
+		$order = 1;
+		try{
+		foreach($cmOrderList as $cmId){
+		
+			$id = intval($cmId);
+			if (!empty($id)) {
+			
+				$connection->exec("UPDATE `user_customfields` SET `cf_order`='".$order."' WHERE `user_customfields`.`cf_id`=".$id . " LIMIT 1 ;");
+				$order++;
+			}
+				
+			}
+		}
+					catch (Exception $e){
+				throw new Exception($e->getMessage( ));
+			}
+		$this->customfields = Null;
+		$this->initialiseCustomfields($connection);
+	
+	}
+	public function getCustomfields($connection) {
 		if ($this -> customfields == Null) {
-			$this -> initialiseCustomfields();
+			$this -> initialiseCustomfields($connection);
 		}
 		return $this -> customfields;
 	}
 
-	public function addCustomfield($key, $value) {
-		$connection -> exec('INSERT INTO user_customfields (cf_uid, cf_key, cf_value) VALUES (' . $this -> id . ', "' . $key . '", "' . $value . '";');
-		$cf = new customfield();
-		$cf -> setId($connection -> lastInsertId());
-		$cf -> setKey($key);
-		$cf -> setValue($value);
-		$this -> customfields[] = $cf;
+	public function addCustomfield($key, $value,$connection) {
+		$connection -> exec('INSERT INTO user_customfields (cf_uid, cf_key, cf_value) VALUES (' . $this -> id . ', "' . $key . '", "' . $value . '");');
+		$this -> customfields = Null;
+		$this -> initialiseCustomfields($connection);
 	}
 
 	public function getCustomfieldByKey($key) {
@@ -142,8 +170,17 @@ class user extends abstractUser {
 			}
 		}
 	}
-
-	public function addRole($roleid) {
+	public function getCustomfieldById($id) {
+		if ($this -> customfields == Null) {
+			$this -> initialiseCustomfields();
+		}
+		foreach ($this->customfields AS $cf) {
+			if ($cf -> getId() == $id) {
+				return $cf;
+			}
+		}
+	}
+	public function addRole($roleid,$connection) {
 		$yesorno = true;
 		foreach ($this->getRolesIds() as $key => $value) {
 			if ($value == $roleid) {
@@ -152,16 +189,18 @@ class user extends abstractUser {
 		}
 		if ($yesorno) {
 			$connection -> exec('INSERT INTO user_role (ur_uid, ur_rid) VALUES (' . $this -> id . ', "' . $roleid . '";');
-			$this -> roles = usertools::mkRoleObjects(user::initialiseRoles($this -> id, $connection));
+			$this -> roles = usertools::mkRoleObjects(user::initialiseRoles($this -> id, $this->connection));
 		}
 	}
 
-	public function delRole($roleid) {
-		$connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $this -> id . ' and ur_rid=' . $roleid . ';');
+	public function delRole($roleid, $connection) {
+		$connection->exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $this -> id . ' and ur_rid=' . $roleid . ';');
 	}
 
-	public function removeCustomfield($id) {
-		$connection -> exec('DELETE FROM `user_customfields` WHERE `user_customfields`.`cf_id` = ' . $id . ';');
+	public function removeCustomfield($id, $connection) {
+		$connection->exec('DELETE FROM `user_customfields` WHERE `user_customfields`.`cf_id` = ' . $id . ';');
+		$this -> customfields = Null;
+		$this -> initialiseCustomfields($connection);
 	}
 
 	/**
@@ -324,6 +363,7 @@ class alienuser extends abstractUser {
 	private $password;
 	private $lastlogin;
 	private $roles = array();
+	private $customfields = array();
 
 	public function getUsername() {
 		return $this -> username;
@@ -397,7 +437,22 @@ class alienuser extends abstractUser {
 	public function isValid(){
 		return False;
 	}
+	private function initialiseCustomfields($connection) {
+		foreach ($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'";') as $customfieldrow) {
+			$customfield = new customfield();
+			$customfield -> setId($customfieldrow[cf_id]);
+			$customfield -> setKey($customfieldrow[cf_key]);
+			$customfield -> setValue($customfieldrow[cf_value]);
+			$this -> customfields[] = $customfield;
+		}
+	}
 
+	public function getCustomfields($connection) {
+		if ($this -> customfields == Null) {
+			$this -> initialiseCustomfields($connection);
+		}
+		return $this -> customfields;
+	}
 }
 
 /**
@@ -406,39 +461,6 @@ class alienuser extends abstractUser {
  *
  */
 class usertools {
-	/**
-	 * Register a new user
-	 * Was once registerUser
-	 * @deprecated
-	 * @param unknown_type $name fullname
-	 * @param unknown_type $username username
-	 * @param unknown_type $password a password
-	 * @param unknown_type $role the role.. must be static on public-sites
-	 * @param unknown_type $connection pdo-object
-	 */
-	static public function registerUser2($name, $username, $password, $role, $connection) {
-		if (usertools::passwordRequirements($password, $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"])) {
-			if (!usertools::userExists($username, $connection)) {
-				try {
-					$password = hash($GLOBALS["password_hash"], $password);
-					// TODO check for specialchars!
-					$datetime = new DateTime($GLOBALS["timezone"]);
-					$connection -> exec("INSERT INTO users (`username`, `password`, `lastlogin`, `lastip`) VALUES ('" . $username . "', '" . $password . "', '" . $datetime -> format('Y-m-d') . "', '" . getenv('REMOTE_ADDR') . "');");
-					$userid = $connection -> lastInsertId();
-					$connection -> exec("INSERT INTO users_profile (`user_profile_id`, `name`, `schule`, `klasse`, `mail`, `hobbys`) VALUES ('" . $userid . "', '" . $name . "', '', '', '', '');");
-					$connection -> exec("INSERT INTO userrole (`buserid`, `broleid`) VALUES ('" . $userid . "', '" . $role . "');");
-					return "User " . $username . " was created successfull!";
-				} catch (Exception $e) {
-					return "Error is happend: " . $e;
-				}
-			} else {
-				return "User does already exist";
-			}
-		} else {
-			return "Your password is to short. It needs at least " . $GLOBALS["min_password_length"] . " signs";
-		}
-	}
-
 	/**
 	 * create a user
 	 * @param array $post your post-variable <br />
@@ -451,17 +473,17 @@ class usertools {
 	 * @param unknown_type $connection
 	 */
 	public static function registerUser($post, $connection) {
-		if (!empty($post)) {
-			if (($post['password'] == $post['password2']) && (!empty($post['email'])) && (usertools::passwordRequirements($post['password'], $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"]))) {
-				if (!usertools::userExists($post['username'], $connection)) {
+		if ((!empty($post))&&($GLOBALS['registration'])) {
+			if (($post['registerPassword'] == $post['registerPassword2']) && (!empty($post['registerEmail'])) && (usertools::passwordRequirements($post['registerPassword'], $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"]))) {
+				if (!usertools::userExists($post['registerUsername'], $connection)) {
 					try {
 
-						$password = hash($GLOBALS["password_hash"], $post['password']);
+						$password = hash($GLOBALS["password_hash"], $post['registerPassword']);
 						// TODO check for specialchars!
 						$datetime = new DateTime($GLOBALS["timezone"]);
-						$connection -> exec("INSERT INTO user (`username`, `password`, `lastlogin`, `lastip`) VALUES ('" . $post['username'] . "', '" . $password . "', '" . $datetime -> format('Y-m-d ') . "', '" . getenv('REMOTE_ADDR') . "');");
+						$connection -> exec("INSERT INTO user (`username`, `password`, `lastlogin`, `lastip`) VALUES ('" . $post['registerUsername'] . "', '" . $password . "', '" . $datetime -> format('Y-m-d ') . "', '" . getenv('REMOTE_ADDR') . "');");
 						$userid = $connection -> lastInsertId();
-						$connection -> exec("INSERT INTO user_customfields (`cf_uid`, `cf_key`, `cf_value`) VALUES ('" . $userid . "', 'E-Mail', '" . $post[email] . "');");
+						$connection -> exec("INSERT INTO user_customfields (`cf_uid`, `cf_key`, `cf_value`) VALUES ('" . $userid . "', 'E-Mail', '" . $post[registerEmail] . "');");
 						if (!empty($GLOBALS["defaultRole"])) {
 							$roleid = usertools::getIdFromRole($GLOBALS["defaultRole"], $connection);
 							$connection -> exec("INSERT INTO user_role (`ur_uid`, `ur_rid`) VALUES ('" . $userid . "', '" . $roleid . "');");
@@ -476,6 +498,9 @@ class usertools {
 			} else {
 				return "Something is strange with your password. Remember: <br /> It needs at least " . $GLOBALS["min_password_length"] . " signs<br />You should type two passwords which are the same (to confirm)";
 			}
+		}
+		else{
+			return "Corrupt post-data or registration is disabled. Do you try to hack? Fool!";
 		}
 	}
 
@@ -527,6 +552,12 @@ class usertools {
 		return false;
 	}
 
+	static public function userIdExists($id, $connection) {
+		foreach ($connection->query('SELECT * FROM user WHERE uid="'.$id.'";') as $userrow) {
+			return true;
+		}
+		return false;
+	}
 	/**
 	 * What's required for a password? is the password strong enough?
 	 * @param unknown_type $password
@@ -555,39 +586,6 @@ class usertools {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Change a user
-	 * was once called editUser
-	 * @deprecated
-	 * @param unknown_type $oldUser
-	 * @param unknown_type $editUser
-	 * @param unknown_type $connection
-	 */
-	//TODO find a good art for this method! as example, give direct the POST-array!
-	static public function editUser2($oldUser, $editUser, $connection) {
-		$changes = false;
-		$password = hash($GLOBALS["password_hash"], $editUser['password']);
-		$changeSQL = array();
-		if ($oldUser['name'] != $editUser['name']) {
-			array_push($changeSQL, ' name="' . $editUser['name'] . '"');
-			$changes = true;
-		}
-		if ($oldUser['password'] != $password) {
-			usertools::setPassword($oldUser['username'], $editUser['password'], $connection);
-		}
-		if ($oldUser['broleid'] != $editUser['broleid']) {
-			usertools::setRole($oldUser['id'], $oldUser['broleid'], $editUser['broleid'], $connection);
-		}
-		if ($changes) {
-			$SQLUpdate = "UPDATE users_profile SET";
-			foreach ($changeSQL as $singlechange) {
-				$SQLUpdate .= $singlechange;
-			}
-			$SQLUpdate .= ' WHERE user_profile_id="' . $oldUser["id"] . '";';
-			$connection -> exec($SQLUpdate);
-		}
 	}
 
 	/**
@@ -633,8 +631,7 @@ class usertools {
 				}
 			}
 
-			usertools::setRole2($fakeOldUser, $getUsedRoles, $connection);
-			// usertools::setRole($fakeOldUser -> getId(), $fakeOldUser -> getRoles(), $editUser['roles'], $connection);
+			usertools::setRole($fakeOldUser, $getUsedRoles, $connection);
 			$changes = true;
 		}
 
@@ -654,24 +651,21 @@ class usertools {
 	 * @param String $oldRole
 	 * @param String $newRole
 	 * @param PDO $connection
+	 * DEPRECATED
 	 **/
-	static public function setRole($userid, $oldRole, $newRole, $connection) {
-		$oldId = usertools::getIdFromRole($oldRole, $connection);
-		$newId = usertools::getIdFromRole($newRole, $connection);
-		$connection -> exec('UPDATE user_role SET ur_rid="' . $newId . '" WHERE ur_uid="' . $userid . '" AND ur_rid="' . $oldId . '";');
-	}
 
 	//new roles = getusedroles
-	static public function setRole2($user, $newRoles, $connection) {
+	static public function setRole($user, $newRoles, $connection) {
 		if (sizeof($newRoles) != 0) {
 			$removeRoles = array_diff($user -> getRolesIds(), $newRoles);
+			foreach ($removeRoles as $rRole) {
+				$user -> delRole($rRole, $connection);
+			}
 		}
 		foreach ($newRoles as $addRole) {
 			$user -> addRole($addRole, $connection);
 		}
-		foreach ($removeRoles AS $rRole) {
-			$user -> delRole($rRole, $connection);
-		}
+
 	}
 
 	public static function mkRoleObjects($dbRoles) {

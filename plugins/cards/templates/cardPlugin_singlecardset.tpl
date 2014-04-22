@@ -17,7 +17,7 @@
         <tr>
             <td>{$question}</td>
             <td>
-                <input TYPE="text" SIZE="40" NAME="answer" value="" />
+                <input TYPE="text" SIZE="40" NAME="answer" value="" autofocus />
             </td>
         </tr>
 
@@ -29,32 +29,30 @@
                 <a href="plugin.php?plugin={$pluginId}&amp;action=editquestion&amp;setid={$setid}&amp;questionid={$questionid}">
                     <img alt="Edit question" src="img/edit.png" />
                 </a>
-                <a href="plugin.php?plugin={$pluginId}&amp;action=deletequestion&setid={$setid}&questionid={$questionid}">
+                <a href="plugin.php?plugin={$pluginId}&amp;action=deletequestion&amp;setid={$setid}&amp;questionid={$questionid}">
                     <img "alt="Delete question " src="img/delete.png " /></a></td>
 	</tr>
 
 </table>
-		<h3>Statistic-Chart: How many was this question wrong answered and how
-		many times was it right?</h3>
-		{if $rightAnswered != "0.1 " || $wrongAnswered !="0.1 "}
+		<h3>Statistic-Chart</h3>
+		{if $rightAnswered != 0.1 || $wrongAnswered !=0.1 }
 		<div><b>The answer was {$rightAnswered}  times right answered and
-		{$wrongAnswered} times wrong answered (0.1 means the answer is never answered!)</b></div>
+		{$wrongAnswered} times wrong answered</b></div>
 		<div dojoType="dojox.charting.widget.Chart2D" id="chart4"
-			theme="dojox.charting.themes.PurpleRain"
-			style="width: 300px; height: 300px;">
+			theme="dojox.charting.themes.Tom"
+			style="width: 250px; height:250px;">
 
-		<div class="plot" name="default" type="Pie" radius="100"
-			fontColor="black" labelOffset="-20"></div>
+		<div class="plot" name="default" type="Pie" radius="150"
+			fontColor="black" labelOffset="-12"></div>
 
 		<div class="series" name="serie1"
 			data="{$rightAnswered}, {$wrongAnswered}"
-			legend="&lt;em&gt;Custom&lt;/em&gt; legend"></div>
+			legend="Where is the legend used?"></div>
 		<div class="action" type="Tooltip"></div>
 		<div class="action" type="MoveSlice" shift="2 "></div>
 		</div>
-		{/if}
-		{if $rightAnswered == "0.1" && $wrongAnswered =="0.1"}
-		<h2>No Question answerd..</h2>
+		{else}
+		<h2>Question not answered till now. Answer it!</h2>
 		{/if}
 
 </form>

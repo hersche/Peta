@@ -14,6 +14,12 @@ if (isset($_GET['plugin'])){
 	if($plugin->getRequiredDojo() != Null){
 		$template->assign("dojorequire", $plugin->getRequiredDojo());
 	}
+	if($plugin->getRequiredCss() != Null){
+		$template->assign("allcss", $plugin->getRequiredCss());
+	}
+	if($plugin->getOnLoadCode() != Null){
+		$template->assign("onLoadCode", $plugin->getOnLoadCode());
+	}
 	// $messages[] = $plugin->getPluginName();
 }
 
@@ -22,4 +28,5 @@ if (isset($_GET['plugin'])){
 $template->assign("messages", $messages);
 $template->assign("plugins", $instancedPluginManager->getInstancedPlugins());
 $template->display('plugin.tpl');
+
 ?>

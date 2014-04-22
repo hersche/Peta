@@ -45,6 +45,13 @@ abstract class plugin {
 	public function getRequiredDojo(){
 		return Null;
 	}	
+	public function getRequiredCss(){
+		return Null;
+	}	
+	
+	public function getOnLoadCode(){
+		return Null;
+	}
 	/**
 	* For internally use of the plugins, to do unique tables.
 	*/

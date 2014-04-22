@@ -129,8 +129,7 @@ class skamsterCards extends plugin {
 					$template -> assign("setid", $_GET['setid']);
 					$template -> assign("cardsettitle", $set -> getSetName());
 					$template -> assign("cardsetdescription", $set -> getSetDescription());
-					$dojorequire = array("dojox.charting.widget.Chart2D", "dojox.charting.themes.PurpleRain");
-					$template -> assign("dojorequire", $dojorequire);
+					$template -> assign("dojorequire", array("dojox.charting.widget.Chart2D", "dojox.charting.themes.PurpleRain"));
 					$questions = $set -> getQuestions();
 					// TODO may better use a empty()-method
 					if (count($questions) > 0) {

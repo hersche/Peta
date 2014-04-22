@@ -82,6 +82,11 @@ class forum extends plugin {
 					$template -> display($this->folder.'forumPlugin_reply.tpl');
 				}
 				break;
+			case "deletethread":
+				if(!empty($_GET['threadid'])){
+					$threads->deleteThread($_GET['threadid'], true);
+				}
+				break;
 			case "editthread" :
 				$thread = $threads -> getThreadById($_GET['threadid']);
 				if (!is_null($thread)) {

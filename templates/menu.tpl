@@ -1,9 +1,10 @@
+
 <div class="menu">
     <a href="index.php" class="button home">Home</a>
 	
-	{section name=id loop=$allowedPluginInstances}
-		<a class="button" href="plugin.php?plugin={$allowedPluginInstances[id]->getId()}" title="{$allowedPluginInstances[id]->getDescription()}">{$allowedPluginInstances[id]->getName()}</a>
-    {/section}
+	{foreach item=pI from=$allowedPluginInstances}
+		<a class="button" href="plugin.php?plugin={$pI->getId()}" title="{$pI->getDescription()}">{$pI->getName()}</a>
+    {/foreach}
 	{if {$user->getUsername()} != "Public"}
 		<a href="profile.php" class="button profile">Profile</a>
 		{if $admin}
