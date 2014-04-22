@@ -65,7 +65,12 @@ class skamsterCards extends plugin {
 	public function getId(){
 		return $this->id;
 	}
-
+	public function getRequiredDojo(){
+		if(($_GET['action']=="singlecardset") or ($_GET['action']=="createcardset")){
+			return array("dojox.charting.widget.Chart2D", "dojox.charting.themes.PurpleRain");
+		}
+		return Null;
+	}
 	public function start() {
 		$connection = $this -> connection;
 		$template = $this -> templateObject;

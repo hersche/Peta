@@ -42,6 +42,10 @@ if (isset($_GET['plugin'])){
 	$pluginInstance = $instancedPluginManager->getInstancedPluginById($_GET['plugin']);
 	$plugin = $pluginInstance->getInstance();
 	$template->assign("plugin", $plugin);
+	if($plugin->getRequiredDojo() != Null){
+		$template->assign("dojorequire", $plugin->getRequiredDojo());
+	}
+	
 	// $messages[] = $plugin->getPluginName();
 }
 
@@ -66,6 +70,7 @@ if($_GET['action'] == "createInstancedPlugin"){
 	$newInstPlugin = $instancedPluginManager->createInstancedPlugin($_GET['name'], $_GET['description'], $_GET['path'], $_GET['className'],$_GET['active']);
 	
 }
+
 // $var = array("content");
 // $template->_smarty_include("plugins/exampleplugin/templates/content.tpl", $var);
 $template->assign("messages", $messages);

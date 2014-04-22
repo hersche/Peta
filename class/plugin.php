@@ -44,6 +44,14 @@ abstract class plugin {
 		return get_called_class();
 	}
 	
+	public function getRequiredDojo(){
+		return Null;
+	}
+	
+	public function getRequiredJs(){
+		return Null;
+	}
+	
 	/**
 	* For internally use of the plugins, to do unique tables.
 	*/
