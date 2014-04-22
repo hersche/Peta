@@ -1,19 +1,16 @@
 {include file="{$folder}forumPlugin_menu.tpl"} {if $threads}
-<div style="margin-top:60px;">
-    <ul>
-        {section name=forum loop=$threads}
-        <li>
-            <table border="1">
+<div style="margin-top:5px;">
+	<table style="border: 1px solid gray;">	
+		<tr><th>Topic</th><th>PostCounter</th></tr>
+		{foreach $threads as $thread}
+
                 <tr>
                     <td>
-                        <a href="plugin.php?plugin={$pluginId}&amp;action=showthread&amp;threadid={$threads[forum]->getId()}">{$threads[forum]->getTitle()}</a>
+                        <a href="plugin.php?plugin={$pluginId}&amp;action=showthread&amp;threadid={$thread->getId()}">{$thread->getTitle()}</a>
                     </td>
-                    <td>{$threads[forum]->getSubThreadCounter()} posts are there</td>
+                    <td>{$thread->getSubThreadCounter()} posts</td>
                 </tr>
-            </table>
-        </li>
-        {/section}
-
-    </ul>
+        {/foreach}
+	</table>
 </div>
 {/if}

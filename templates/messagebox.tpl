@@ -1,12 +1,21 @@
 {if $messages}
-<div id="messagebox" style=" background-color: red;">
+<script type="text/javascript">
+    dojo.addOnLoad(function() {
+        var button = new dijit.form.Button({
+            label: "Close!",
+            onClick: function() {
+				dojo.fx.wipeOut({literal}{node: 'messagebox'}{/literal}).play();
+            }
+        },
+        "messageboxclosebutton");
+    });
+</script>
+<div id="messagebox" style=" background-color: red; width: 60%;">
 <ul>
-{section name=message loop=$messages}
-<li>{$messages[message]}</li>
-{/section}
+{foreach item=message from=$messages}
+<li>{$message}</li>
+{/foreach}
 </ul>
-    <button dojoType="dijit.form.Button" id="messageboxclosebutton">
-    Close
-</button>
+    <button type="button" id="messageboxclosebutton"></button>
 </div>
 {/if}

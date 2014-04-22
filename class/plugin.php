@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * What's a plugin? This class should define these.. every plugin has to extend this class!
@@ -43,15 +42,17 @@ abstract class plugin {
 	public function getClassName(){
 		return get_called_class();
 	}
-	
+
 	public function getRequiredDojo(){
 		return Null;
-	}
+	}	
+	public function getRequiredCss(){
+		return Null;
+	}	
 	
-	public function getRequiredJs(){
+	public function getOnLoadCode(){
 		return Null;
 	}
-	
 	/**
 	* For internally use of the plugins, to do unique tables.
 	*/
@@ -59,6 +60,8 @@ abstract class plugin {
 		return $this->getClassName()."_".$this->getId()."_";
 	}
 	
+
+	public abstract function deleteInstanceTables();
 	/**
 	* Execute-method of the plugin
 	**/
@@ -160,8 +163,8 @@ class rawIOPluginManager {
 }
 
 class instancedPluginManager{
-private $instancedPluginList = array();
-private $connection;
+	private $instancedPluginList = array();
+	private $connection;
 	public function __construct($user,$template, $connection){
 		$this->connection = $connection;
 		// Tableconstructor
@@ -189,6 +192,8 @@ private $connection;
 			}
 		}
 	}
+	
+	
 	public function getInstancedPluginList($className){
 		$list = array();
 		foreach($this->instancedPluginList as $iP){
@@ -199,7 +204,6 @@ private $connection;
 		return $list;		
 	}
 	public function createInstancedPlugin($name, $description, $path, $className,$active){
-		
 		$sql = "INSERT INTO plugin (`pl_name`,`pl_description`, `pl_path`,`pl_className`,`pl_active`) VALUES ('" . $name . "', '" . $description . "', '" . $path . "', '" . $className . "', " . $active . ");";
 		$this->connection -> exec($sql);
 		//var_dump($sql);
@@ -218,6 +222,9 @@ class instancedPlugin{
 	private $pluginObj;
 	private $currentUser;
 	private $template;
+	private $roles;
+	private $restRoles;
+	private $allRoles;
 	
 	
 	public function __construct($id,$name, $description, $path, $className,$active,$connection,$template,$currentUser){
@@ -231,7 +238,61 @@ class instancedPlugin{
 		$this->connection=$connection;
 		$this->currentUser = $currentUser;
 		$this->template=$template;
+		$this->updateRoles();
+	}
+	
+	private function updateRoles(){
+		$this->allRoles=array();
+		$this->roles=array();
+		$this->restRoles=array();
+		foreach($this->connection->query("SELECT * FROM role") as $roleRow){
+			$role = new role();
+			$role->setId($roleRow['rid']);
+			$role->setRole($roleRow['role']);
+			array_push($this->allRoles, $role);
+		}
+		$publicRole = new role();
+		$publicRole->setId(-1);
+		$publicRole->setRole("Public");
+		array_push($this->allRoles, $publicRole);
+		$sqlEx = $this->connection->query("SELECT * FROM pluginrole WHERE pluginId='".$this->id."';");
+		foreach($sqlEx as $row){
+			foreach($this->allRoles as $role){
+				if($role->getId()==$row['roleId']){
+					$role->setAccessRights($row['access']);
+					array_push($this->roles, $role);
+				}
+			}
+		}
 		
+		foreach($this->allRoles as $role){
+			if(!in_array($role, $this->roles)){
+				array_push($this->restRoles, $role);
+			}
+		}
+	}
+	
+	// public function insertRole($roleId + ownid into pluginrole, $conn->lastinsertid mit rechte into roleaccess
+	public function insertRole($roleId, $access){
+		$this->connection->exec('INSERT INTO pluginRole (pluginId, roleId,access) VALUES (' . $this -> id . ', ' . $roleId . ', ' . $access . ');');
+		$this->updateRoles();
+	}
+	
+	public function getUsedRoles(){
+		//var_dump(sizeof($this->roles));
+		return $this->roles;
+	}
+	
+	public function getRestRoles(){
+		
+		if(sizeof($this->roles)!=0){
+		//var_dump($this->restRoles);
+			return $this->restRoles;
+		}
+		else{
+			//var_dump($this->allRoles);
+			return $this->allRoles;
+		}
 	}
 	
 	public function getId(){
@@ -259,29 +320,59 @@ class instancedPlugin{
 		$this->pluginObj = new $this->className($this->id,$this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
 		return $this->pluginObj;
 	}
-	
+	public function removeRole($roleId){
+		if(isset($roleId)){
+			$this->connection -> exec('DELETE FROM `pluginrole` WHERE `roleId` = ' . $roleId . ' AND `pluginId` = ' . $this->id . ';');
+			$this->updateRoles();
+		}
+	}
 	public function edit(){
 		$this->setName($_POST['instancePluginName']);
 		$this->setDescription($_POST['instancePluginDescription']);
+
+		$this->setRoles();
 		
 	}
 	
+	private function setRoles(){
+		foreach($this->allRoles as $role){
+			if($_POST["role_".$role->getId()]!=Null){
+				if(!in_array($role, $this->roles)){
+					//The role make a int out of the string - use getAccessRightsString to convert back
+					$role->setAccessRights($_POST['access_'.$role->getId()]);
+					$this->insertRole($role->getId(),$role->getAccessRights());
+				}
+				if((isset($_POST['access_'.$role->getId()]))&&($_POST['access_'.$role->getId()]!=$role->getAccesRightsString())){
+					$this->connection->exec("UPDATE `".$this->dbPrefix."pluginrole` SET `access` =  '" . $role->getAccessRights() . "' WHERE `pluginId` =" . $this->id . " and `roleId` =" . $role->getId() . " LIMIT 1 ;");
+				}
+			}
+			else{
+				if(in_array($role, $this->roles)){
+					$this->removeRole($role->getId());
+				}
+			}
+			
+		}
+	}
 	private function setName($name){
-		if($name!=$this->name){
+		if(($name!=$this->name)&($name!="")){
 			$this->name=$name;
 			$this->connection->exec('UPDATE plugin SET pl_name="' . $name . '" WHERE pl_id="' . $this->id. '";');
 		}
 	}
 	
 	private function setDescription($description){
-		if($description!=$this->description){
+		if(($description!=$this->description)&&($description!="")){
 			$this->description=$description;
 			$this->connection->exec('UPDATE plugin SET pl_description="' . $description . '" WHERE pl_id="' . $this->id. '";');
 		}
 	}
 	
 	public function delete(){
+		$inst = $this->getInstance();
+		$inst->deleteInstanceTables();
 		$this -> connection -> exec("DELETE FROM plugin WHERE pl_id = " . $this->id . "; ");
+		
 	}
 
 }

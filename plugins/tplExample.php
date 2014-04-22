@@ -5,6 +5,7 @@ class skamsterTplExample extends plugin{
 	private $templateObject;
 	private $connection;
 	private $id;
+	private $folder;
 	/**
 	 *
 	 * Constructor
@@ -18,10 +19,13 @@ class skamsterTplExample extends plugin{
 		$this -> currentUser = $currentUser;
 		$this -> templateObject = $templateObject;
 		$this -> connection = $connection;
+		$this->folder = $folder;
 	}
-	function getIdentifier(){
-		return get_called_class();
+	
+	public function deleteInstanceTables(){ 
+		//I've no db's
 	}
+	
 	public function getPluginName(){
 		return "tplExample.skamster";
 	}	
@@ -34,7 +38,7 @@ class skamsterTplExample extends plugin{
 
 	
 	public function start(){
-		$this->templateObject->display('tplExample.tpl');
+		$this->templateObject->display($this->folder.'tplExample.tpl');
 	}
 }
 

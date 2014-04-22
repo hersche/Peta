@@ -19,7 +19,6 @@ class allCardSets {
 			$setid = $setRow['setid'];
 			$set -> setSetName($setRow['setname']);
 			$set -> setSetDescription($setRow['setdescription']);
-			var_dump('SELECT * FROM '.$GLOBALS["dbPrefix"].'question_question WHERE set="'.$setid.'";');
 			foreach ($connection->query('SELECT * FROM '.$GLOBALS["dbPrefix"].'question_question WHERE '.$GLOBALS["dbPrefix"].'question_question.set="'.$setid.'";') as $questionRow) {
 				$question = new question();
 				$question -> setId($questionRow['questionid']);
@@ -29,7 +28,6 @@ class allCardSets {
 				$question -> setWrongAnswered($questionRow['wrongAnswered']);
 				$questionid = $questionRow['questionid'];
 				foreach ($connection->query('SELECT * FROM '.$GLOBALS["dbPrefix"].'question_answer WHERE '.$GLOBALS["dbPrefix"].'question_answer.ownerquestion='.$questionid) as $answerRow) {
-					print($answerRow['answertext']);
 					$answerobj = new answer();
 					$answerobj -> setAnswer($answerRow['answertext']);
 					$answerobj -> setAnswerId($answerRow['answerid']);
@@ -164,7 +162,6 @@ class cardSet {
 	 * @param unknown_type $connection
 	 */
 	public function newQuestion($question, $connection) {
-		var_dump("INSERT INTO `".$GLOBALS['dbPrefix']."question_question` (`set`, `question`, `mode`) VALUES (" . $this -> setid . ", '" . $question -> getQuestion() . "', '" . $question -> getMode() . "')");
 		$connection -> exec("INSERT INTO `".$GLOBALS['dbPrefix']."question_question` (`set`, `question`, `mode`) VALUES (" . $this -> setid . ", '" . $question -> getQuestion() . "', '" . $question -> getMode() . "')");
 		$question -> setId($connection -> lastInsertId());
 		array_push($this -> questions, $question);

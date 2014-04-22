@@ -1,0 +1,8 @@
+CACHE MANIFEST
+/css/button.css
+/css/default.css
+/js/extras.js
+/js/dojo/dojo.js
+NETWORK:
+login.php
+# 2014 MODIFY this line a little to guarante a cache-update when deploy

@@ -1,6 +1,8 @@
 <?php 
 require_once '../config.php';
+require_once '../class/role.php';
 require_once '../class/user.php';
+require_once '../class/plugin.php';
 require_once 'class/admin.php';
 session_start();
 

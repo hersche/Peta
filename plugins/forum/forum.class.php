@@ -25,7 +25,12 @@ class allThreads {
 			$thread -> setTopTopic($row['toptopic']);
 			$thread -> setThreadState($row['threadstate']);
 			$thread -> setEditCounter($row['editcounter']);
-			$thread -> setUsername(usertools::getUsernameById($row['userid'], $connection));
+			if($row['userid']!=-1){
+				$thread -> setUsername(usertools::getUsernameById($row['userid'], $connection));
+			}
+			else{
+				$thread -> setUsername("Public", $connection);
+			}
 			array_push($this -> threads, $thread);
 		}
 		foreach ($this->threads as $thread) {
@@ -83,12 +88,15 @@ class allThreads {
 		$thread = $this -> getThreadById($threadid);
 		if (!is_null($thread)) {
 			$subthreads = $this -> getSubThreads($threadid);
-			$this -> connect -> exec("DELETE FROM `".$this->dbPrefix."forum_threads` WHERE `forumid` = " . $threadid . "; ");
-			foreach ($subthreads as $subthread) {
-				$this -> connect -> exec("DELETE FROM ".$this->dbPrefix."forum_threads WHERE `forumid` = " . $subthread -> getId() . "; ");
+			//$this -> connect -> exec("DELETE FROM `".$this->dbPrefix."forum_threads` WHERE `forumid` = " . $threadid . "; ");
+			$thread->delete($this->connect);
+			if($includeSubThreads){
+				foreach ($subthreads as $subThread) {
+					$subThread->delete($this->connect);
+				}
+				$this -> threads = array();
+				$this -> __construct($this ->connect, $this->user,$this->dbPrefix);
 			}
-			$this -> threads = array();
-			$this -> __construct($this -> connect, $this -> user);
 		}
 	}
 
@@ -130,7 +138,7 @@ class allThreads {
 		$thread -> setTitle($title);
 		$thread -> setUserId($this -> user -> getId());
 		$thread -> setTopTopic($toptopic);
-		$thread -> setUsername(usertools::getUsernameById($this -> user -> getId(), $this -> connect));
+		$thread -> setUsername($this->user-> getUsername(), $this -> connect);
 		array_push($this -> threads, $thread);
 		return $this -> connect -> lastInsertId();
 	}
@@ -189,7 +197,9 @@ class thread {
 	public function getPosition() {
 		return $this -> position;
 	}
-
+	public function delete($connect){
+		$connect -> exec("DELETE FROM `".$this->dbPrefix."forum_threads` WHERE `forumid` = " . $this->id . "; ");
+	}
 	public function getEditCounter() {
 		return $this -> editcounter;
 	}

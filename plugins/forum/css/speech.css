@@ -25,14 +25,7 @@ is to other properties or values in creating the effect */
     width:500px; 
     padding:0 0 50px; 
     margin:0 auto;
-}
-
-h1 {
-    margin:1em 0 0; 
-    font-size:2.5em; 
-    font-weight:normal; 
-    line-height:1.2; 
-    text-align:center;
+	margin-top: 30px;
 }
 
 h2 {
@@ -628,6 +621,7 @@ blockquote p {
 	position:relative;
 	padding:15px 30px;
 	margin:0;
+	margin-top: 1%;
 	color:#fff;
 	background:#5a8f00; /* default background for browsers without gradient support */
 	/* css3 */
@@ -1126,7 +1120,8 @@ blockquote p {
 ** ============================================================================================================================ */
 
 .rectangle-speech-border {
-	position:relative; 
+	position:relative;
+	width:auto;
 	padding:50px 15px; 
 	margin:1em 0 3em;
 	border:10px solid #5a8f00; 
