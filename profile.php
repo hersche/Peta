@@ -17,7 +17,7 @@ elseif(isset($_GET['deleteId'])){
 elseif(isset($_GET['doOrder'])){
 $foo = var_dump($_POST['customfieldsOrder']);
 $user->orderCustomfields($_POST['customfieldsOrder'],$connection);
-
+die();
 	//throw new Exception(json_encode($_POST));
 }
 echo $foo;
@@ -33,6 +33,7 @@ switch($_GET['action']){
 		}
 		$template->assign("customfields", $user->getCustomfields($connection));
 		$template->assign("roles", $user->getRoles());
+		$template->assign("username", $user->getUsername());
 		$template->display('profile_edit.tpl');
 		break;
 		

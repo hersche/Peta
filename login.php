@@ -39,21 +39,6 @@ switch($_GET['action']) {
 		}
 		break;
 	default:
-		if((!empty($_POST['loginUsername']))&&(!empty($_POST['loginPassword']))){
-			$user = new user($_POST['loginUsername'], $_POST['loginPassword'], $connection);
-			if((isset($_SESSION["user"]))&&($user->isValid())){
-				if($user->getWelcome()){
-				  $messages[] = "Welcome ".$user->getUsername().'. Your last Login was at '.$user->getLastLogin().' from adress '.$user->getLastIp();
-				  $user->disableWelcome();
-				}
-				$template->assign("messages", $messages);
-				$template->display('index.tpl');
-				break;
-			}
-			else{
-				$messages[] = "Wrong Password or user";
-			}
-		}
 		$template->assign("messages", $messages);
 		$template->display('login.tpl');
 }

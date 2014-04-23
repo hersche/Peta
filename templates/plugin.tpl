@@ -1,12 +1,8 @@
 {include file="header.tpl" title="Mainpage"} {include file="menu.tpl"} {include file="messagebox.tpl"}
-{* <span>
-    {section name=id loop=$plugins}
-    <a class="button" href="plugin.php?plugin={$plugins[id]->getId()}" title="{$plugins[id]->getDescription()}">{$plugins[id]->getName()}</a>
-    {/section}
-</span> *}
+{* <span> {section name=id loop=$plugins} <a class="button" href="plugin.php?plugin={$plugins[id]->getId()}" title="{$plugins[id]->getDescription()}">{$plugins[id]->getName()}</a> {/section} </span> *}
 <div>
-{if ($plugin) }
-<h1>{$pluginInstance->getName()} </h1> <h5>{if $allowedAccess == "Admin"}<a class="button edit" href="pluginEdit.php?rawPluginName={$pluginInstance->getClassName()}&editPluginId={$pluginInstance->getId()}">Edit Plugin (your admin here)</a>{/if}</h5>
-{$plugin->start()} 
+    {if ($plugin) }
+    <h1>{$pluginInstance->getName()} </h1><h5>{if $allowedAccess == "Admin"}<a class="button edit" href="pluginEdit.php?rawPluginName={$pluginInstance->getClassName()}&editPluginId={$pluginInstance->getId()}">Edit Plugin (your admin here)</a>{/if}</h5>
+    {$plugin->start()}
 </div>
 {/if} {$content} {include file="footer.tpl"}

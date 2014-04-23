@@ -1,27 +1,25 @@
 {include file="header.tpl" title=Login} {include file="menu.tpl"} {include file="messagebox.tpl"}
 <table>
     <h1>Welcome to PhpMeta. For more functions, please log in!</h1>
-    <form method="POST" action="login.php">
-
+    <form method="POST" action="index.php">
 
         <tr>
             <td>Username</td>
             <td>
-                <input type="text" name="loginUsername" placeholder="Loginname" autofocus />
+            <input type="text" name="loginUsername" placeholder="Loginname" autofocus />
             </td>
         </tr>
         <tr>
             <td>Password</td>
             <td>
-                <input type="password" name="loginPassword" />
+            <input type="password" name="loginPassword" />
             </td>
         </tr>
         <tr>
             <td>
-                <input type="submit" value="Login" />
+            <input type="submit" value="Login" />
             </td>
         </tr>
-
 
     </form>
 </table>
@@ -33,34 +31,34 @@
         <tr>
             <td>Username:</td>
             <td>
-                <input type="text" name="registerUsername" placeholder="Username" />
+            <input type="text" name="registerUsername" placeholder="Username" />
             </td>
         </tr>
         <tr>
             <td>E-Mail:</td>
             <td>
-                <input type="mail" name="registerEmail" placeholder="E-Mail" />
+            <input type="mail" name="registerEmail" placeholder="E-Mail" />
             </td>
         </tr>
         <tr>
             <td>Password:</td>
             <td>
-                <input type="password" name="registerPassword" />
+            <input type="password" name="registerPassword" />
             </td>
         </tr>
         <tr>
             <td>Confirm password:</td>
             <td>
-                <input type="password" name="registerPassword2" />
+            <input type="password" name="registerPassword2" />
             </td>
         </tr>
         <tr>
             <td>
-                <input type="submit" value="Register" />
+            <input type="submit" value="Register" />
             </td>
         </tr>
     </form>
 </table>
 {/if}
-<a href="README">See details</a>
+<p><a href="README">See details</a> or go to the <a href="http://skamster.github.io/index.html?s=peta">Projectwebsite</a></p>
 {include file="footer.tpl"}

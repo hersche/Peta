@@ -1,7 +1,7 @@
 {include file="header.tpl" title=Usermanagement} {include file="menu.tpl"} {include file="messagebox.tpl"}
-<h2>
-    <a href="user.php?action=createuser">Create User</a>
-</h2>
+<h3>
+    <a href="user.php?action=createuser" class="button create">Create User</a>
+</h3>
 
 <h2>Edit a user</h2>
 <p>But please respect all the users which hasn't so much rights like you!</p>

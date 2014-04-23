@@ -51,16 +51,6 @@ switch($_GET['action']) {
 		break;
 
 	case "mkuser" :
-	//		if((!empty($_POST['username']))&&(!empty($_POST['name']))){
-	//			if($_POST['password']==$_POST['password2']){
-	//				foreach(admin::getRoles($connection) as $role){
-	//					if($role['role'] == $_POST['role']){
-	//						$roleid = $role['roleid'];
-	//					}
-	//				}
-	//				array_push($messages, usertools::registerUser($_POST['username'], $_POST['name'], $_POST['password'], $roleid, $connection));
-	//			}
-	//		}
 		$messages[] = usertools::registerUser($_POST, $connection);
 		break;
 }

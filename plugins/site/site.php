@@ -58,18 +58,23 @@ class skamsterSite extends plugin{
 		return "This should work as a usual web/info-site .";
 	}
 	public function getOnLoadCode(){
-		return 'dojo.connect(dragAndDropList,"onDndDrop",function(e){updateList()});';
+		if(!isset($_GET['singleViewId'])){
+			return 'dojo.connect(dragAndDropList,"onDndDrop",function(e){updateList()});';
+		}
 	}
 	public function insertSite($name, $content, $order){
-		$this->connection->exec("INSERT INTO `".$this->dbPrefix."site` (`name`, `content`, `order`) VALUES ('" . $name . "', '" .base64_encode(str_replace(' ','+',$content)) . "', " . intval($order) . ");");
+		$this->connection->exec("INSERT INTO `".$this->dbPrefix."site` (`name`, `content`) VALUES ('" . $name . "', '" .base64_encode(str_replace(' ','+',$content)) . "');");
+		$this->updateSites();
 	}
 	
 	public function deleteSite($id){
 		$this->connection->exec("DELETE FROM `".$this->dbPrefix."site` WHERE `id` = " . $id . "; ");
+		$this->updateSites();
 	}
 	
-	public function editSite($id, $name, $content,$order){
+	public function editSite($id, $name, $content){
 		$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `name` =  '" . $name . "',`content`='" .base64_encode(str_replace(' ','+',$content)) . "' WHERE `id`=".$id . " LIMIT 1 ;");
+		$this->updateSites();
 	}
 	
 	public function getSiteById($id){
@@ -95,21 +100,13 @@ class skamsterSite extends plugin{
 			`order` int(11) NOT NULL,
 			PRIMARY KEY (`id`)
 		)");
-		if(isset($_GET['createSiteId'])){
-			$this->insertSite($_POST['siteName'],$_POST['siteContent'],$_POST['siteOrder']);
-		}	
-		elseif(isset($_GET['editSiteId'])){
-			$this->editSite($_GET['editSiteId'],$_POST['siteName'],$_POST['siteContent'],$_POST['siteOrder']);
-		}
-		elseif(isset($_GET['singleEditViewId'])){
+
+		if(isset($_GET['singleEditViewId'])){
 			$this->template->assign("singleEditSite", $this->getSiteById($_GET['singleEditViewId']));
 		}
 		elseif(isset($_GET['singleViewId'])){
 			$this->template->assign("siteListMenu", $this->siteList);
 			$this->template->assign("singleViewSite", $this->getSiteById($_GET['singleViewId']));
-		}
-		elseif(isset($_GET['deleteSiteId'])){
-			$this->deleteSite($_GET['deleteSiteId']);
 		}
 		elseif(isset($_GET['doOrder'])){
 		
@@ -125,15 +122,25 @@ class skamsterSite extends plugin{
 			}
 		}
 		else{
+			if((isset($_POST['editSiteName']))&&(isset($_POST['editSiteContent']))){
+				$this->editSite($_GET['singleEditId'],$_POST['editSiteName'],$_POST['editSiteContent']);
+			}
+			elseif((isset($_POST['createSiteName']))&&(isset($_POST['createSiteContent']))){
+				$this->insertSite($_POST['createSiteName'],$_POST['createSiteContent']);
+			}
+			elseif(isset($_GET['deleteSiteId'])){
+				$this->deleteSite($_GET['deleteSiteId']);
+			}
 			$this->template->assign("siteList", $this->siteList);
 		}
+
 		$this->template->assign('pluginId',$_GET['plugin']);
 		$this->template->display($this->folder.'site.tpl');
 	}
 }
 /**
 * Dataobject represent DB
-* Better do not public variables, do getter and setter. This is just faster.
+* Better do not use public variables like this, do getter and setter. This is just faster.
 **/
 class site{
 	public $id;
