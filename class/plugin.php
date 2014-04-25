@@ -164,6 +164,8 @@ class rawIOPluginManager {
 class instancedPluginManager{
 	private $instancedPluginList;
 	private $connection;
+    private $user;
+    private $template;
 	public function __construct($user,$template, $connection){
 		$this->connection = $connection;
 		// Tableconstructor
@@ -184,14 +186,16 @@ class instancedPluginManager{
 		  `access` int(3) NOT NULL,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
-        $this->updateInstancedPlugins();
         $this->connection = $connection;
+        $this->user=$user;
+        $this->template=$template;
+        $this->updateInstancedPlugins();
 	}
     
     public function updateInstancedPlugins(){
         $this->instancedPluginList = array();
         foreach($this->connection->query('SELECT * FROM `plugin` LIMIT 0 , 30') as $row){
-            array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'],                                                       $row['pl_className'],$row['pl_active'],$this->connection, $template,$user));
+            array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'],                                                       $row['pl_className'],$row['pl_active'],$this->connection, $this->template,$this->user));
 		}
     }
 	public function getInstancedPlugins(){
