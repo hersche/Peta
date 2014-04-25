@@ -10,28 +10,29 @@
 </form>
 {/if}
 
-{if $instancedPluginList}
-{if $rawPlugin and $admin}
+{if $admin eq True or $allowedAccess eq "Admin"}
+{if $rawPlugin}
 <div id="rawPlugin">
     <h2>Your used rawPlugin: {$rawPlugin->getPath()}</h2>
-
+    {/if}
+{if $instancedPluginList}
     <h3>List of instanced plugins</h3>
     <ul>
 
-        {foreach from=$instancedPluginList item=instancedPlugin}
+        {foreach from=$instancedPluginList item=instPlugin}
         <li>
             <table>
-                <form action="pluginEdit.php?action=editPluginInstance&pluginId={$instancedPlugin->getId()}&rawPluginName={$rawPlugin->getName()}" method="post">
+                <form action="pluginEdit.php?action=editPluginInstance&pluginId={$instPlugin->getId()}&rawPluginName={$rawPlugin->getName()}" method="post">
                     <tr>
-                        <td><label for={$instancedPlugin->getName()}></label><label>Name</label><td>
-                        <input type="text" name="instancePluginName" value="{$instancedPlugin->getName()}" class="dijitInputField"/>
+                        <td><label for={$instPlugin->getName()}></label><label>Name</label><td>
+                        <input type="text" name="instancePluginName" value="{$instPlugin->getName()}" class="dijitInputField"/>
                         </td>
                     </tr>
                     <tr>
-                        <td><label for="description">Description</label></td><td>                        <textarea class="dijitTextArea" height="40px" name="instancePluginDescription">{$instancedPlugin->getDescription()}</textarea></td>
+                        <td><label for="description">Description</label></td><td>                        <textarea class="dijitTextArea" height="40px" name="instancePluginDescription">{$instPlugin->getDescription()}</textarea></td>
                     </tr>
 
-                    {foreach from=$instancedPlugin->getUsedRoles() item=usedRole}
+                    {foreach from=$instPlugin->getUsedRoles() item=usedRole}
                     <tr>
                         <td>{$usedRole->getRole()}</td>
                         <td>
@@ -42,7 +43,7 @@
                     </tr>
                     {/foreach}
 
-                    {foreach from=$instancedPlugin->getRestRoles() item=restRole}
+                    {foreach from=$instPlugin->getRestRoles() item=restRole}
                     <tr>
                         <td>{$restRole->getRole()}</td>
                         <td>
@@ -57,8 +58,8 @@
                         <td>
                         <input type="submit" class="button edit" value="Edit" />
                         </td>
-                        <td><a href="pluginEdit.php?action=pluginInstanceDelete&plugId={$instancedPlugin->getId()}" class="button delete">Delete</a></td>
-                        <td><a href="plugin.php?plugin={$instancedPlugin->getId()}" class="button">Show Plug</a></td>
+                        <td><a href="pluginEdit.php?action=pluginInstanceDelete&amp;plugId={$instPlugin->getId()}&amp;rawPluginName={$rawPlugin->getName()}" class="button delete">Delete</a></td>
+                        <td><a href="plugin.php?plugin={$instPlugin->getId()}" class="button">Show Plug</a></td>
                     </tr>
                     <tr>
                         <td>
@@ -72,17 +73,19 @@
 
         {/foreach}
     </ul>
+    {/if}
+    {if $rawPlugin}
     <h1>Plugin erstellen</h1>
-    <form action="pluginEdit.php" method="get">
+    <form action="pluginEdit.php?rawPluginName={$rawPlugin->getName()}" method="post">
         <table>
             <tr>
                 <td><label for="className">rawPluginName </label></td><td>
-                <input value="{$getPluginEdit['className']}" type="text" disabled  />
+                <input value="{$rawPlugin->getName()}" type="text" disabled  />
                 </td>
             </tr>
             <tr>
                 <td><label for="Path">rawPluginPath </label></td><td>
-                <input value="{$instancedPlugin->getPath()}" type="text" disabled  />
+                <input value="{$rawPlugin->getPath()}" type="text" disabled  />
                 </td>
             </tr>
             <tr>
@@ -95,25 +98,26 @@
         <table>
             <tr>
                 <td><label for="name">Name</label></td><td>
-                <input value="{$instancedPlugin->getClassName()}" type="text" name="name" />
+                <input value="" type="text" name="createName" placeholder="{$rawPlugin->getName()}" />
                 </td>
             </tr>
             <tr>
                 <td><label for="Active">Active</label></td><td>
-                <input value="1" name="active" type="checkbox" checked  />
+                <input value="1" name="createActive" type="checkbox" checked  />
                 </td>
             </tr>
             <tr>
                 <td><label for="description">Description</label></td>
-                <td>                <textarea name="description"></textarea></td>
+                <td>                <textarea name="createDescription"></textarea></td>
             </tr>
         </table>
         <input type="hidden" value="createInstancedPlugin" name="action" />
-        <input type="hidden" value="{$instancedPlugin->getPath()}" name="path" />
-        <input type="hidden" value="{$instancedPlugin->getClassName()}" name="className" />
+        <input type="hidden" value="{$rawPlugin->getPath()}" name="createPath" />
+        <input type="hidden" value="{$rawPlugin->getName()}" name="createClassName" />
         <input type="submit" value="Create instancedPlugin" />
     </form>
     {/if}
+    
     {/if}
     {if $instancedPlugin}
     <table>

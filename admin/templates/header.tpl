@@ -25,23 +25,14 @@
     {/foreach}
     <script type="text/javascript">
         dojo.require("dojo.fx");
-        dojo.require("dijit.form.Button"); { foreach
-            item = dojo
-            from = $dojorequire
-        }
-        dojo.require("{$dojo}"); {/foreach
-        } { literal
-        }
+        dojo.require("dijit.form.Button"); {foreach item = dojo from = $dojorequire}
+        dojo.require("{$dojo}"); {/foreach} {literal}
 
-        dojo.addOnLoad(function() { {/literal
-            }
+        dojo.addOnLoad(function() { {/literal}
             //basicWipeinSetup();
-            { $onLoadCode
-            } { literal
-            }
+            {$onLoadCode} {literal}
         });
-        {/literal
-        }
+        {/literal}
     </script>
 
     {foreach item=css from=$allcss}

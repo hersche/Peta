@@ -162,7 +162,7 @@ class rawIOPluginManager {
 }
 
 class instancedPluginManager{
-	private $instancedPluginList = array();
+	private $instancedPluginList;
 	private $connection;
 	public function __construct($user,$template, $connection){
 		$this->connection = $connection;
@@ -176,16 +176,28 @@ class instancedPluginManager{
 		  `pl_active` tinyint(1) NOT NULL,
 		  PRIMARY KEY (`pl_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');
-		
-		foreach($connection->query('SELECT * FROM `plugin` LIMIT 0 , 30') as $row){
-			array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'], $row['pl_className'],$row['pl_active'],$connection, $template,$user));
-		}
+			
+        $connection->query('CREATE TABLE IF NOT EXISTS `pluginRole` (
+		  `id` int(16) NOT NULL AUTO_INCREMENT,
+		  `pluginId` int(11) NOT NULL,
+		  `roleId` int(11) NOT NULL,
+		  `access` int(3) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
+        $this->updateInstancedPlugins();
+        $this->connection = $connection;
 	}
+    
+    public function updateInstancedPlugins(){
+        $this->instancedPluginList = array();
+        foreach($this->connection->query('SELECT * FROM `plugin` LIMIT 0 , 30') as $row){
+            array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'],                                                       $row['pl_className'],$row['pl_active'],$this->connection, $template,$user));
+		}
+    }
 	public function getInstancedPlugins(){
 		return $this->instancedPluginList;
 	}
 	public function getInstancedPluginById($id){
-	
 		foreach($this->instancedPluginList as $iP){
 			if($iP->getId()==$id){
 				return $iP;
@@ -206,7 +218,7 @@ class instancedPluginManager{
 	public function createInstancedPlugin($name, $description, $path, $className,$active){
 		$sql = "INSERT INTO plugin (`pl_name`,`pl_description`, `pl_path`,`pl_className`,`pl_active`) VALUES ('" . $name . "', '" . $description . "', '" . $path . "', '" . $className . "', " . $active . ");";
 		$this->connection -> exec($sql);
-		//var_dump($sql);
+		$this->updateInstancedPlugins();
 	}
 }
 
