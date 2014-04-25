@@ -39,9 +39,16 @@ switch($_GET['action']){
 		
 		
 	default:
+        
 		if((isset($_GET['userid']))&&(usertools::userIdExists($_GET['userid'], $connection))&&($_GET['userid']!=$user->getId())){
 			$user = usertools::getAlienUserbyId($_GET['userid'], $connection);
 		}
+    elseif((isset($_GET['userid']))&&($_GET['userid']==-1)){
+        $user = new alienuser();
+        $user->setId(-1);
+        $user->setUsername("Guest");
+        
+    }
 		else{
 			$template->assign("own", true);
 			$template->assign("roles", $user->getRoles());
