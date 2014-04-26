@@ -63,7 +63,8 @@ class skamsterSite extends plugin{
 		}
 	}
 	public function insertSite($name, $content){
-		$this->connection->exec("INSERT INTO `".$this->dbPrefix."site` (`name`, `content`) VALUES ('" . $name . "', '" .base64_encode(str_replace(' ','+',$content)) . "');");
+        $escCont = str_replace("\r\n", "", $content);
+		$this->connection->exec("INSERT INTO `".$this->dbPrefix."site` (`name`, `content`) VALUES ('" . $name . "', '" .$escCont . "');");
 		$this->updateSites();
 	}
 	
@@ -73,7 +74,8 @@ class skamsterSite extends plugin{
 	}
 	
 	public function editSite($id, $name, $content){
-		$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `name` =  '" . $name . "',`content`='" .base64_encode(str_replace(' ','+',$content)) . "' WHERE `id`=".$id . " LIMIT 1 ;");
+        $escCont = str_replace("\r\n", "", $content);
+		$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `name` =  '" . $name . "',`content`='" .$escCont . "' WHERE `id`=".$id . " LIMIT 1 ;");
 		$this->updateSites();
 	}
 	
@@ -90,8 +92,8 @@ class skamsterSite extends plugin{
 	public function updateSites(){
 		$this->siteList = array();
 		foreach($this->connection->query("SELECT * FROM `".$this->dbPrefix."site` ORDER BY `order`;") as $row){
-			$tmpCont = str_replace(' ','+',$row['content']);
-			array_push($this->siteList,new site($row['id'],$row['name'],str_replace('+',' ',base64_decode($tmpCont)),$row['order']));
+            $escCont = str_replace("\r\n", "", $row['content']);
+			array_push($this->siteList,new site($row['id'],$row['name'],$escCont,$row['order']));
 		}
 	}
 	public function start(){	
@@ -104,7 +106,11 @@ class skamsterSite extends plugin{
 		)");
 
 		if(isset($_GET['singleEditViewId'])){
+            if((isset($_POST['editSiteName']))&&(isset($_POST['editSiteContent']))){
+                $this->editSite($_GET['singleEditViewId'],$_POST['editSiteName'],$_POST['editSiteContent']);
+            }
 			$this->template->assign("singleEditSite", $this->getSiteById($_GET['singleEditViewId']));
+    
 		}
 		elseif(isset($_GET['singleViewId'])){
 			$this->template->assign("siteListMenu", $this->siteList);
@@ -125,10 +131,7 @@ class skamsterSite extends plugin{
 		}
 		else{
             if(($this->user->getPluginAccess()=="Admin")||($this->user->getAdmin())){
-			     if((isset($_POST['editSiteName']))&&(isset($_POST['editSiteContent']))){
-                    $this->editSite($_GET['singleEditId'],$_POST['editSiteName'],$_POST['editSiteContent']);
-                 }
-			     elseif((isset($_POST['createSiteName']))&&(isset($_POST['createSiteContent']))){
+			     if((isset($_POST['createSiteName']))&&(isset($_POST['createSiteContent']))){
                     $this->insertSite($_POST['createSiteName'],$_POST['createSiteContent']);
                  }
 			     elseif(isset($_GET['deleteSiteId'])){
