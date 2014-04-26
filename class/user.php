@@ -129,20 +129,17 @@ class user extends abstractUser {
 	public function orderCustomfields($cmOrderList, $connection){
 		$order = 1;
 		try{
-		foreach($cmOrderList as $cmId){
-		
+		  foreach($cmOrderList as $cmId){
 			$id = intval($cmId);
 			if (!empty($id)) {
-			
-				$connection->exec("UPDATE `user_customfields` SET `cf_order`='".$order."' WHERE `user_customfields`.`cf_id`=".$id . " LIMIT 1 ;");
+				$connection->exec("UPDATE `user_customfields` SET `user_customfields`.`cf_order`='".$order."' WHERE `user_customfields`.`cf_id`=".$id . " LIMIT 1 ;");
 				$order++;
-			}
-				
+			     }	
 			}
 		}
-					catch (Exception $e){
-				throw new Exception($e->getMessage( ));
-			}
+        catch (Exception $e){
+            throw new Exception($e->getMessage( ));
+        }
 		$this->customfields = Null;
 		$this->initialiseCustomfields($connection);
 	

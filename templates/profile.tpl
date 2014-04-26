@@ -1,13 +1,13 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"} {include file="menu.tpl"} <h1>Profile</h1>
 <h2>Username: {$username}</h2>
 Customfields:
-<ul>
+<ol>
     {foreach item=cm from=$customfields}
     <li>
         {$cm->getKey()}: {$cm->getValue()}
     </li>
     {/foreach}
-</ul>
+</ol>
 {if $own}
 <p>
     Your roles:

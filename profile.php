@@ -15,12 +15,10 @@ elseif(isset($_GET['deleteId'])){
 
 
 elseif(isset($_GET['doOrder'])){
-$foo = var_dump($_POST['customfieldsOrder']);
 $user->orderCustomfields($_POST['customfieldsOrder'],$connection);
-die();
-	//throw new Exception(json_encode($_POST));
+    die();
 }
-echo $foo;
+
 switch($_GET['action']){
 	case "edit":
 		$template->assign("onLoadCode", 'dojo.connect(customfieldList,"onDndDrop",function(e){updateCustomfieldList()});');

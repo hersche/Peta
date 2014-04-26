@@ -52,8 +52,9 @@ Customfields:
         {foreach item=cm from=$customfields}
         <li class="dojoDndItem">
             {$cm->getKey()}: {$cm->getValue()} <a href="profile.php?action=edit&amp;editId={$cm->getId()}" class="button edit">Edit</a><a href="profile.php?deleteId={$cm->getId()}" class="button delete">Delete</a>
+            <input type="hidden" name="customfieldsOrder[]" value="{$cm->getId()}" />
         </li>
-        <input type="hidden" name="customfieldsOrder[]" value="{$cm->getId()}" />
+        
         {/foreach}
     </ol>
 </form>
