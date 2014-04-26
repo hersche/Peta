@@ -102,7 +102,7 @@ $instancedPluginManager = new instancedPluginManager($user, $template, $connecti
 $allowedPluginInstances = array();
 $pluginInstance = Null;
 $allowed = False;
-$allowedAccess = "Nuluuuul";
+$allowedAccess = "Null";
 $fn = basename($_SERVER['PHP_SELF']);
 foreach ($instancedPluginManager->getInstancedPlugins() as $pI) {
 	foreach ($user->getRoles() as $uRole) {
@@ -150,7 +150,7 @@ if ($user -> getUsername() == "Public") {
 	if ($allowed) {
 		//Hay!
 	} else {
-		if ($fn != "login.php") {
+		if (($fn != "login.php")&&($fn != "profile.php")) {
 			header("Location: login.php");
 		}
 	}
