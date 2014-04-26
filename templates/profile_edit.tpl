@@ -48,9 +48,9 @@
 </ul>
 Customfields:
 <form action="profile.php?doOrder=do" method="post" id="customfieldsOrderForm">
-    <ol dojoType="dojo.dnd.Source" data-dojo-id="customfieldList">
+    <ol dojoType="dojo.dnd.Source" data-dojo-id="customfieldList" class="customfieldlist">
         {foreach item=cm from=$customfields}
-        <li class="dojoDndItem">
+        <li class="dojoDndItem customfield">
             {$cm->getKey()}: {$cm->getValue()} <a href="profile.php?action=edit&amp;editId={$cm->getId()}" class="button edit">Edit</a><a href="profile.php?deleteId={$cm->getId()}" class="button delete">Delete</a>
             <input type="hidden" name="customfieldsOrder[]" value="{$cm->getId()}" />
         </li>

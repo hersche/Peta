@@ -1,9 +1,9 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"} {include file="menu.tpl"} <h1>Profile</h1>
 <h2>Username: {$username}</h2>
 Customfields:
-<ol>
+<ol class="customfieldlist">
     {foreach item=cm from=$customfields}
-    <li>
+    <li class="customfield">
         {$cm->getKey()}: {$cm->getValue()}
     </li>
     {/foreach}
