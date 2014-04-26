@@ -50,6 +50,7 @@
             <td>
             <input type="submit" value="Edit now!" />
             </td>
+            <td><a href="user.php?deleteId={$userid}" class="button delete">Delete</a></td>
 
         </tr>
     </table>

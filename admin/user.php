@@ -30,8 +30,6 @@ switch($_GET['action']) {
 			$template -> display('users_edituser.tpl');
 		}
 		break;
-	case "deleteuser" :
-		break;
 	case "createuser" :
 		$template -> assign("roles", admin::extractFromArray(admin::getRoles($connection), "role"));
 		$template -> assign("messages", $messages);
@@ -54,7 +52,9 @@ switch($_GET['action']) {
 		$messages[] = usertools::registerUser($_POST, $connection);
 		break;
 }
-
+if(isset($_GET['deleteId'])){
+    usertools::deleteUser($_GET['deleteId'], $connection);
+}
 if ((!isset($_GET['action'])) || ($_GET['action'] == "mkedit") || ($_GET['action'] == "mkuser")) {
 	$template -> assign("messages", $messages);
 	$users = admin::getUsers($connection);

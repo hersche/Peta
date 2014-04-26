@@ -744,6 +744,12 @@ class usertools {
 		}
 	}
 
+    
+    static public function deleteUser($id, $connection){
+        $connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $id .';');
+        $connection -> exec('DELETE FROM `user_customfields` WHERE `cf_uid` = ' . $id .';');
+        $connection -> exec('DELETE FROM `user` WHERE `uid` = ' . $id .';');
+    }
 	/**
 	 * Resolve a username with a id..
 	 * @param unknown_type $userid
