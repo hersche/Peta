@@ -29,6 +29,9 @@ function updateList() {
         </ol>
     </form>
 </div>
+{/if}
+
+{if $newEnabled}
 <form id="createSiteForm" action="plugin.php?plugin={$pluginId}" method="POST">
     <table style="width:90%">
         <tr>
@@ -65,7 +68,6 @@ function updateList() {
 </form>
 {/if}
 
-
 {if $singleEditSite}
 <script type="text/javascript">
     require(["dojo/parser", "dijit/Editor", "dijit/_editor/plugins/FontChoice", // 'fontName','fontSize','formatBlock'
@@ -100,7 +102,6 @@ function updateList() {
                                 var hiddenF = dom.byId("editEditorSend");
                                 var dEditor = registry.byNode(dom.byId("editEditor"));
                                 hiddenF.value = dEditor.get('value');
-                                alert(hiddenF.value);
                             });
 							 
                             document.forms["editSiteForm"].submit();

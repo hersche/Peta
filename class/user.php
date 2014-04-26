@@ -26,11 +26,10 @@ class user extends abstractUser {
 	private $password;
 	public $urow;
 	private $connection;
+    private $admin;
+    private $pluginAccess;
 	// private $connection;
 
-	public function getUrow() {
-		return $this -> urow;
-	}
 
 	/**
 	 * This do the login
@@ -117,6 +116,30 @@ class user extends abstractUser {
 			$this -> initialiseCustomfields($connection);
 		//}
 	}
+    
+    
+    
+    public function getUrow() {
+		return $this -> urow;
+	}
+
+    public function setAdmin($admin){
+        $this->admin = $admin;      
+    }
+    
+    public function setPluginAccess($pluginAccess){
+        $this->pluginAccess = $pluginAccess;   
+    }
+    
+    
+    public function getPluginAccess(){
+     return $this->pluginAccess;   
+    }
+    public function getAdmin(){
+     return $this->admin;   
+    }
+    
+    
 	private function initialiseCustomfields($connection) {
 		foreach ($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'" ORDER BY `cf_order`;') as $customfieldrow) {
 			$customfield = new customfield();
@@ -361,6 +384,7 @@ class alienuser extends abstractUser {
 	private $lastlogin;
 	private $roles = array();
 	private $customfields = array();
+    private $pluginAccess;
 
 	public function getUsername() {
 		return $this -> username;
@@ -373,7 +397,21 @@ class alienuser extends abstractUser {
 	public function getPassword() {
 		return $this -> password;
 	}
-
+    public function setAdmin($admin){
+        $this->admin = $admin;      
+    }
+    
+    public function setPluginAccess($pluginAccess){
+        $this->pluginAccess = $pluginAccess;   
+    }
+    
+    
+    public function getPluginAccess(){
+     return $this->pluginAccess;   
+    }
+    public function getAdmin(){
+     return false;   
+    }
 	public function getRoles() {
 		return $this -> roles;
 	}
@@ -671,7 +709,6 @@ class usertools {
 			$roleObject = new role();
 			$roleObject -> setId($dbRole['rid']);
 			$roleObject -> setRole($dbRole['role']);
-			$roleObject -> setAdmin($dbRole['r_admin']);
 			$roleObjects[] = $roleObject;
 		}
 		return $roleObjects;

@@ -1,7 +1,7 @@
 <?php
 class skamsterSite extends plugin{
 	
-	private $currentUser;
+	private $user;
 	private $template;
 	private $connection;
 	private $id;
@@ -27,7 +27,7 @@ class skamsterSite extends plugin{
 	 */
 	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
 		$this->id = $id;
-		$this -> currentUser = $currentUser;
+		$this -> user = $currentUser;
 		$this -> template = $templateObject;
 		$this -> connection = $connection;
 		$this->folder=$folder;
@@ -62,7 +62,7 @@ class skamsterSite extends plugin{
 			return 'dojo.connect(dragAndDropList,"onDndDrop",function(e){updateList()});';
 		}
 	}
-	public function insertSite($name, $content, $order){
+	public function insertSite($name, $content){
 		$this->connection->exec("INSERT INTO `".$this->dbPrefix."site` (`name`, `content`) VALUES ('" . $name . "', '" .base64_encode(str_replace(' ','+',$content)) . "');");
 		$this->updateSites();
 	}
@@ -85,6 +85,8 @@ class skamsterSite extends plugin{
 			}
 		}
 	}
+    
+    
 	public function updateSites(){
 		$this->siteList = array();
 		foreach($this->connection->query("SELECT * FROM `".$this->dbPrefix."site` ORDER BY `order`;") as $row){
@@ -116,24 +118,34 @@ class skamsterSite extends plugin{
 				//
 				if ((!empty($id))||($id!=0)) {
 					$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `order`=".$order." WHERE `id`=".$id . " LIMIT 1 ;");
-					//throw new Exception("UPDATE `".$this->dbPrefix."site` SET `order`=".$order." WHERE `id`=".$id . " LIMIT 1 ;");
 					$order++;
 				}
 			}
+            die();
 		}
 		else{
-			if((isset($_POST['editSiteName']))&&(isset($_POST['editSiteContent']))){
-				$this->editSite($_GET['singleEditId'],$_POST['editSiteName'],$_POST['editSiteContent']);
-			}
-			elseif((isset($_POST['createSiteName']))&&(isset($_POST['createSiteContent']))){
-				$this->insertSite($_POST['createSiteName'],$_POST['createSiteContent']);
-			}
-			elseif(isset($_GET['deleteSiteId'])){
-				$this->deleteSite($_GET['deleteSiteId']);
-			}
-			$this->template->assign("siteList", $this->siteList);
-		}
+            if(($this->user->getPluginAccess()=="Admin")||($this->user->getAdmin())){
+			     if((isset($_POST['editSiteName']))&&(isset($_POST['editSiteContent']))){
+                    $this->editSite($_GET['singleEditId'],$_POST['editSiteName'],$_POST['editSiteContent']);
+                 }
+			     elseif((isset($_POST['createSiteName']))&&(isset($_POST['createSiteContent']))){
+                    $this->insertSite($_POST['createSiteName'],$_POST['createSiteContent']);
+                 }
+			     elseif(isset($_GET['deleteSiteId'])){
+                    $this->deleteSite($_GET['deleteSiteId']);
+                 }
+                $this->template->assign("siteList", $this->siteList);
+                $this->template->assign('newEnabled',True);
+               
 
+            }
+            else{
+               if(sizeof($this->siteList) > 0){
+                   $this->template->assign("siteListMenu", $this->siteList);
+			$this->template->assign("singleViewSite", $this->siteList[0]);
+               }
+            }
+		}
 		$this->template->assign('pluginId',$_GET['plugin']);
 		$this->template->display($this->folder.'site.tpl');
 	}

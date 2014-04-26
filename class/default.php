@@ -80,6 +80,9 @@ if (isset($_SESSION["user"])) {
 		$admin = true;
 	}
 	$user = $_SESSION["user"];
+    if($admin){
+        $user->setAdmin(true);
+    }
 	$template -> assign("user", $user);
 }
 
@@ -99,7 +102,7 @@ $instancedPluginManager = new instancedPluginManager($user, $template, $connecti
 $allowedPluginInstances = array();
 $pluginInstance = Null;
 $allowed = False;
-$allowedAccess = "Null";
+$allowedAccess = "Nuluuuul";
 $fn = basename($_SERVER['PHP_SELF']);
 foreach ($instancedPluginManager->getInstancedPlugins() as $pI) {
 	foreach ($user->getRoles() as $uRole) {
@@ -134,6 +137,7 @@ foreach ($instancedPluginManager->getInstancedPlugins() as $pI) {
 		$pluginInstance = $pI;
 	}
 }
+$user->setPluginAccess($allowedAccess);
 $template -> assign("allowedPluginInstances", $allowedPluginInstances);
 if ($pluginInstance != Null) {
 	$plugin = $pluginInstance -> getInstance();
