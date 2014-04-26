@@ -21,7 +21,7 @@
        <td>Text</td>
        <td>
 		<input type="hidden" name="topictext" id='editorSend' />
-		<div data-dojo-type="dijit/Editor" id="editor"data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink', 					'dijit/_editor/plugins/AlwaysShowToolbar','preview'],onChange:function(){document.getElementById('editorSend').value = this.getValue();}"{/literal}>
+		<div data-dojo-type="dijit/Editor" class="editor" id="editor" data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink', 'dijit/_editor/plugins/AlwaysShowToolbar','preview'],onChange:function(){document.getElementById('editorSend').value = this.getValue();}"{/literal}>
 			<p>{$text}</p>
 		</div>
       </td>

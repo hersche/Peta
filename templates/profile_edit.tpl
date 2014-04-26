@@ -1,7 +1,8 @@
 {include file="header.tpl" title=Cards} {include file="messagebox.tpl"}
 {include file="menu.tpl"}
 <script type="text/javascript">
-    require(['dojo/parser', 'dijit/Editor']);
+        require(["dojo/parser", "dijit/Editor", "dijit/_editor/plugins/FontChoice", // 'fontName','fontSize','formatBlock'
+    "dijit/_editor/plugins/TextColor", "dijit/_editor/plugins/LinkDialog", "dijit/_editor/plugins/AlwaysShowToolbar", "dijit/_editor/plugins/ViewSource", "dijit/_editor/plugins/FullScreen"]);
 
     function updateCustomfieldList() {
         var xhrArgs = {
@@ -74,7 +75,7 @@ Customfields:
             <td>Text</td>
             <td>
             <input type="hidden" name="editValue" id='editorEditSend' />
-            <div class="editor" data-dojo-type="dijit/Editor" id="editCustomfieldEditor" data-dojo-props="{literal}extraPlugins:[],onChange:function(){document.getElementById('editorSend2').value = this.getValue();}"{/literal}>
+            <div class="editor" data-dojo-type="dijit/Editor" id="editCustomfieldEditor" data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink','viewsource', 'findreplace','fullscreen','dijit/_editor/plugins/AlwaysShowToolbar','preview',{name: 'LocalImage', uploadable: false, fileMask: '*.*'}],onChange:function(){document.getElementById('editorSend2').value = this.getValue();}"{/literal}>
                 <p>
                     {$editCustomField->getValue()}
                 </p>
@@ -115,7 +116,7 @@ Customfields:
             <td>Text</td>
             <td>
             <input type="hidden" name="newValue" id='editorSend' />
-            <div class="editor" data-dojo-type="dijit/Editor" id="editor" data-dojo-props="{literal}extraPlugins:[],onChange:function(){document.getElementById('editorSend').value = this.getValue();}"{/literal}> <p></p></div></td>
+            <div class="editor" data-dojo-type="dijit/Editor" id="editor" data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink','viewsource', 'findreplace','fullscreen','dijit/_editor/plugins/AlwaysShowToolbar','preview',{name: 'LocalImage', uploadable: false, fileMask: '*.*'}],onChange:function(){document.getElementById('editorSend').value = this.getValue();}"{/literal}> <p></p></div></td>
         </tr>
         <tr>
             <td>

@@ -21,8 +21,9 @@ $user->orderCustomfields($_POST['customfieldsOrder'],$connection);
 
 switch($_GET['action']){
 	case "edit":
+        $template->assign("allcss",array("js/dojo/dojox/editor/plugins/resources/css/Preview.css", "js/dojo/dojox/form/resources/FileUploader.css","js/dojo/dojox/editor/plugins/resources/css/LocalImage.css","js/dojo/dojox/editor/plugins/resources/css/FindReplace.css"));
 		$template->assign("onLoadCode", 'dojo.connect(customfieldList,"onDndDrop",function(e){updateCustomfieldList()});');
-		$template->assign("dojorequire", array("dijit.Editor","dojo.dnd.Source"));
+		$template->assign("dojorequire", array("dijit.Editor","dojo.dnd.Source","dojox.editor.plugins.Preview","dojox.editor.plugins.LocalImage","dojox.editor.plugins.FindReplace"));
 		if(isset($_POST)){
 			usertools::editUser($user->getId(), $_POST, $connection);
 		}
