@@ -1,5 +1,4 @@
 {include file="header.tpl" title="Mainpage"} {include file="menu.tpl"} {include file="messagebox.tpl"}
-{* <span> {section name=id loop=$plugins} <a class="button" href="pluginEdit.php?plugin={$plugins[id]->getId()}" title="{$plugins[id]->getDescription()}">{$plugins[id]->getName()}</a> {/section} </span> *}
 {if $admin}
 <form action="pluginEdit.php" method="get">
     <label>RawPlugins</label>

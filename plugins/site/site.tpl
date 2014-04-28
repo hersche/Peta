@@ -43,7 +43,7 @@ function updateList() {
             <td>Text</td>
             <td>
             <input type="hidden" name="createSiteContent" id='editorSend' />
-            <div class="editor" data-dojo-type="dijit/Editor" id="editor" data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink','viewsource', 'findreplace','fullscreen','preview',{name: 'LocalImage', uploadable: false, fileMask: '*.*'}],onChange:function(){document.getElementById('editorSend').value = this.getValue();}"{/literal}>
+            <div class="editor" data-dojo-type="dijit/Editor" id="editor" data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink','viewsource', 'unlink', 'insertImage', 'findreplace','fullscreen','preview'],onChange:function(){document.getElementById('editorSend').value = this.getValue();}"{/literal}>
                 <p>
                     {$text}
                 </p>
@@ -84,7 +84,7 @@ function updateList() {
             <td>Text</td>
             <td>
             <input type="hidden" name="editSiteContent" id='editEditorSend' />
-            <div data-dojo-type="dijit/Editor" class="editor" id="editEditor" data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink','viewsource', 'findreplace','fullscreen','dijit/_editor/plugins/AlwaysShowToolbar','preview',{name: 'LocalImage', uploadable: false, fileMask: '*.*'}],onChange:function(){document.getElementById('editEditorSend').value = this.getValue();}"{/literal}>
+            <div data-dojo-type="dijit/Editor" class="editor" id="editEditor" data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink', 'unlink', 'insertImage','viewsource', 'findreplace','fullscreen','dijit/_editor/plugins/AlwaysShowToolbar','preview'],onChange:function(){document.getElementById('editEditorSend').value = this.getValue();}"{/literal}>
                 <p>
                     {$singleEditSite->content}
                 </p>

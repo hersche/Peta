@@ -39,7 +39,7 @@ class forum extends plugin {
 	}
 	public function getRequiredDojo(){
 		if(($_GET['action']=="reply") or ($_GET['action']=="createthreads") or ($_GET['action']=="editthread")){
-			return array("dijit.Editor","dojox.editor.plugins.Preview");
+			return array("dojo/parser","dijit.Editor","dojox.editor.plugins.Preview");
 		}
 		return Null;
 	}
@@ -110,7 +110,7 @@ class forum extends plugin {
 				if ((!empty($_POST['topictitle'])) && (!empty($_POST['topictext'])) && ($_GET['savemethod'] == "new")) {
 					$threads -> createNewThread($_POST['topictitle'], $_POST['topictext']);
 					$template -> assign('threads', $threads -> getAllTopThreads());
-					array_push($messages, "Thread opened");
+					//array_push($messages, "Thread opened");
 					$template -> assign('messages', $messages);
 					$template -> display($this->folder.'forumPlugin.tpl');
 					break;
