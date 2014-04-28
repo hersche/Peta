@@ -91,7 +91,11 @@ class skamsterSite extends plugin{
     
 	public function updateSites(){
 		$this->siteList = array();
-		foreach($this->connection->query("SELECT * FROM `".$this->dbPrefix."site` ORDER BY `order`;") as $row){
+        $statement = $this->connection->query("SELECT * FROM `".$this->dbPrefix."site` ORDER BY `order`;");
+        if($statement===False){
+            $statement = array();   
+        }
+		foreach($statement as $row){
             $escCont = str_replace("\r\n", "", $row['content']);
 			array_push($this->siteList,new site($row['id'],$row['name'],$escCont,$row['order']));
 		}

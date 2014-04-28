@@ -179,7 +179,7 @@ class instancedPluginManager{
 		  PRIMARY KEY (`pl_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');
 			
-        $connection->query('CREATE TABLE IF NOT EXISTS `pluginRole` (
+        $connection->query('CREATE TABLE IF NOT EXISTS `pluginrole` (
 		  `id` int(16) NOT NULL AUTO_INCREMENT,
 		  `pluginId` int(11) NOT NULL,
 		  `roleId` int(11) NOT NULL,
@@ -290,7 +290,7 @@ class instancedPlugin{
 	
 	// public function insertRole($roleId + ownid into pluginrole, $conn->lastinsertid mit rechte into roleaccess
 	public function insertRole($roleId, $access){
-		$this->connection->exec('INSERT INTO pluginRole (pluginId, roleId,access) VALUES (' . $this -> id . ', ' . $roleId . ', ' . $access . ');');
+		$this->connection->exec('INSERT INTO pluginrole (pluginId, roleId,access) VALUES (' . $this -> id . ', ' . $roleId . ', ' . $access . ');');
 		$this->updateRoles();
 	}
 	
