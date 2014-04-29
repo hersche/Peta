@@ -1,5 +1,5 @@
 <?php
-function tree($array, $parent, $parts = array(), $step = 0) {
+function tree($array, $parent, $parts = array(), $step = 0, $folder = "") {
 
     if (!count($array)) {
         return '';
@@ -14,11 +14,11 @@ function tree($array, $parent, $parts = array(), $step = 0) {
 
             $t .= '<li class="directory'. ($open ? ' open' : '') .'">';
                 $t .= '<a href="#" data-role="directory"><i class="icon icon-folder-'. ($open ? 'open' : 'close') .'"></i> ' . $key . '</a>';
-                $t .= tree($item, "$parent/$key", $parts, $open ? $step + 1 : false);
+                $t .= tree($item, "$parent/$key", $parts, $open ? $step + 1 : false, $folder=$key);
             $t .=  '</li>';
         } else {
             $selected = (isset($parts[$step]) && $item == $parts[$step]);
-            $t .= '<li class="file'. ($selected ? ' active' : '') .'"><a href="'. PLUGPATH . $item . '">'.$item.'</a></li>';
+            $t .= '<li class="file'. ($selected ? ' active' : '') .'"><a href="'. PLUGPATH.$folder.'/'.$item . '">'.$item.'</a></li>';
         }
     }
 
