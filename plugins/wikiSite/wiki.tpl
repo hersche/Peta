@@ -1,4 +1,13 @@
-
+<script type="text/javascript">
+function updateList() {
+        var xhrArgs = {
+            form : dojo.byId('siteOrderForm'),
+            handleAs : "text",
+            preventCache : true
+        }
+        var deferred = dojo.xhrPost(xhrArgs);
+    }
+</script>
 
 <style type="text/css">    
     /* -------------------------------------------------------------------
@@ -56,19 +65,33 @@
 	background-image:url({$folder}markitup/sets/markdown/images/preview.png);
 }
 </style>
+{if $siteList}
+<div style="width: 34%;">
+    <form action="plugin.php?plugin={$pluginId}&amp;doOrder=do" method="get" id="siteOrderForm">
+        <ol dojoType="dojo.dnd.Source" data-dojo-id="dragAndDropList">
+            {foreach $siteList as $site}
+            <li  class="dojoDndItem">
+                <a class="button" href="plugin.php?plugin={$pluginId}&amp;singleViewId={$site->id}">{$site->name}</a>
+                <input type="hidden" name="siteOrder[]" value="{$site->id}" />
+                <a style="margin-left:4%" href="plugin.php?plugin={$pluginId}&amp;singleEditViewId={$site->id}" class="button edit">Edit</a>
+                <a style="margin-left:.5%" href="plugin.php?plugin={$pluginId}&amp;deleteSiteId={$site->id}" class="button delete">Delete</a>
+            </li>
+            {/foreach}
+        </ol>
+    </form>
+</div>
 
-
-<form id="createSiteForm" action="plugin.php?plugin={$pluginId}" method="POST">
+<form id="createMDSiteForm" action="plugin.php?plugin={$pluginId}" method="POST">
     <table style="width:90%">
         <tr>
             <td>Sitename</td><td>
-            <input name="createSiteName" type="text" placeholder="Enter sitename" autofocus>
+            <input name="createMDSiteName" type="text" placeholder="Enter sitename" autofocus>
             </td>
         </tr>
         <tr>
             <td>Text</td>
             <td>
-            <textarea id="wiki" cols="80" rows="20">fooooo</textarea></td>
+            <textarea id="wiki" cols="80" name="createMDSiteContent" rows="20">A text</textarea></td>
         </tr>
         <tr>
             <td colspan="2"><button id="submit"></button>
@@ -78,7 +101,7 @@
                         iconClass : "dijitEditorIcon dijitEditorIconSave",
                         label : "Create site!",
                         onClick : function() {
-                            document.forms["createSiteForm"].submit();
+                            document.forms["createMDSiteForm"].submit();
                         }
                     }, "submit");
                     button.startup();
@@ -87,6 +110,7 @@
         </tr>
     </table>
 </form>
+{/if}
 <script type="text/javascript">
 $(function() {
     {literal}
@@ -167,25 +191,17 @@ miu = {
 
 
 {if $singleEditSite}
-<script type="text/javascript">
-    require(["dojo/parser", "dijit/Editor", "dijit/_editor/plugins/FontChoice", // 'fontName','fontSize','formatBlock'
-    "dijit/_editor/plugins/TextColor", "dijit/_editor/plugins/LinkDialog", "dijit/_editor/plugins/AlwaysShowToolbar", "dijit/_editor/plugins/ViewSource", "dijit/_editor/plugins/FullScreen"]);
-</script>
-<form id="editSiteForm" action="plugin.php?plugin={$pluginId}&amp;singleEditViewId={$singleEditSite->id}" method="POST">
+<form id="editMDSiteForm" action="plugin.php?plugin={$pluginId}&amp;singleEditViewId={$singleEditSite->id}" method="POST">
     <table style="width:90%">
         <tr>
             <td>Sitename</td><td>
-            <input type="text" name="editSiteName" value="{$singleEditSite->name}" placeholder="Enter sitename" autofocus />
+            <input type="text" name="editMDSiteName" value="{$singleEditSite->name}" placeholder="Enter sitename" autofocus />
             </td>
         </tr>
         <tr>
             <td>Text</td>
             <td>
-            <input type="hidden" name="editSiteContent" id='editEditorSend' />
-            <div data-dojo-type="dijit/Editor" class="editor" id="editEditor" data-dojo-props="{literal}extraPlugins:['foreColor','hiliteColor',{name:'dijit/_editor/plugins/FontChoice', command:'fontName', generic:true},'createLink', 'unlink', 'insertImage','viewsource', 'findreplace','fullscreen','dijit/_editor/plugins/AlwaysShowToolbar','preview'],onChange:function(){document.getElementById('editEditorSend').value = this.getValue();}"{/literal}>
-                <p>
-                    {$singleEditSite->content}
-                </p>
+            <textarea id="wiki" cols="80" name="editMDSiteContent" rows="20">{$singleEditSite->content}</textarea></td>
             </div></td>
         </tr>
         <tr>
@@ -196,13 +212,7 @@ miu = {
                         iconClass : "dijitEditorIconSave",
                         label : "Send it!",
                         onClick : function() {
-                            require(["dijit/registry", "dojo/dom"], function(registry, dom) {
-                                var hiddenF = dom.byId("editEditorSend");
-                                var dEditor = registry.byNode(dom.byId("editEditor"));
-                                hiddenF.value = dEditor.get('value');
-                            });
-							 
-                            document.forms["editSiteForm"].submit();
+                            document.forms["editMDSiteForm"].submit();
                            
                         }
                     }, "submit");
@@ -223,5 +233,5 @@ miu = {
         {/foreach}
     </div>
 </ul>
-{$singleViewSite->content}
+{$singleViewSite->parsedContent}
 {/if}

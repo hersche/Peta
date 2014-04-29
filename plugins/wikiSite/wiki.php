@@ -8,6 +8,7 @@ class skamsterWiki extends plugin{
 	private $folder;
 	private $dbPrefix;
 	private $siteList;
+    
 	/**
 	 *
 	 * Constructor
@@ -23,7 +24,7 @@ class skamsterWiki extends plugin{
 		$this -> connection = $connection;
 		$this->folder=$folder;
 		$this->dbPrefix=$this->getDbPrefix();
-		$this->updateSites();
+		$this->updateMDSites();
 	}
 	public function deleteInstanceTables(){ 
 		$this -> connection -> exec("DROP TABLE IF EXIST `".$this->getDbPrefix()."site`");
@@ -48,24 +49,24 @@ class skamsterWiki extends plugin{
 	public function getPluginDescription() {
 		return "This should work as a usual web/info-site .";
 	}
-	public function insertSite($name, $content){
+	public function insertMDSite($name, $content){
         $escCont = str_replace("\r\n", "", $content);
-		$this->connection->exec("INSERT INTO `".$this->dbPrefix."site` (`name`, `content`) VALUES ('" . $name . "', '" .$escCont . "');");
-		$this->updateSites();
+		$this->connection->exec("INSERT INTO `".$this->dbPrefix."mdsite` (`name`, `content`) VALUES ('" . $name . "', '" .$escCont . "');");
+		$this->updateMDSites();
 	}
 	
-	public function deleteSite($id){
-		$this->connection->exec("DELETE FROM `".$this->dbPrefix."site` WHERE `id` = " . $id . "; ");
-		$this->updateSites();
+	public function deleteMDSite($id){
+		$this->connection->exec("DELETE FROM `".$this->dbPrefix."mdsite` WHERE `id` = " . $id . "; ");
+		$this->updateMDSites();
 	}
 	
-	public function editSite($id, $name, $content){
+	public function editMDSite($id, $name, $content){
         $escCont = str_replace("\r\n", "", $content);
-		$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `name` =  '" . $name . "',`content`='" .$escCont . "' WHERE `id`=".$id . " LIMIT 1 ;");
-		$this->updateSites();
+		$this->connection->exec("UPDATE `".$this->dbPrefix."mdsite` SET `name` =  '" . $name . "',`content`='" .$escCont . "' WHERE `id`=".$id . " LIMIT 1 ;");
+		$this->updateMDSites();
 	}
 	
-	public function getSiteById($id){
+	public function getMDSiteById($id){
 		$sites = array();
 		foreach($this->siteList as $site){
 			if($site->id==$id){
@@ -74,49 +75,55 @@ class skamsterWiki extends plugin{
 		}
 	}
     
+    public function getRequiredDojo(){
+        if(!isset($_GET['singleViewId'])){
+			return array("dojo.dnd.Source");
+        }
+	}
     
-	public function updateSites(){
+    	public function getOnLoadCode(){
+		if(!isset($_GET['singleViewId'])){
+			return 'dojo.connect(dragAndDropList,"onDndDrop",function(e){updateList()});';
+		}
+	}
+	public function updateMDSites(){
 		$this->siteList = array();
-        $statement = $this->connection->query("SELECT * FROM `".$this->dbPrefix."site` ORDER BY `order`;");
+        $statement = $this->connection->query("SELECT * FROM `".$this->dbPrefix."mdsite` ORDER BY `order`;");
         if($statement===False){
             $statement = array();   
         }
 		foreach($statement as $row){
             $escCont = str_replace("\r\n", "", $row['content']);
-			array_push($this->siteList,new site($row['id'],$row['name'],$escCont,$row['order']));
+			array_push($this->siteList,new site($row['id'],$row['name'],$row['content'],$row['order']));
 		}
 	}
 	public function start(){
-		$this -> connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."site` (
+		$this -> connection -> exec("CREATE TABLE IF NOT EXISTS `".$this->getDbPrefix()."mdsite` (
 			`id` int(11) NOT NULL AUTO_INCREMENT,
 			`name` text NOT NULL,
 			`content` text NOT NULL,
 			`order` int(11) NOT NULL,
 			PRIMARY KEY (`id`)
 		)");
-        
-
-        
         $this->template->assign("folder", $this->folder);
 		if(isset($_GET['singleEditViewId'])){
-            if((isset($_POST['editSiteName']))&&(isset($_POST['editSiteContent']))){
-                $this->editSite($_GET['singleEditViewId'],$_POST['editSiteName'],$_POST['editSiteContent']);
+            if((isset($_POST['editMDSiteName']))&&(isset($_POST['editMDSiteContent']))){
+                $this->editMDSite($_GET['singleEditViewId'],$_POST['editMDSiteName'],$_POST['editMDSiteContent']);
             }
-			$this->template->assign("singleEditSite", $this->getSiteById($_GET['singleEditViewId']));
+			$this->template->assign("singleEditSite", $this->getMDSiteById($_GET['singleEditViewId']));
     
 		}
 		elseif(isset($_GET['singleViewId'])){
 			$this->template->assign("siteListMenu", $this->siteList);
-			$this->template->assign("singleViewSite", $this->getSiteById($_GET['singleViewId']));
+			$this->template->assign("singleViewSite", $this->getMDSiteById($_GET['singleViewId']));
 		}
 		elseif(isset($_GET['doOrder'])){
 		
 			$order = 1;
 			foreach($_POST['siteOrder'] as $siteId){
 				$id = intval($siteId);
-				//
 				if ((!empty($id))||($id!=0)) {
-					$this->connection->exec("UPDATE `".$this->dbPrefix."site` SET `order`=".$order." WHERE `id`=".$id . " LIMIT 1 ;");
+					$this->connection->exec("UPDATE `".$this->dbPrefix."mdsite` SET `order`=".$order." WHERE `id`=".$id . " LIMIT 1 ;");
 					$order++;
 				}
 			}
@@ -124,21 +131,19 @@ class skamsterWiki extends plugin{
 		}
 		else{
             if(($this->user->getPluginAccess()=="Admin")||($this->user->getAdmin())){
-			     if((isset($_POST['createSiteName']))&&(isset($_POST['createSiteContent']))){
-                    $this->insertSite($_POST['createSiteName'],$_POST['createSiteContent']);
+			     if((isset($_POST['createMDSiteName']))&&(isset($_POST['createMDSiteContent']))){
+                    $this->insertMDSite($_POST['createMDSiteName'],$_POST['createMDSiteContent']);
                  }
-			     elseif(isset($_GET['deleteSiteId'])){
-                    $this->deleteSite($_GET['deleteSiteId']);
+			     elseif(isset($_GET['deleteMDSiteId'])){
+                    $this->deleteMDSite($_GET['deleteMDSiteId']);
                  }
                 $this->template->assign("siteList", $this->siteList);
                 $this->template->assign('newEnabled',True);
-               
-
             }
             else{
                if(sizeof($this->siteList) > 0){
                    $this->template->assign("siteListMenu", $this->siteList);
-			$this->template->assign("singleViewSite", $this->siteList[0]);
+			       $this->template->assign("singleViewSite", $this->siteList[0]);
                }
             }
 		}
@@ -155,10 +160,14 @@ class site{
 	public $name;
 	public $content;
 	public $order;
+    public $parsedContent;
 	public function __construct($id,$name,$content,$order){
 		$this->id = $id;
 		$this->name=$name;
 		$this->content=$content;
+        require_once($this->folder.'Parsedown.php');
+        $markDown = new Parsedown();
+        $this->parsedContent = $markDown->text($content);
 		$this->order=$order; }
 }
 ?>
