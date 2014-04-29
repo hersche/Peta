@@ -20,6 +20,12 @@ if (isset($_GET['plugin'])){
 	if($plugin->getOnLoadCode() != Null){
 		$template->assign("onLoadCode", $plugin->getOnLoadCode());
 	}
+    	if($plugin->getJs() != Null){
+		$template->assign("jsscripts", $plugin->getJs());
+	}
+        	if($plugin->getHeaderTags() != Null){
+		$template->assign("headerTags", $plugin->getHeaderTags());
+	}
 	// $messages[] = $plugin->getPluginName();
 }
 

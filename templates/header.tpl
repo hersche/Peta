@@ -9,7 +9,9 @@
     @import "js/dojo/dijit/themes/soria/soria.css";
 </style>
 
-
+{foreach item=tag from=$headerTags}
+    {$tag}
+{/foreach}
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript">
         var djConfig = {

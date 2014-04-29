@@ -52,6 +52,13 @@ abstract class plugin {
 	public function getOnLoadCode(){
 		return Null;
 	}
+    
+    public function getJs(){
+		return Null;
+	}
+    public function getHeaderTags(){
+		return Null;
+	}
 	/**
 	* For internally use of the plugins, to do unique tables.
 	*/
