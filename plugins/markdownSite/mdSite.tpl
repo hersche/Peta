@@ -67,6 +67,10 @@ function updateList() {
 .markItUp .preview a {
 	background-image:url({$folder}markitup/sets/markdown/images/preview.png);
 }
+    
+.markItUpHeader .sort a {
+	background-image:url({$folder}markitup/sets/markdown/images/sort.png);
+}
 </style>
 {if $siteList}
 <div style="width: 34%;">
@@ -144,10 +148,11 @@ $(function() {
         {name:'Quotes', openWith:'> '},
         {name:'Code Block / Code', openWith:'(!(\t|!|`)!)', closeWith:'(!(`)!)'},
         {separator:'---------------'},
+        {name:'Sort',className:"sort", replaceWith:function(h) { var s = h.selection.split((($.browser.mozilla) ? "\n" : "\r\n"));s.sort();
+				if (h.altKey) s.reverse();return s.join("\n");}},
         {name:'Preview', call:'preview', className:"preview"}
     ]
 }
-
 // mIu nameSpace to avoid conflict.
 miu = {
     markdownTitle: function(markItUp, char) {

@@ -150,6 +150,10 @@ class markdownSiteSkamster extends plugin{
                    $this->template->assign("siteListMenu", $this->siteList);
 			       $this->template->assign("singleViewSite", $this->siteList[0]);
                }
+                else{
+                 $nonSite = new site(-1,"No Site exists yet","### You didn't create a site till now. Do it, and this one is gone :)",1); 
+                 $this->template->assign("singleViewSite", $nonSite);
+                }
             }
 		}
         if($adminAccess){
