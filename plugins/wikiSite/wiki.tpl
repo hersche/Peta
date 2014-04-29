@@ -6,57 +6,54 @@
 // By Jay Salvat - http://markitup.jaysalvat.com/
 // ------------------------------------------------------------------*/
 .markItUp .markItUpButton1 a {
-	background-image:url({$folder}markitup/sets/wiki/images/h1.png); 
+	background-image:url({$folder}markitup/sets/markdown/images/h1.png); 
 }
 .markItUp .markItUpButton2 a {
-	background-image:url({$folder}markitup/sets/wiki/images/h2.png); 
+	background-image:url({$folder}markitup/sets/markdown/images/h2.png); 
 }
 .markItUp .markItUpButton3 a {
-	background-image:url({$folder}markitup/sets/wiki/images/h3.png); 
+	background-image:url({$folder}markitup/sets/markdown/images/h3.png); 
 }
 .markItUp .markItUpButton4 a {
-	background-image:url({$folder}markitup/sets/wiki/images/h4.png); 
+	background-image:url({$folder}markitup/sets/markdown/images/h4.png); 
 }
 .markItUp .markItUpButton5 a {
-	background-image:url({$folder}markitup/sets/wiki/images/h5.png); 
+	background-image:url({$folder}markitup/sets/markdown/images/h5.png); 
+}
+.markItUp .markItUpButton6 a {
+	background-image:url({$folder}markitup/sets/markdown/images/h6.png); 
 }
 
-.markItUp .markItUpButton6 a {
-	background-image:url({$folder}markitup/sets/wiki/images/bold.png);
-}
 .markItUp .markItUpButton7 a {
-	background-image:url({$folder}markitup/sets/wiki/images/italic.png);
+	background-image:url({$folder}markitup/sets/markdown/images/bold.png);
 }
 .markItUp .markItUpButton8 a {
-	background-image:url({$folder}markitup/sets/wiki/images/stroke.png);
+	background-image:url({$folder}markitup/sets/markdown/images/italic.png);
 }
 
 .markItUp .markItUpButton9 a {
-	background-image:url({$folder}markitup/sets/wiki/images/list-bullet.png);
+	background-image:url({$folder}markitup/sets/markdown/images/list-bullet.png);
 }
 .markItUp .markItUpButton10 a {
-	background-image:url({$folder}markitup/sets/wiki/images/list-numeric.png);
+	background-image:url({$folder}markitup/sets/markdown/images/list-numeric.png);
 }
 
 .markItUp .markItUpButton11 a {
-	background-image:url({$folder}markitup/sets/wiki/images/picture.png); 
+	background-image:url({$folder}markitup/sets/markdown/images/picture.png); 
 }
 .markItUp .markItUpButton12 a {
-	background-image:url({$folder}markitup/sets/wiki/images/link.png);
-}
-.markItUp .markItUpButton13 a {
-	background-image:url({$folder}markitup/sets/wiki/images/url.png);
+	background-image:url({$folder}markitup/sets/markdown/images/link.png);
 }
 
-.markItUp .markItUpButton14 a	{
-	background-image:url({$folder}markitup/sets/wiki/images/quotes.png);
+.markItUp .markItUpButton13 a	{
+	background-image:url({$folder}markitup/sets/markdown/images/quotes.png);
 }
-.markItUp .markItUpButton15 a	{
-	background-image:url({$folder}markitup/sets/wiki/images/code.png);
+.markItUp .markItUpButton14 a	{
+	background-image:url({$folder}markitup/sets/markdown/images/code.png);
 }
 
 .markItUp .preview a {
-	background-image:url({$folder}markitup/sets/wiki/images/preview.png);
+	background-image:url({$folder}markitup/sets/markdown/images/preview.png);
 }
 </style>
 
@@ -92,38 +89,52 @@
 </form>
 <script type="text/javascript">
 $(function() {
-    {literal}   myWikiSettings = {
-    nameSpace:          "wiki", // Useful to prevent multi-instances CSS conflict
+    {literal}
+    myMarkdownSettings = {
+    nameSpace:          'markdown', // Useful to prevent multi-instances CSS conflict
     previewParserPath:  {/literal}"{$folder}ajaxHandler.php",{literal}
-    onShiftEnter:       {keepDefault:false, replaceWith:'\n\n'},
-    markupSet:  [
-        {name:'Heading 1', key:'1', openWith:'== ', closeWith:' ==', placeHolder:'Your title here...' },
-        {name:'Heading 2', key:'2', openWith:'=== ', closeWith:' ===', placeHolder:'Your title here...' },
-        {name:'Heading 3', key:'3', openWith:'==== ', closeWith:' ====', placeHolder:'Your title here...' },
-        {name:'Heading 4', key:'4', openWith:'===== ', closeWith:' =====', placeHolder:'Your title here...' },
-        {name:'Heading 5', key:'5', openWith:'====== ', closeWith:' ======', placeHolder:'Your title here...' },
+    onShiftEnter:       {keepDefault:false, openWith:'\n\n'},
+    markupSet: [
+        {name:'First Level Heading', key:"1", placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '=') } },
+        {name:'Second Level Heading', key:"2", placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '-') } },
+        {name:'Heading 3', key:"3", openWith:'### ', placeHolder:'Your title here...' },
+        {name:'Heading 4', key:"4", openWith:'#### ', placeHolder:'Your title here...' },
+        {name:'Heading 5', key:"5", openWith:'##### ', placeHolder:'Your title here...' },
+        {name:'Heading 6', key:"6", openWith:'###### ', placeHolder:'Your title here...' },
         {separator:'---------------' },        
-        {name:'Bold', key:'B', openWith:"'''", closeWith:"'''"}, 
-        {name:'Italic', key:'I', openWith:"''", closeWith:"''"}, 
-        {name:'Stroke through', key:'S', openWith:'<s>', closeWith:'</s>'}, 
+        {name:'Bold', key:"B", openWith:'**', closeWith:'**'},
+        {name:'Italic', key:"I", openWith:'_', closeWith:'_'},
         {separator:'---------------' },
-        {name:'Bulleted list', openWith:'(!(* |!|*)!)'}, 
-        {name:'Numeric list', openWith:'(!(# |!|#)!)'}, 
+        {name:'Bulleted List', openWith:'- ' },
+        {name:'Numeric List', openWith:function(markItUp) {
+            return markItUp.line+'. ';
+        }},
         {separator:'---------------' },
-        {name:'Picture', key:'P', replaceWith:'[[Image:[![Url:!:http://]!]|[![name]!]]]'}, 
-        {name:'Link', key:'L', openWith:'[[![Link]!] ', closeWith:']', placeHolder:'Your text to link here...' },
-        {name:'Url', openWith:'[[![Url:!:http://]!] ', closeWith:']', placeHolder:'Your text to link here...' },
-        {separator:'---------------' },
-        {name:'Quotes', openWith:'(!(> |!|>)!)'},
-        {name:'Code', openWith:'(!(<source lang="[![Language:!:php]!]">|!|<pre>)!)', closeWith:'(!(</source>|!|</pre>)!)'}, 
-        {separator:'---------------' },
-        {name:'Preview', call:'preview', className:'preview'}
+        {name:'Picture', key:"P", replaceWith:'![[![Alternative text]!]]([![Url:!:http://]!] "[![Title]!]")'},
+        {name:'Link', key:"L", openWith:'[', closeWith:']([![Url:!:http://]!] "[![Title]!]")', placeHolder:'Your text to link here...' },
+        {separator:'---------------'},    
+        {name:'Quotes', openWith:'> '},
+        {name:'Code Block / Code', openWith:'(!(\t|!|`)!)', closeWith:'(!(`)!)'},
+        {separator:'---------------'},
+        {name:'Preview', call:'preview', className:"preview"}
     ]
-};
+}
+
+// mIu nameSpace to avoid conflict.
+miu = {
+    markdownTitle: function(markItUp, char) {
+        heading = '';
+        n = $.trim(markItUp.selection||markItUp.placeHolder).length;
+        for(i = 0; i < n; i++) {
+            heading += char;
+        }
+        return '\n'+heading+'\n';
+    }
+}
     {/literal}
 	// Add markItUp! to your textarea in one line
 	// $('textarea').markItUp( { Settings }, { OptionalExtraSettings } );
-    {literal}$('#wiki').markItUp(myWikiSettings);{/literal}
+    {literal}$('#wiki').markItUp(myMarkdownSettings);{/literal}
 
 
 

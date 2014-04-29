@@ -1,9 +1,9 @@
 <?php
-require_once 'wiky.inc.php';
+require_once 'Parsedown.php';
         //Ajax
         if(isset($_POST['data'])){
-            $wiky=new wiky;
-            print($wiky->parse($_POST['data']));
+            $Parsedown = new Parsedown();
+            echo $Parsedown->text($_POST['data']);
             exit();
         }
 

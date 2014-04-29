@@ -40,7 +40,7 @@ class skamsterWiki extends plugin{
 	}
 	
 	public function getJs(){
-			return array("http://code.jquery.com/jquery-1.11.0.min.js", "http://code.jquery.com/jquery-migrate-1.2.1.min.js",$this->folder."markitup/jquery.markitup.js",$this->folder."markitup/sets/wiki/set.js");
+			return array("http://code.jquery.com/jquery-1.11.0.min.js", "http://code.jquery.com/jquery-migrate-1.2.1.min.js",$this->folder."markitup/jquery.markitup.js",$this->folder."markitup/sets/markdown/set.js");
 	}
 	/**
 		This method will just be executed on instance plugins.
