@@ -15,15 +15,6 @@ class skamsterSite extends plugin{
 	 * @param array $get all the get-datas
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
-	 
-	 </script>
-<style type="text/css">
-@import "js/dojo/dojox/editor/plugins/resources/css/Preview.css";
-@import "js/dojo/dojox/form/resources/FileUploader.css";
-@import "js/dojo/dojox/editor/plugins/resources/css/LocalImage.css";
-@import "js/dojo/dojox/editor/plugins/resources/css/FindReplace.css";
-</style>
-	 
 	 */
 	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
 		$this->id = $id;
@@ -38,8 +29,10 @@ class skamsterSite extends plugin{
 		$this -> connection -> exec("DROP TABLE IF EXIST `".$this->getDbPrefix()."site`");
 	}
 	public function getRequiredCss(){
-		return array("js/dojo/dojox/editor/plugins/resources/css/Preview.css", "js/dojo/dojox/form/resources/FileUploader.css", "js/dojo/dojox/editor/plugins/resources/css/LocalImage.css","js/dojo/dojox/editor/plugins/resources/css/FindReplace.css");
-		}
+        if((isset($_GET['doEdit']))||(isset($_GET['singleEditViewId']))){
+		  return array("js/dojo/dojox/editor/plugins/resources/css/Preview.css", "js/dojo/dojox/form/resources/FileUploader.css", "js/dojo/dojox/editor/plugins/resources/css/LocalImage.css","js/dojo/dojox/editor/plugins/resources/css/FindReplace.css");
+        }
+    }
 	public function getPluginName(){
 		return "site.skamster";
 	}	
@@ -49,7 +42,9 @@ class skamsterSite extends plugin{
 	}
 	
 	public function getRequiredDojo(){
+        if((isset($_GET['doEdit']))||(isset($_GET['singleEditViewId']))){
 			return array("dijit.Editor","dojox.editor.plugins.Preview","dojox.editor.plugins.LocalImage","dojox.editor.plugins.FindReplace","dojo.dnd.Source");
+        }
 	}
 	/**
 		This method will just be executed on instance plugins.
@@ -58,7 +53,7 @@ class skamsterSite extends plugin{
 		return "This should work as a usual web/info-site .";
 	}
 	public function getOnLoadCode(){
-		if(!isset($_GET['singleViewId'])){
+		if((isset($_GET['doEdit']))||(isset($_GET['singleEditViewId']))){
 			return 'dojo.connect(dragAndDropList,"onDndDrop",function(e){updateList()});';
 		}
 	}
@@ -108,7 +103,7 @@ class skamsterSite extends plugin{
 			`order` int(11) NOT NULL,
 			PRIMARY KEY (`id`)
 		)");
-
+        $adminAccess = (($this->user->getPluginAccess()=="Admin")||($this->user->getAdmin()));
 		if(isset($_GET['singleEditViewId'])){
             if((isset($_POST['editSiteName']))&&(isset($_POST['editSiteContent']))){
                 $this->editSite($_GET['singleEditViewId'],$_POST['editSiteName'],$_POST['editSiteContent']);
@@ -120,7 +115,7 @@ class skamsterSite extends plugin{
 			$this->template->assign("siteListMenu", $this->siteList);
 			$this->template->assign("singleViewSite", $this->getSiteById($_GET['singleViewId']));
 		}
-		elseif(isset($_GET['doOrder'])){
+		elseif(($adminAccess)&&(isset($_GET['doOrder']))){
 		
 			$order = 1;
 			foreach($_POST['siteOrder'] as $siteId){
@@ -133,26 +128,31 @@ class skamsterSite extends plugin{
 			}
             die();
 		}
-		else{
-            if(($this->user->getPluginAccess()=="Admin")||($this->user->getAdmin())){
-			     if((isset($_POST['createSiteName']))&&(isset($_POST['createSiteContent']))){
-                    $this->insertSite($_POST['createSiteName'],$_POST['createSiteContent']);
-                 }
-			     elseif(isset($_GET['deleteSiteId'])){
-                    $this->deleteSite($_GET['deleteSiteId']);
-                 }
+        elseif(($adminAccess)&&(isset($_POST['createSiteName']))&&(isset($_POST['createSiteContent']))){
+                $this->insertSite($_POST['createSiteName'],$_POST['createSiteContent']);
                 $this->template->assign("siteList", $this->siteList);
                 $this->template->assign('newEnabled',True);
-               
-
+        }
+        elseif(($adminAccess)&&(isset($_GET['deleteSiteId']))){
+            $this->deleteSite($_GET['deleteSiteId']);
+            $this->template->assign("siteList", $this->siteList);
+            $this->template->assign('newEnabled',True);
+        }
+		else{
+            if(($adminAccess)&&(isset($_GET['doEdit']))){
+                $this->template->assign("siteList", $this->siteList);
+                $this->template->assign('newEnabled',True);
             }
             else{
                if(sizeof($this->siteList) > 0){
                    $this->template->assign("siteListMenu", $this->siteList);
-			$this->template->assign("singleViewSite", $this->siteList[0]);
+			       $this->template->assign("singleViewSite", $this->siteList[0]);
                }
             }
 		}
+        if($adminAccess){
+            $this->template->assign("editButton", true);
+        }
 		$this->template->assign('pluginId',$_GET['plugin']);
 		$this->template->display($this->folder.'site.tpl');
 	}

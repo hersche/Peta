@@ -125,6 +125,8 @@ class markdownSiteSkamster extends plugin{
          }
 		elseif(($adminAccess)&&isset($_GET['deleteMDSiteId'])){
             $this->deleteMDSite($_GET['deleteMDSiteId']);
+            $this->template->assign("siteList", $this->siteList);
+            $this->template->assign('newEnabled',True);
          }
 		elseif(($adminAccess)&&isset($_GET['doOrder'])){
 			$order = 1;

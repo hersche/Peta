@@ -32,7 +32,7 @@ function updateList() {
 {/if}
 
 {if $newEnabled}
-<form id="createSiteForm" action="plugin.php?plugin={$pluginId}" method="POST">
+<form id="createSiteForm" action="plugin.php?plugin={$pluginId}&amp;doEdit" method="POST">
     <table style="width:90%">
         <tr>
             <td>Sitename</td><td>
@@ -123,6 +123,9 @@ function updateList() {
         {foreach $siteListMenu as $site}
         <a class="button view" href="plugin.php?plugin={$pluginId}&amp;singleViewId={$site->id}">{$site->name} </a>
         {/foreach}
+        {if $editButton}
+            <a class="button edit" href="plugin.php?plugin={$pluginId}&amp;doEdit">Edit Contents</a>
+        {/if}
     </div>
 </ul>
 {$singleViewSite->content}
