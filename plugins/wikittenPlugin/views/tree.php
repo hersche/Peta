@@ -15,10 +15,14 @@ function tree($array, $parent, $parts = array(), $step = 0, $folder = "") {
             $t .= '<li class="directory'. ($open ? ' open' : '') .'">';
                 $t .= '<a href="#" data-role="directory"><i class="icon icon-folder-'. ($open ? 'open' : 'close') .'"></i> ' . $key . '</a>';
                 $t .= tree($item, "$parent/$key", $parts, $open ? $step + 1 : false, $folder=$key);
+                $folder="";
             $t .=  '</li>';
         } else {
             $selected = (isset($parts[$step]) && $item == $parts[$step]);
-            $t .= '<li class="file'. ($selected ? ' active' : '') .'"><a href="'. PLUGPATH.$folder.'/'.$item . '">'.$item.'</a></li>';
+            if($folder!=""){
+                $folder =$folder."/";
+            }
+            $t .= '<li class="file'. ($selected ? ' active' : '') .'"><a href="'. PLUGPATH.urlencode ($folder.$item) . '">'.$item.'</a></li>';
         }
     }
 
