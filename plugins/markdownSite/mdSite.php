@@ -1,5 +1,5 @@
 <?php
-class skamsterWiki extends plugin{
+class markdownSiteSkamster extends plugin{
 	
 	private $user;
 	private $template;
@@ -33,7 +33,7 @@ class skamsterWiki extends plugin{
 		return array($this->folder."markitup/skins/markitup/style.css");
 		}
 	public function getPluginName(){
-		return "wiki.skamster";
+		return "markdownSite.skamster";
 	}	
 	
 	public function getId(){
@@ -105,6 +105,7 @@ class skamsterWiki extends plugin{
 			`order` int(11) NOT NULL,
 			PRIMARY KEY (`id`)
 		)");
+        $adminAccess = (($this->user->getPluginAccess()=="Admin")||($this->user->getAdmin()));
         $this->template->assign("folder", $this->folder);
 		if(isset($_GET['singleEditViewId'])){
             if((isset($_POST['editMDSiteName']))&&(isset($_POST['editMDSiteContent']))){
@@ -117,8 +118,15 @@ class skamsterWiki extends plugin{
 			$this->template->assign("siteListMenu", $this->siteList);
 			$this->template->assign("singleViewSite", $this->getMDSiteById($_GET['singleViewId']));
 		}
-		elseif(isset($_GET['doOrder'])){
-		
+        elseif(($adminAccess)&&(isset($_POST['createMDSiteName']))&&(isset($_POST['createMDSiteContent']))){
+            $this->insertMDSite($_POST['createMDSiteName'],$_POST['createMDSiteContent']);
+            $this->template->assign("siteList", $this->siteList);
+            $this->template->assign('newEnabled',True);
+         }
+		elseif(($adminAccess)&&isset($_GET['deleteMDSiteId'])){
+            $this->deleteMDSite($_GET['deleteMDSiteId']);
+         }
+		elseif(($adminAccess)&&isset($_GET['doOrder'])){
 			$order = 1;
 			foreach($_POST['siteOrder'] as $siteId){
 				$id = intval($siteId);
@@ -130,25 +138,23 @@ class skamsterWiki extends plugin{
             die();
 		}
 		else{
-            if(($this->user->getPluginAccess()=="Admin")||($this->user->getAdmin())){
-			     if((isset($_POST['createMDSiteName']))&&(isset($_POST['createMDSiteContent']))){
-                    $this->insertMDSite($_POST['createMDSiteName'],$_POST['createMDSiteContent']);
-                 }
-			     elseif(isset($_GET['deleteMDSiteId'])){
-                    $this->deleteMDSite($_GET['deleteMDSiteId']);
-                 }
+            if(($adminAccess)&&(isset($_GET['doEdit']))){
+
                 $this->template->assign("siteList", $this->siteList);
                 $this->template->assign('newEnabled',True);
-            }
+                }
             else{
                if(sizeof($this->siteList) > 0){
                    $this->template->assign("siteListMenu", $this->siteList);
 			       $this->template->assign("singleViewSite", $this->siteList[0]);
                }
+                if($adminAccess){
+                    $this->template->assign("editButton", true);    
+                }
             }
 		}
 		$this->template->assign('pluginId',$_GET['plugin']);
-		$this->template->display($this->folder.'wiki.tpl');
+		$this->template->display($this->folder.'mdSite.tpl');
 	}
 }
 /**

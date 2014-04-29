@@ -65,9 +65,12 @@ function updateList() {
 	background-image:url({$folder}markitup/sets/markdown/images/preview.png);
 }
 </style>
+{if $editButton}
+<a href="plugin.php?plugin={$pluginId}&amp;doEdit" class="button edit">Edit contents</a>
+{/if}
 {if $siteList}
 <div style="width: 34%;">
-    <form action="plugin.php?plugin={$pluginId}&amp;doOrder=do" method="get" id="siteOrderForm">
+    <form action="plugin.php?plugin={$pluginId}&amp;doOrder" method="get" id="siteOrderForm">
         <ol dojoType="dojo.dnd.Source" data-dojo-id="dragAndDropList">
             {foreach $siteList as $site}
             <li  class="dojoDndItem">
@@ -80,8 +83,9 @@ function updateList() {
         </ol>
     </form>
 </div>
-
-<form id="createMDSiteForm" action="plugin.php?plugin={$pluginId}" method="POST">
+{/if}
+{if $newEnabled}
+<form id="createMDSiteForm" action="plugin.php?plugin={$pluginId}&amp;doEdit" method="POST">
     <table style="width:90%">
         <tr>
             <td>Sitename</td><td>
