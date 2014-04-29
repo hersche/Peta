@@ -1,4 +1,5 @@
 <script type="text/javascript">
+    {literal}
 function updateList() {
         var xhrArgs = {
             form : dojo.byId('siteOrderForm'),
@@ -7,7 +8,9 @@ function updateList() {
         }
         var deferred = dojo.xhrPost(xhrArgs);
     }
+    {/literal}
 </script>
+
 
 <style type="text/css">    
     /* -------------------------------------------------------------------
@@ -65,9 +68,6 @@ function updateList() {
 	background-image:url({$folder}markitup/sets/markdown/images/preview.png);
 }
 </style>
-{if $editButton}
-<a href="plugin.php?plugin={$pluginId}&amp;doEdit" class="button edit">Edit contents</a>
-{/if}
 {if $siteList}
 <div style="width: 34%;">
     <form action="plugin.php?plugin={$pluginId}&amp;doOrder" method="get" id="siteOrderForm">
@@ -235,6 +235,9 @@ miu = {
         {foreach $siteListMenu as $site}
         <a class="button view" href="plugin.php?plugin={$pluginId}&amp;singleViewId={$site->id}">{$site->name} </a>
         {/foreach}
+        {if $editButton}
+<a href="plugin.php?plugin={$pluginId}&amp;doEdit" class="button edit">Edit contents</a>
+{/if}
     </div>
 </ul>
 {$singleViewSite->parsedContent}

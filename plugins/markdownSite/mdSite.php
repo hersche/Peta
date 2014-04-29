@@ -76,13 +76,13 @@ class markdownSiteSkamster extends plugin{
 	}
     
     public function getRequiredDojo(){
-        if(!isset($_GET['singleViewId'])){
+        if((isset($_GET['doEdit']))||(isset($_GET['singleEditViewId']))){
 			return array("dojo.dnd.Source");
         }
 	}
     
     	public function getOnLoadCode(){
-		if(!isset($_GET['singleViewId'])){
+		if((isset($_GET['doEdit']))||(isset($_GET['singleEditViewId']))){
 			return 'dojo.connect(dragAndDropList,"onDndDrop",function(e){updateList()});';
 		}
 	}
@@ -148,11 +148,11 @@ class markdownSiteSkamster extends plugin{
                    $this->template->assign("siteListMenu", $this->siteList);
 			       $this->template->assign("singleViewSite", $this->siteList[0]);
                }
-                if($adminAccess){
-                    $this->template->assign("editButton", true);    
-                }
             }
 		}
+        if($adminAccess){
+            $this->template->assign("editButton", true);    
+        }
 		$this->template->assign('pluginId',$_GET['plugin']);
 		$this->template->display($this->folder.'mdSite.tpl');
 	}
