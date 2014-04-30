@@ -139,7 +139,7 @@ foreach ($instancedPluginManager->getInstancedPlugins() as $pI) {
 }
 $user->setPluginAccess($allowedAccess);
 $template -> assign("allowedPluginInstances", $allowedPluginInstances);
-if ($pluginInstance != Null) {
+if (($pluginInstance != Null)&&($pluginInstance->getActive()==1)) {
 	$plugin = $pluginInstance -> getInstance();
 	$template -> assign("pluginInstance", $pluginInstance);
 	$template -> assign("plugin", $plugin);

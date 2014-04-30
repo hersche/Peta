@@ -309,7 +309,6 @@ class instancedPlugin{
 	public function getRestRoles(){
 		
 		if(sizeof($this->roles)!=0){
-		//var_dump($this->restRoles);
 			return $this->restRoles;
 		}
 		else{
@@ -339,9 +338,16 @@ class instancedPlugin{
 		return $this->active;
 	}
 	public function getInstance(){
-		require_once $this->path;
-		$this->pluginObj = new $this->className($this->id,$this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
-		return $this->pluginObj;
+        if (file_exists($this->path)){
+		  require_once $this->path;
+		  $this->pluginObj = new $this->className($this->id,$this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
+		  return $this->pluginObj;
+        }
+        else{
+            print("Plugin not instanceable, deactivate it! (may move/rename files?)");
+            $this->connection->exec('UPDATE plugin SET pl_active="' . 0 . '" WHERE pl_id="' . $this->id. '";');
+            die();
+}
 	}
 	public function removeRole($roleId){
 		if(isset($roleId)){
@@ -352,7 +358,14 @@ class instancedPlugin{
 	public function edit(){
 		$this->setName($_POST['instancePluginName']);
 		$this->setDescription($_POST['instancePluginDescription']);
-
+        $active = isset($_POST['editActive']) ? $_POST['editActive'] : 0 ;
+            if($active!=$this->active){
+                $this->connection->exec('UPDATE plugin SET pl_active="' . $active . '" WHERE pl_id="' . $this->id. '";');
+            }
+        
+        if(isset($_POST['editPath'])){
+            $this->connection->exec('UPDATE plugin SET pl_path="' . $_POST['editPath'] . '" WHERE pl_id="' . $this->id. '";');
+        }
 		$this->setRoles();
 		
 	}

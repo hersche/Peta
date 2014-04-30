@@ -3,7 +3,9 @@
     <a href="index.php" class="button home">Home</a>
 	
 	{foreach item=pI from=$allowedPluginInstances}
+    {if $pI->getActive() == 1}
 		<a class="button" href="plugin.php?plugin={$pI->getId()}" title="{$pI->getDescription()}">{$pI->getName()}</a>
+    {/if}
     {/foreach}
 	{if {$user->getUsername()} != "Public"}
 		<a href="profile.php" class="button profile">Profile</a>

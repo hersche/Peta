@@ -27,6 +27,9 @@
                         <input type="text" name="instancePluginName" value="{$instPlugin->getName()}" class="dijitInputField"/>
                         </td>
                     </tr>
+                        {if $rawPlugin->getPath()!=$instPlugin->getPath()}
+                           <tr><td><input type="hidden" value="{$rawPlugin->getPath()}" name="editPath" /><p>pluginPath seems to be changed, restore with                               save</p></td></tr>
+                        {/if}
                     <tr>
                         <td><label for="description">Description</label></td><td>                        <textarea class="dijitTextArea" height="40px" name="instancePluginDescription">{$instPlugin->getDescription()}</textarea></td>
                     </tr>
@@ -51,8 +54,17 @@
                             {html_options values=$restRole->getAccessStringList() output=$restRole->getAccessStringList()}
                         </select></td>
                     </tr>
+                    
                     {/foreach}
-
+            <tr>
+                <td><label for="Active">Active</label></td><td>
+                {if $instPlugin->getActive()==1}
+                    <input value="1" name="editActive" type="checkbox" checked  />
+                {else}
+                    <input value="1" name="editActive" type="checkbox"  />
+                {/if}
+                </td>
+            </tr>
                     <tr>
                         <td>
                         <input type="submit" class="button edit" value="Edit" />
@@ -79,12 +91,12 @@
         <table>
             <tr>
                 <td><label for="className">rawPluginName </label></td><td>
-                <input value="{$rawPlugin->getName()}" type="text" disabled  />
+                <input value="{$rawPlugin->getName()}" type="text" disabled style="width:100%" />
                 </td>
             </tr>
             <tr>
                 <td><label for="Path">rawPluginPath </label></td><td>
-                <input value="{$rawPlugin->getPath()}" type="text" disabled  />
+                <input value="{$rawPlugin->getPath()}" type="text" style="width:100%" disabled  />
                 </td>
             </tr>
             <tr>
