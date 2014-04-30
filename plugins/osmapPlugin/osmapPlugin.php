@@ -26,7 +26,13 @@ class osmapPluginSkamster extends plugin{
 	 */
 	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
 		$this->id = $id;
-		$this -> user = $currentUser;
+        $this -> user = $currentUser;
+        // Workaround possible bug, may from php (5.5 never reached that!)
+        // TODO further checking
+        if($currentUser==""){
+            $this->user = $_SESSION['user'];   
+        }
+
 		$this -> template = $templateObject;
 		$this -> connection = $connection;
 		$this->folder=$folder;
