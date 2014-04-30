@@ -3,7 +3,7 @@
 <form action="pluginEdit.php" method="get">
     <label>RawPlugins</label>
     <select name="rawPluginName">
-        {html_options values=$rawPluginNames output=$rawPluginNames}
+        {html_options values=$rawPluginNames output=$rawPluginNames selected=$smarty.get.rawPluginName }
     </select>
     <input type="submit" value="Choose RawPlugin!" />
 </form>
