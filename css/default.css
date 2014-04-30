@@ -1,16 +1,23 @@
 .menu {
-	background-image: -webkit-gradient(
-	linear,
-	right top,
-	left top,
-	color-stop(0, #EADDBE),
-	color-stop(1, #F0F011)
-);
-background-image: -o-linear-gradient(left, #EADDBE 0%, #F0F011 100%);
-background-image: -moz-linear-gradient(left, #EADDBE 0%, #F0F011 100%);
-background-image: -webkit-linear-gradient(left, #EADDBE 0%, #F0F011 100%);
-background-image: -ms-linear-gradient(left, #EADDBE 0%, #F0F011 100%);
-background-image: linear-gradient(to left, #EADDBE 0%, #F0F011 100%);
+background: rgb(25,209,206);
+background: -moz-linear-gradient(left, rgba(25,209,206,1) 0%, rgba(162,239,45,1) 29%, rgba(39,178,206,1) 66%, rgba(35,247,7,1) 100%);
+background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(25,209,206,1)), color-stop(29%,rgba(162,239,45,1)), color-stop(66%,rgba(39,178,206,1)), color-stop(100%,rgba(35,247,7,1)));
+background: -webkit-linear-gradient(left, rgba(25,209,206,1) 0%,rgba(162,239,45,1) 29%,rgba(39,178,206,1) 66%,rgba(35,247,7,1) 100%);
+background: -o-linear-gradient(left, rgba(25,209,206,1) 0%,rgba(162,239,45,1) 29%,rgba(39,178,206,1) 66%,rgba(35,247,7,1) 100%);
+background: -ms-linear-gradient(left, rgba(25,209,206,1) 0%,rgba(162,239,45,1) 29%,rgba(39,178,206,1) 66%,rgba(35,247,7,1) 100%);
+background: linear-gradient(to right, rgba(25,209,206,1) 0%,rgba(162,239,45,1) 29%,rgba(39,178,206,1) 66%,rgba(35,247,7,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#19d1ce', endColorstr='#23f707',GradientType=1 );
+        -moz-border-radius: .6em;
+    -webkit-border-radius: .6em;
+    border-radius: .6em;
+	border-style: transparent;
+	border-width: 3px;
+	width: 98%;
+	height: 65px;
+	padding: 0px, 0px, 0px, 0px,;
+	-moz-box-shadow: 0 0 5px 5px #888;
+    -webkit-box-shadow: 0 0 5px 5px#888;
+    box-shadow: 0 0 5px 5px #888;
 }
 
 .customfieldlist {
@@ -43,7 +50,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d1f7b360', e
 }
 
 .menu a {
-	margin-left: 10px;
+	margin-left: 2px;
 }
 
 .mainThread {
@@ -78,17 +85,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#51ff62', end
 	height: 90%;
 }
 
-.menu {
-    -moz-border-radius: .6em;
-    -webkit-border-radius: .6em;
-    border-radius: .6em;
-	border-style: dashed;
-	border-width: thin 0px thin 0px;
-	width: 98%;
-	height: 30px;
-	padding: 0px, 0px, 0px, 0px,;
-	background-color: #DBF7A2;
-}
+
 
 .header {
 	border-style: none;
