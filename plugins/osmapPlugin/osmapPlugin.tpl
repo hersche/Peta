@@ -59,7 +59,6 @@
  {/foreach}
 
 {/if}
-        require(["dijit/form/NumberSpinner", "dojo/domReady!"]);
 		var popup = L.popup();
 		function onMapClick(e) {
             var pos = L.latLng(e.latlng);
