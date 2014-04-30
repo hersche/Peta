@@ -38,7 +38,7 @@ class skamsterTplExample extends plugin{
 
 	
 	public function start(){
-		$this->templateObject->display($this->folder.'tplExample.tpl');
+		return $this->template->fetch($this->folder.'tplExample.tpl');
 	}
 }
 

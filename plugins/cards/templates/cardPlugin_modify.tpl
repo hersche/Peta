@@ -1,4 +1,4 @@
-{include file="messagebox.tpl"} {include file="{$folder}templates/cardPlugin_menu.tpl"}
+{include file="{$folder}templates/cardPlugin_menu.tpl"}
 <h1>Modify Cardset</h1>
 <h2>Add question</h2>
 <form action="plugin.php?plugin={$pluginId}&action=addquestion" method="post">

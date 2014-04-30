@@ -39,6 +39,10 @@ abstract class plugin {
 	/**
 	* Get the className, which have to be unique too! Don't use points, better something like pluginnameUsername . This isn't so important for the user to show, the pluginName is used for this.
 	**/
+    public function getMessages(){
+        return Null;
+    }
+    
 	public function getClassName(){
 		return get_called_class();
 	}
@@ -344,9 +348,8 @@ class instancedPlugin{
 		  return $this->pluginObj;
         }
         else{
-            print("Plugin not instanceable, deactivate it! (may move/rename files?)");
             $this->connection->exec('UPDATE plugin SET pl_active="' . 0 . '" WHERE pl_id="' . $this->id. '";');
-            die();
+            throw new Exception("Plugin is not there, deactivate it. When you move it, go to pluginconfig and re-activate it.");
 }
 	}
 	public function removeRole($roleId){

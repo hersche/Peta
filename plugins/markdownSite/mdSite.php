@@ -160,7 +160,7 @@ class markdownSiteSkamster extends plugin{
             $this->template->assign("editButton", true);    
         }
 		$this->template->assign('pluginId',$_GET['plugin']);
-		$this->template->display($this->folder.'mdSite.tpl');
+		return $this->template->fetch($this->folder.'mdSite.tpl');
 	}
 }
 /**

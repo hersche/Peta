@@ -3,6 +3,6 @@
 <div>
     {if ($plugin) }
     <h1>{$pluginInstance->getName()} </h1><h5>{if $allowedAccess == "Admin"}<a class="button edit" href="pluginEdit.php?rawPluginName={$pluginInstance->getClassName()}&editPluginId={$pluginInstance->getId()}">Edit Plugin (your admin here)</a>{/if}</h5>
-    {$plugin->start()}
+    {$pluginContent}
 </div>
 {/if} {$content} {include file="footer.tpl"}

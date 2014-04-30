@@ -140,7 +140,15 @@ foreach ($instancedPluginManager->getInstancedPlugins() as $pI) {
 $user->setPluginAccess($allowedAccess);
 $template -> assign("allowedPluginInstances", $allowedPluginInstances);
 if (($pluginInstance != Null)&&($pluginInstance->getActive()==1)) {
-	$plugin = $pluginInstance -> getInstance();
+    try{
+	   $plugin = $pluginInstance -> getInstance();
+    } catch (Exception $e) {
+	   $template -> assign('messages', $messages);
+	   $template -> assign('errorTitle', "Plugin-Failure");
+	   $template -> assign('errorDescription', "There was a pluginfailure! Message: ".$e->getMessage());
+	   $template -> display('error.tpl');
+	   die();
+    }
 	$template -> assign("pluginInstance", $pluginInstance);
 	$template -> assign("plugin", $plugin);
 
@@ -168,8 +176,7 @@ if ($user -> getUsername() == "Public") {
 	}
 }
 if ((isset($_GET['plugin'])) && ($pluginInstance == Null) && ($fn != "login.php") && ($fn != "index.php") && ($fn != "profile.php")) {
-	array_push($messages, "No plugin found with your id");
-	array_push($messages, $fn);
+	array_push($messages, "No plugin found with your id, site is ".fn);
 	$template -> assign('messages', $messages);
 	$template -> assign('errorTitle', "Plugin-Failure");
 	$template -> assign('errorDescription', "There was a pluginfailure! 404NotFound!");

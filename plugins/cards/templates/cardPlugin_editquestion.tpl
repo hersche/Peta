@@ -1,4 +1,4 @@
-{include file="messagebox.tpl"} {include file="{$folder}templates/cardPlugin_menu.tpl"}
+{include file="{$folder}templates/cardPlugin_menu.tpl"}
 <form action="plugin.php?plugin={$pluginId}&action=editquestion&amp;setid={$setid}&amp;questionid={$questionid}" method="post">
     <table>
         <tr>

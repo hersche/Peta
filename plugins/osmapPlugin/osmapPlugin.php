@@ -56,7 +56,6 @@ class osmapPluginSkamster extends plugin{
 	public function getPluginDescription() {
 		return "This should work as a usual web/info-site .";
 	}
-
     
     public function getHeaderTags(){
 		return array('<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>');
@@ -106,20 +105,26 @@ class osmapPluginSkamster extends plugin{
 			`ownerid` int(11) NOT NULL,
 			PRIMARY KEY (`id`)
 		)");
+        $messages = array();
         if((isset($_POST['createPoiName']))&&($_POST['createPoiPosition'])){
             $this->insertPoi($_POST['createPoiName'], $_POST['createPoiPosition']);
+            array_push($messages, "Poi ".$_POST['createPoiName']." is created");
         }
         elseif(isset($_GET['delPoi'])){
             // TODO such stuff is unprotected!
-            $this->deletePoi($_GET['delPoi']);  
+            $this->deletePoi($_GET['delPoi']); 
+            array_push($messages, "Poi deleted");
         }
         elseif((isset($_POST['editPoiName']))&&(isset($_POST['editPoiPosition']))&&(isset($_POST['editPoiId']))){
             $this->editPoi($_POST['editPoiId'], $_POST['editPoiName'], $_POST['editPoiPosition']);
+            array_push($messages, "Poi is edited as ".$_POST['editPoiName']);
         }
         $this->template->assign("startPoi", $this->getStartPoi());
+
         $this->template->assign("poiList", $this->poiList);
         $this->template->assign("pluginId", $this->getId());
-        $this->template->display($this->folder.'osmapPlugin.tpl');
+        $this->template->assign("messages", $messages);
+        return $this->template->fetch($this->folder.'osmapPlugin.tpl');
 	}
 }
 /**

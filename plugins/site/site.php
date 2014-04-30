@@ -154,7 +154,7 @@ class skamsterSite extends plugin{
             $this->template->assign("editButton", true);
         }
 		$this->template->assign('pluginId',$_GET['plugin']);
-		$this->template->display($this->folder.'site.tpl');
+		return $this->template->fetch($this->folder.'site.tpl');
 	}
 }
 /**

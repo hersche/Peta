@@ -1,4 +1,4 @@
-{include file="messagebox.tpl"} {include file="{$folder}templates/cardPlugin_menu.tpl"} {if $cardsets}
+{include file="{$folder}templates/cardPlugin_menu.tpl"} {if $cardsets}
 <ul>
     {section name=set loop=$cardsets}
     <li>

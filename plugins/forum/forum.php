@@ -69,7 +69,7 @@ class forum extends plugin {
 				$dojorequire = array("dijit.Editor", "dojo.parser");
 				$template -> assign("dojorequire", $dojorequire);
 				$template -> assign("savemethod", "new");
-				$template -> display($this->folder.'forumPlugin_createThread.tpl');
+				return $template->fetch($this->folder.'forumPlugin_createThread.tpl');
 				break;
 			case "reply" :
 				$thread = $threads -> getThreadById($_GET['threadid']);
@@ -79,7 +79,7 @@ class forum extends plugin {
 					$template -> assign("threadid", $thread -> getId());
 					$template -> assign("threadtitle", $thread -> getTitle());
 					$template -> assign("savemethod", "reply");
-					$template -> display($this->folder.'forumPlugin_reply.tpl');
+					return $template->fetch($this->folder.'forumPlugin_reply.tpl');
 				}
 				break;
 			case "deletethread":
@@ -98,11 +98,12 @@ class forum extends plugin {
 						$template -> assign("threadtitle", $thread -> getTitle());
 						$template -> assign("title", $thread -> getTitle());
 						$template -> assign("text", $thread -> getText());
-						$template -> display($this->folder.'forumPlugin_edit.tpl');
+						return $template->fetch($this->folder.'forumPlugin_edit.tpl');
 					} else {
 						$template -> assign("errorTitle", "You haven't enough rights or the thread doesn't exist");
 						$template -> assign("errorDescription", "Please check your roles and verify that this thread exists!");
 						$template -> display('error.tpl');
+                        die();
 					}
 				}
 				break;
@@ -112,7 +113,7 @@ class forum extends plugin {
 					$template -> assign('threads', $threads -> getAllTopThreads());
 					//array_push($messages, "Thread opened");
 					$template -> assign('messages', $messages);
-					$template -> display($this->folder.'forumPlugin.tpl');
+					return $template->fetch($this->folder.'forumPlugin.tpl');
 					break;
 				} else if ((!empty($_POST['topictext'])) && (!empty($_GET['threadid']))) {
 					$thread = $threads -> getThreadById($_GET['threadid']);
@@ -130,7 +131,7 @@ class forum extends plugin {
 				} else {
 					$template -> assign('errorTitle', _("No data submitted"));
 					$template -> assign('errorDescription', _("Please use the normal form"));
-					$template -> display('error.tpl');
+					return $template->fetch('error.tpl');
 					break;
 				}
 				header("Location: plugin.php?plugin=".$_GET['plugin']."&action=showthread&threadid=" . $threads -> getTopThreadId($_GET['threadid']));
@@ -150,22 +151,22 @@ class forum extends plugin {
 						}
 						$subthreads = $threads -> getSubThreads($thread -> getId(), $admin);
 						$template -> assign('subthreads', $subthreads);
-						$template -> display($this->folder.'forumPlugin_view.tpl');
+						return $template->fetch($this->folder.'forumPlugin_view.tpl');
 					} else {
 						$template -> assign('errorTitle', _("No thread found by this id!"));
 						$template -> assign('errorDescription', _("There was no thread with this id."));
-						$template -> display('error.tpl');
+						return $template->fetch('error.tpl');
 					}
 				} else {
 					$template -> assign('errorTitle', _("No thread-id was given"));
 					$template -> assign('errorDescription', _("There was no id for a thread!"));
-					$template -> display('error.tpl');
+					return $template->fetch('error.tpl');
 				}
 				break;
 			default :
 				$template -> assign('show', $_POST['topictext']);
 				$template -> assign('threads', $threads -> getAllTopThreads());
-				$template -> display($this->folder.'/forumPlugin.tpl');
+				return $template->fetch($this->folder.'/forumPlugin.tpl');
 		}
 	}
 

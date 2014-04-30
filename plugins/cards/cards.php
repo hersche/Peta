@@ -91,7 +91,7 @@ class skamsterCards extends plugin {
 				} else {
 					$template -> assign("nrofquestions", $_GET['nrofquestions']);
 				}
-				$template -> display($this -> folder . 'templates/cardPlugin_create.tpl');
+				return $template -> fetch($this -> folder . 'templates/cardPlugin_create.tpl');
 				break;
 			case "mkcreatecardset" :
 				if (!empty($_POST["cardsetname"])) {
@@ -120,7 +120,7 @@ class skamsterCards extends plugin {
 					array_push($messages, "Create cardset successfull!");
 					$template -> assign("messages", $messages);
 					$template -> assign("cardsets", $allSets -> getSets());
-					$template -> display($this -> folder . 'templates/cardPlugin.tpl');
+					return $template -> fetch($this -> folder . 'templates/cardPlugin.tpl');
 				}
 				break;
 			case "singlecardset" :
@@ -187,7 +187,7 @@ class skamsterCards extends plugin {
 						$template -> assign("question", "There are no questions!");
 					}
 					$template -> assign("messages", $messages);
-					$template -> display($this -> folder . 'templates/cardPlugin_singlecardset.tpl');
+					return $template -> fetch($this -> folder . 'templates/cardPlugin_singlecardset.tpl');
 					break;
 				}
 			case "deletecardset" :
@@ -208,7 +208,7 @@ class skamsterCards extends plugin {
 						header("Location: plugin.php?plugin=" . $_GET['plugin']);
 					}
 				}
-				$template -> display($this -> folder . 'templates/cardPlugin_delete.tpl');
+				return $template -> fetch($this -> folder . 'templates/cardPlugin_delete.tpl');
 				break;
 			case "editcardset" :
 				$noCardset = true;
@@ -242,7 +242,7 @@ class skamsterCards extends plugin {
 				if ($noCardset) {
 					$template -> assign("cardsetname", gettext("There is no set with id ") . $_POST["setid"] . $_GET["setid"]);
 				}
-				$template -> display($this -> folder . 'templates/cardPlugin_editcardset.tpl');
+				return $template -> fetch($this -> folder . 'templates/cardPlugin_editcardset.tpl');
 				break;
 			case "editquestion" :
 				$noCardset = true;
@@ -277,7 +277,7 @@ class skamsterCards extends plugin {
 				if ($noCardset) {
 					$template -> assign("cardsetname", "There is no set with id " . $_POST["setid"] . $_GET["setid"]);
 				}
-				$template -> display($this -> folder . 'templates/cardPlugin_editquestion.tpl');
+				return $template -> fetch($this -> folder . 'templates/cardPlugin_editquestion.tpl');
 				break;
 			case "deletequestion" :
 				$template -> assign("setid", $_GET['setid']);
@@ -302,7 +302,7 @@ class skamsterCards extends plugin {
 						}
 					}
 				}
-				$template -> display($this -> folder . 'templates/cardPlugin_delete.tpl');
+				return $template -> fetch($this -> folder . 'templates/cardPlugin_delete.tpl');
 				break;
 			case "addquestion" :
 				$template -> assign("cardsets", $allSets -> getSets());
@@ -318,13 +318,12 @@ class skamsterCards extends plugin {
 					array_push($messages, "Add question successfull");
 				}
 				$template -> assign("messages", $messages);
-				$template -> display($this -> folder . 'templates/cardPlugin_modify.tpl');
+				return $template -> fetch($this -> folder . 'templates/cardPlugin_modify.tpl');
 				break;
 			default :
 				$carding = new allCardSets($_SESSION["user"] -> getId(), $connection,$this->getDbPrefix());
 				$template -> assign("cardsets", $carding -> getSets());
-				$template -> display($this -> folder . 'templates/cardPlugin.tpl');
-				break;
+				return $template -> fetch($this -> folder . 'templates/cardPlugin.tpl');
 		}
 	}
 

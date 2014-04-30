@@ -1,8 +1,3 @@
-{include file="messagebox.tpl"}
-<script type="text/javascript">
-    {section name=dojo loop=$dojorequire}
-    dojo.require("{$dojorequire[dojo]}"); {/section}
-</script>
 {include file="{$folder}templates/cardPlugin_menu.tpl"}
 <h1>{$cardsettitle}</h1>&nbsp;
 <a href="plugin.php?plugin={$pluginId}&action=editcardset&setid={$setid}" class="button edit">Edit questionset</a>
