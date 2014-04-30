@@ -1,13 +1,35 @@
 <script type="text/javascript">
     
     dojo.addOnLoad(function(){
+
     // create a map in the "map" div, set the view to a given place and zoom
         {if $startPoi}
         var map = L.map('map').setView({$startPoi->position}, 6);
         {else}
 		var map = L.map('map').setView([51.505, -0.09], 4);
          {/if}
+         
+
+          
 {literal}
+         
+    function generateZoomList(zoomValue) {
+             var zoomList = '<p>Zoom</p><select name="zoom">';
+             var i = 0;
+            while (i<19){
+                if(zoomValue==i){
+                    zoomList = zoomList +"<option selected>"+i+"</option>";
+                } else{
+                    zoomList = zoomList +"<option>"+i+"</option>";   
+                }
+                i++;
+            }
+        zoomList = zoomList +"</select>";
+        return zoomList;
+         }
+          
+          
+          
 		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
 			maxZoom: 18,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
@@ -27,7 +49,8 @@
 			[51.503, -0.06],
 			[51.51, -0.047]
 		]).addTo(map).bindPopup("I am a polygon.");
-{/literal}
+
+          {/literal}
 {if $poiList}
 {foreach from=$poiList item=poi}
  		L.marker({$poi->position}).addTo(map)
@@ -36,19 +59,23 @@
  {/foreach}
 
 {/if}
-
+        require(["dijit/form/NumberSpinner", "dojo/domReady!"]);
 		var popup = L.popup();
 
+{literal}
 		function onMapClick(e) {
             var pos = L.latLng(e.latlng);
 			popup
 				.setLatLng(e.latlng)
-				.setContent('<form action="plugin.php?plugin={$pluginId}" method="post"><input type="text" name="createPoiName" /><input type="hidden" name="createPoiPosition" value="['+pos.lat+','+pos.lng+']" /><input type="submit" value="Create Poi" /></form>' + '['+pos.lat+','+pos.lng+']') {literal}
+				.setContent('<form action="plugin.php?plugin={$pluginId}" method="post"><input type="text" name="createPoiName" /><input type="hidden" name="createPoiPosition" value="['+pos.lat+','+pos.lng+']" /><div data-dojo-type="dijit/form/NumberSpinner" data-dojo-props="intermediateChanges:true, constraints:{min:0,max:40}, value:15" id="temperatureCelsius">'+generateZoomList(map.getZoom())+'<input type="submit" value="Create Poi" /></form> ['+pos.lat+','+pos.lng+']') 
 				.openOn(map);
+                //alert(map.getZoom());
 		}
 
 		map.on('click', onMapClick);
+
     });
+  
     {/literal}
 </script>
 
