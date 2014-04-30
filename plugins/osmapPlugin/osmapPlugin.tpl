@@ -14,7 +14,7 @@
 {literal}
          
     function generateZoomList(zoomValue) {
-             var zoomList = '<p>Zoom</p><select name="zoom">';
+             var zoomList = '<select name="zoom">';
              var i = 0;
             while (i<19){
                 if(zoomValue==i){
@@ -54,20 +54,21 @@
 {if $poiList}
 {foreach from=$poiList item=poi}
  		L.marker({$poi->position}).addTo(map)
-			.bindPopup("{$poi->name} <br /><a href='plugin.php?plugin={$pluginId}&amp;delPoi={$poi->id}'>Delete</a>");
+			.bindPopup("{$poi->name} <br /><a href='plugin.php?plugin={$pluginId}&amp;delPoi={$poi->id}' class='button delete'>Delete</a>");
  
  {/foreach}
 
 {/if}
         require(["dijit/form/NumberSpinner", "dojo/domReady!"]);
 		var popup = L.popup();
-
-{literal}
 		function onMapClick(e) {
             var pos = L.latLng(e.latlng);
 			popup
 				.setLatLng(e.latlng)
-				.setContent('<form action="plugin.php?plugin={$pluginId}" method="post"><input type="text" name="createPoiName" /><input type="hidden" name="createPoiPosition" value="['+pos.lat+','+pos.lng+']" /><div data-dojo-type="dijit/form/NumberSpinner" data-dojo-props="intermediateChanges:true, constraints:{min:0,max:40}, value:15" id="temperatureCelsius">'+generateZoomList(map.getZoom())+'<input type="submit" value="Create Poi" /></form> ['+pos.lat+','+pos.lng+']') 
+				.setContent('<form action="plugin.php?plugin={$pluginId}" method="post"><table><tr><td>Name</td>'
+                +'<td><input type="text" name="createPoiName" /><input type="hidden" name="createPoiPosition" value="['+pos.lat+','+pos.lng+']" />'
+                +'</td></tr><tr><td>Zoom</td><td>'+generateZoomList(map.getZoom())+'</td></tr><tr><td><input type="submit" value="Create Poi" />'
+                +'</td><td> ['+pos.lat+','+pos.lng+']</td></tr></table></form>') 
 				.openOn(map);
                 //alert(map.getZoom());
 		}
@@ -75,8 +76,6 @@
 		map.on('click', onMapClick);
 
     });
-  
-    {/literal}
 </script>
 
 <div id="map" style="width: 600px; height: 400px"></div>
