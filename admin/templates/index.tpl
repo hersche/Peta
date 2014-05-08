@@ -3,6 +3,8 @@
 {include file="messagebox.tpl"}
 
 <h1>Adminpart</h1>
-<p>This is the adminpart - be carefull, you're mighty now! ;)</p>
+<p>
+    This is the adminpart - be carefull, you're mighty now! ;)
+</p>
 
 {include file="footer.tpl"}

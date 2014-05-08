@@ -3,6 +3,9 @@ CACHE MANIFEST
 /css/default.css
 /js/extras.js
 /js/dojo/dojo.js
+/js/dojo/dijit/themes/dijit.css
+/js/dojo/dijit/themes/dijit_rtl.css
+/js/dojo/dijit/themes/soria/soria.css
 NETWORK:
 login.php
 # 2014 MODIFY this line a little to guarante a cache-update when deploy

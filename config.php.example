@@ -1,0 +1,30 @@
+<?php
+$GLOBALS["db_type"] = "mysql";
+$GLOBALS["db_host"] = "localhost";
+$GLOBALS["db_dbname"] = "db";
+$GLOBALS["db_loginname"] = "dbUser";
+$GLOBALS["db_loginpassword"] = "dbPassword";
+
+/**
+ * password_hash defines the hash-algorithm for the sessions and also for the saved passwords. set it just to the beginn, otherwhise you've got errors!
+ * Possible values are: 
+ * whirlpool
+ */
+$GLOBALS["password_hash"] = "whirlpool";
+$GLOBALS["adminRoles"] = array("admin");
+//set defaultRole to admin, when you forgott your entry..
+$GLOBALS["defaultRole"] = "default";
+$GLOBALS["min_password_length"] = 6;
+$GLOBALS["password_need_specialchars"] = true;
+$GLOBALS["showSecurityWarnings"] = true;
+
+/**
+ * You should define your timezone here. For valid values, look here: http://www.php.net/manual/en/timezones.php 
+ */
+$GLOBALS["timezone"] = "Europe/Zurich";
+
+/** DEBUG LEVEL **/
+error_reporting(E_ALL ^ E_NOTICE);
+
+$GLOBALS['registration'] = True;
+?>

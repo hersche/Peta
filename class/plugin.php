@@ -39,6 +39,10 @@ abstract class plugin {
 	/**
 	* Get the className, which have to be unique too! Don't use points, better something like pluginnameUsername . This isn't so important for the user to show, the pluginName is used for this.
 	**/
+    public function getMessages(){
+        return Null;
+    }
+    
 	public function getClassName(){
 		return get_called_class();
 	}
@@ -51,6 +55,13 @@ abstract class plugin {
 	}	
 	
 	public function getOnLoadCode(){
+		return Null;
+	}
+    
+    public function getJs(){
+		return Null;
+	}
+    public function getHeaderTags(){
 		return Null;
 	}
 	/**
@@ -163,8 +174,10 @@ class rawIOPluginManager {
 }
 
 class instancedPluginManager{
-	private $instancedPluginList = array();
+	private $instancedPluginList;
 	private $connection;
+    private $user;
+    private $template;
 	public function __construct($user,$template, $connection){
 		$this->connection = $connection;
 		// Tableconstructor
@@ -177,15 +190,30 @@ class instancedPluginManager{
 		  `pl_active` tinyint(1) NOT NULL,
 		  PRIMARY KEY (`pl_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');
-		foreach($connection->query('SELECT * FROM `plugin` LIMIT 0 , 30') as $row){
-			array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'], $row['pl_className'],$row['pl_active'],$connection, $template,$user));
-		}
+			
+        $connection->query('CREATE TABLE IF NOT EXISTS `pluginrole` (
+		  `id` int(16) NOT NULL AUTO_INCREMENT,
+		  `pluginId` int(11) NOT NULL,
+		  `roleId` int(11) NOT NULL,
+		  `access` int(3) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
+        $this->connection = $connection;
+        $this->user=$user;
+        $this->template=$template;
+        $this->updateInstancedPlugins();
 	}
+    
+    public function updateInstancedPlugins(){
+        $this->instancedPluginList = array();
+        foreach($this->connection->query('SELECT * FROM `plugin` LIMIT 0 , 30') as $row){
+            array_push($this->instancedPluginList, new instancedPlugin($row['pl_id'],$row['pl_name'], $row['pl_description'], $row['pl_path'],                                                       $row['pl_className'],$row['pl_active'],$this->connection, $this->template,$this->user));
+		}
+    }
 	public function getInstancedPlugins(){
 		return $this->instancedPluginList;
 	}
 	public function getInstancedPluginById($id){
-	
 		foreach($this->instancedPluginList as $iP){
 			if($iP->getId()==$id){
 				return $iP;
@@ -206,7 +234,7 @@ class instancedPluginManager{
 	public function createInstancedPlugin($name, $description, $path, $className,$active){
 		$sql = "INSERT INTO plugin (`pl_name`,`pl_description`, `pl_path`,`pl_className`,`pl_active`) VALUES ('" . $name . "', '" . $description . "', '" . $path . "', '" . $className . "', " . $active . ");";
 		$this->connection -> exec($sql);
-		//var_dump($sql);
+		$this->updateInstancedPlugins();
 	}
 }
 
@@ -274,7 +302,7 @@ class instancedPlugin{
 	
 	// public function insertRole($roleId + ownid into pluginrole, $conn->lastinsertid mit rechte into roleaccess
 	public function insertRole($roleId, $access){
-		$this->connection->exec('INSERT INTO pluginRole (pluginId, roleId,access) VALUES (' . $this -> id . ', ' . $roleId . ', ' . $access . ');');
+		$this->connection->exec('INSERT INTO pluginrole (pluginId, roleId,access) VALUES (' . $this -> id . ', ' . $roleId . ', ' . $access . ');');
 		$this->updateRoles();
 	}
 	
@@ -286,7 +314,6 @@ class instancedPlugin{
 	public function getRestRoles(){
 		
 		if(sizeof($this->roles)!=0){
-		//var_dump($this->restRoles);
 			return $this->restRoles;
 		}
 		else{
@@ -316,9 +343,15 @@ class instancedPlugin{
 		return $this->active;
 	}
 	public function getInstance(){
-		require_once $this->path;
-		$this->pluginObj = new $this->className($this->id,$this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
-		return $this->pluginObj;
+        if (file_exists($this->path)){
+		  require_once $this->path;
+		  $this->pluginObj = new $this->className($this->id,$this->currentUser, $this->template,dirname($this->path)."/", $this->connection);
+		  return $this->pluginObj;
+        }
+        else{
+            $this->connection->exec('UPDATE plugin SET pl_active="' . 0 . '" WHERE pl_id="' . $this->id. '";');
+            throw new Exception("Plugin is not there, deactivate it. When you move it, go to pluginconfig and re-activate it.");
+}
 	}
 	public function removeRole($roleId){
 		if(isset($roleId)){
@@ -329,7 +362,14 @@ class instancedPlugin{
 	public function edit(){
 		$this->setName($_POST['instancePluginName']);
 		$this->setDescription($_POST['instancePluginDescription']);
-
+        $active = isset($_POST['editActive']) ? $_POST['editActive'] : 0 ;
+            if($active!=$this->active){
+                $this->connection->exec('UPDATE plugin SET pl_active="' . $active . '" WHERE pl_id="' . $this->id. '";');
+            }
+        
+        if(isset($_POST['editPath'])){
+            $this->connection->exec('UPDATE plugin SET pl_path="' . $_POST['editPath'] . '" WHERE pl_id="' . $this->id. '";');
+        }
 		$this->setRoles();
 		
 	}

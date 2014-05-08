@@ -15,16 +15,15 @@ elseif(isset($_GET['deleteId'])){
 
 
 elseif(isset($_GET['doOrder'])){
-$foo = var_dump($_POST['customfieldsOrder']);
 $user->orderCustomfields($_POST['customfieldsOrder'],$connection);
-
-	//throw new Exception(json_encode($_POST));
+    die();
 }
-echo $foo;
+
 switch($_GET['action']){
 	case "edit":
+        $template->assign("allcss",array("js/dojo/dojox/editor/plugins/resources/css/Preview.css", "js/dojo/dojox/form/resources/FileUploader.css","js/dojo/dojox/editor/plugins/resources/css/FindReplace.css"));
 		$template->assign("onLoadCode", 'dojo.connect(customfieldList,"onDndDrop",function(e){updateCustomfieldList()});');
-		$template->assign("dojorequire", array("dijit.Editor","dojo.dnd.Source"));
+		$template->assign("dojorequire", array("dojo.dnd.Source","dojox.editor.plugins.Preview","dojox.editor.plugins.FindReplace"));
 		if(isset($_POST)){
 			usertools::editUser($user->getId(), $_POST, $connection);
 		}
@@ -33,14 +32,22 @@ switch($_GET['action']){
 		}
 		$template->assign("customfields", $user->getCustomfields($connection));
 		$template->assign("roles", $user->getRoles());
+		$template->assign("username", $user->getUsername());
 		$template->display('profile_edit.tpl');
 		break;
 		
 		
 	default:
+        
 		if((isset($_GET['userid']))&&(usertools::userIdExists($_GET['userid'], $connection))&&($_GET['userid']!=$user->getId())){
 			$user = usertools::getAlienUserbyId($_GET['userid'], $connection);
 		}
+    elseif((isset($_GET['userid']))&&($_GET['userid']==-1)){
+        $user = new alienuser();
+        $user->setId(-1);
+        $user->setUsername("Guest");
+        
+    }
 		else{
 			$template->assign("own", true);
 			$template->assign("roles", $user->getRoles());

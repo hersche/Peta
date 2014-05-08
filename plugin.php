@@ -5,12 +5,7 @@ if($user->getWelcome()){
 	$user->disableWelcome();
 }
 
-$pluginmanager = new rawIOPluginManager($user,$template, $connection);
-
-
-
-if (isset($_GET['plugin'])){
-	
+if ($plugin!=NULL){
 	if($plugin->getRequiredDojo() != Null){
 		$template->assign("dojorequire", $plugin->getRequiredDojo());
 	}
@@ -20,12 +15,19 @@ if (isset($_GET['plugin'])){
 	if($plugin->getOnLoadCode() != Null){
 		$template->assign("onLoadCode", $plugin->getOnLoadCode());
 	}
-	// $messages[] = $plugin->getPluginName();
+    	if($plugin->getJs() != Null){
+		$template->assign("jsscripts", $plugin->getJs());
+	}
+        	if($plugin->getHeaderTags() != Null){
+		$template->assign("headerTags", $plugin->getHeaderTags());
+	}
+    $template->assign("pluginContent", $plugin->start());
 }
 
-// $var = array("content");
-// $template->_smarty_include("plugins/exampleplugin/templates/content.tpl", $var);
-$template->assign("messages", $messages);
+else {
+    echo "nope, here's no plug - maybe it's inactive? Ask admin!";   
+}
+
 $template->assign("plugins", $instancedPluginManager->getInstancedPlugins());
 $template->display('plugin.tpl');
 

@@ -1,17 +1,22 @@
 
 <div class="menu">
-    <a href="index.php" class="button home">Home</a>
-	
+    <span style="width: 80%;">
+    <a href="index.php" class="button home" style="margin-left:5px">Home</a>
 	{foreach item=pI from=$allowedPluginInstances}
+    {if $pI->getActive() == 1}
 		<a class="button" href="plugin.php?plugin={$pI->getId()}" title="{$pI->getDescription()}">{$pI->getName()}</a>
+    {/if}
     {/foreach}
+    </span>
 	{if {$user->getUsername()} != "Public"}
-		<a href="profile.php" class="button profile">Profile</a>
+        <table style="float: right;">
+		<tr><td><a href="profile.php" class="button profile">Profile</a></td>
 		{if $admin}
-			<a href="pluginEdit.php" class="button edit">Plugins</a>
-			<a href="admin/index.php" class="button admin" style="float: right;">Admin</a>
+			<td><a href="pluginEdit.php" class="button edit">Plugins</a></td></tr>
+			<tr><td><a href="admin/index.php" class="button admin">Admin</a></td>
 		{/if}
-		<a href="login.php?action=logout" class="button logout" style="float: right;">Logout</a>
+		<td><a href="login.php?action=logout" class="button logout">Logout</a></td></tr>
+        </table>
 	{/if}
 
 </div>

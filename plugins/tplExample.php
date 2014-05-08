@@ -2,7 +2,7 @@
 class skamsterTplExample extends plugin{
 	
 	private $currentUser;
-	private $templateObject;
+	private $template;
 	private $connection;
 	private $id;
 	private $folder;
@@ -14,10 +14,10 @@ class skamsterTplExample extends plugin{
 	 * @param unknown_type $currentUser
 	 * @param unknown_type $connection
 	 */
-	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
+	public function __construct($id, $currentUser, $template, $folder, $connection) {
 		$this->id = $id;
 		$this -> currentUser = $currentUser;
-		$this -> templateObject = $templateObject;
+		$this -> template = $template;
 		$this -> connection = $connection;
 		$this->folder = $folder;
 	}
@@ -38,7 +38,7 @@ class skamsterTplExample extends plugin{
 
 	
 	public function start(){
-		$this->templateObject->display($this->folder.'tplExample.tpl');
+		return $this->template->fetch($this->folder.'tplExample.tpl');
 	}
 }
 

@@ -1,5 +1,4 @@
-    dojo.require("dijit.form.Button");
-    dojo.require("dojo.fx");
+
     function basicWipeinSetup() {
         //Function linked to the button to trigger the wipe.
         function wipeIt() {

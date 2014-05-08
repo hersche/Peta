@@ -26,11 +26,10 @@ class user extends abstractUser {
 	private $password;
 	public $urow;
 	private $connection;
+    private $admin;
+    private $pluginAccess;
 	// private $connection;
 
-	public function getUrow() {
-		return $this -> urow;
-	}
 
 	/**
 	 * This do the login
@@ -117,6 +116,30 @@ class user extends abstractUser {
 			$this -> initialiseCustomfields($connection);
 		//}
 	}
+    
+    
+    
+    public function getUrow() {
+		return $this -> urow;
+	}
+
+    public function setAdmin($admin){
+        $this->admin = $admin;      
+    }
+    
+    public function setPluginAccess($pluginAccess){
+        $this->pluginAccess = $pluginAccess;   
+    }
+    
+    
+    public function getPluginAccess(){
+     return $this->pluginAccess;   
+    }
+    public function getAdmin(){
+     return $this->admin;   
+    }
+    
+    
 	private function initialiseCustomfields($connection) {
 		foreach ($connection->query('SELECT * FROM user_customfields WHERE cf_uid="'.$this->id.'" ORDER BY `cf_order`;') as $customfieldrow) {
 			$customfield = new customfield();
@@ -129,20 +152,17 @@ class user extends abstractUser {
 	public function orderCustomfields($cmOrderList, $connection){
 		$order = 1;
 		try{
-		foreach($cmOrderList as $cmId){
-		
+		  foreach($cmOrderList as $cmId){
 			$id = intval($cmId);
 			if (!empty($id)) {
-			
-				$connection->exec("UPDATE `user_customfields` SET `cf_order`='".$order."' WHERE `user_customfields`.`cf_id`=".$id . " LIMIT 1 ;");
+				$connection->exec("UPDATE `user_customfields` SET `user_customfields`.`cf_order`='".$order."' WHERE `user_customfields`.`cf_id`=".$id . " LIMIT 1 ;");
 				$order++;
-			}
-				
+			     }	
 			}
 		}
-					catch (Exception $e){
-				throw new Exception($e->getMessage( ));
-			}
+        catch (Exception $e){
+            throw new Exception($e->getMessage( ));
+        }
 		$this->customfields = Null;
 		$this->initialiseCustomfields($connection);
 	
@@ -364,6 +384,7 @@ class alienuser extends abstractUser {
 	private $lastlogin;
 	private $roles = array();
 	private $customfields = array();
+    private $pluginAccess;
 
 	public function getUsername() {
 		return $this -> username;
@@ -376,7 +397,21 @@ class alienuser extends abstractUser {
 	public function getPassword() {
 		return $this -> password;
 	}
-
+    public function setAdmin($admin){
+        $this->admin = $admin;      
+    }
+    
+    public function setPluginAccess($pluginAccess){
+        $this->pluginAccess = $pluginAccess;   
+    }
+    
+    
+    public function getPluginAccess(){
+     return $this->pluginAccess;   
+    }
+    public function getAdmin(){
+     return false;   
+    }
 	public function getRoles() {
 		return $this -> roles;
 	}
@@ -674,7 +709,6 @@ class usertools {
 			$roleObject = new role();
 			$roleObject -> setId($dbRole['rid']);
 			$roleObject -> setRole($dbRole['role']);
-			$roleObject -> setAdmin($dbRole['r_admin']);
 			$roleObjects[] = $roleObject;
 		}
 		return $roleObjects;
@@ -710,6 +744,12 @@ class usertools {
 		}
 	}
 
+    
+    static public function deleteUser($id, $connection){
+        $connection -> exec('DELETE FROM `user_role` WHERE `ur_uid` = ' . $id .';');
+        $connection -> exec('DELETE FROM `user_customfields` WHERE `cf_uid` = ' . $id .';');
+        $connection -> exec('DELETE FROM `user` WHERE `uid` = ' . $id .';');
+    }
 	/**
 	 * Resolve a username with a id..
 	 * @param unknown_type $userid
