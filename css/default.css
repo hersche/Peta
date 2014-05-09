@@ -13,11 +13,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#19d1ce', end
 	border-style: transparent;
 	border-width: 3px;
 	width: 98%;
-	height: 65px;
-	padding: 0px, 0px, 0px, 0px,;
+	padding: 0px 0px 0px 0px,;
 	-moz-box-shadow: 0 0 5px 5px #888;
     -webkit-box-shadow: 0 0 5px 5px#888;
     box-shadow: 0 0 5px 5px #888;
+	clear: both;
 }
 
 .customfieldlist {
@@ -48,11 +48,35 @@ background: linear-gradient(135deg, rgba(247,179,96,0.82) 2%,rgba(70,162,181,0.8
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d1f7b360', endColorstr='#007db9e8',GradientType=1 );
 
 }
-
+.menu > .left {
+float: left;
+display: block;
+width: 70%;
+}
+.menu > .right {
+float: right;
+display: block;
+width: 30%;
+max-width: 240px;
+}
+@media screen and (min-width:1700px) {
+	.menu > .right {
+		max-width: 480px;
+	}
+}
 .menu a {
-	margin-left: 2px;
+	margin: 8px 0 0 6px;
+}
+.menu > .right a {
+	float: right;
+	min-width: 70px;
+	margin: 8px 6px 0 0;
 }
 
+.clear {
+height: 8px;
+	clear: both;
+}
 .mainThread {
 	border-style: solid;
 	padding: 8px;
