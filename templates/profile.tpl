@@ -1,4 +1,6 @@
-{include file="header.tpl" title=Cards} {include file="messagebox.tpl"} {include file="menu.tpl"} <h1>Profile</h1>
+{include file="header.tpl" title=Cards} {include file="messagebox.tpl"} {include file="menu.tpl"} 
+<div id="content">
+<h1>Profile</h1>
 <h2>Username: {$username}</h2>
 Customfields:
 <ol class="customfieldlist">
@@ -20,4 +22,5 @@ Customfields:
     {/foreach}
 </ul>
 <h2><a href="profile.php?action=edit" class="button edit" >Edit</a></h2>
+    </div>
 {/if} {include file="footer.tpl"}
