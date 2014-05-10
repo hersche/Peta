@@ -1,4 +1,5 @@
 {include file="header.tpl" title="Mainpage"} {include file="menu.tpl"} {include file="messagebox.tpl"}
+<div id="content">
 {if $admin}
 <form action="pluginEdit.php" method="get">
     <label>RawPlugins</label>
@@ -180,3 +181,4 @@
     </table>
     {/if}
     {$content} {include file="footer.tpl"}
+</div>

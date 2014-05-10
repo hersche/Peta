@@ -1,5 +1,5 @@
 {include file="{$folder}forumPlugin_menu.tpl"} {if $threads}
-<div style="margin-top:5px;">
+<div style="margin-top:1%;">
 	<table style="border: 1px solid gray;">	
 		<tr><th>Topic</th><th>PostCounter</th></tr>
 		{foreach $threads as $thread}
