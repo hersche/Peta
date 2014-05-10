@@ -208,6 +208,7 @@ class instancedPluginManager{
         $connection->query('CREATE TABLE IF NOT EXISTS `pluginmenu` (
 		  `id` int(16) NOT NULL AUTO_INCREMENT,
 		  `pluginId` int(11) NOT NULL,
+          `order` int(11) NOT NULL,
 		  `action` varchar(200) NOT NULL,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
@@ -233,6 +234,13 @@ class instancedPluginManager{
 			}
 		}
 	}
+    
+    public function getOptions(){
+        $sqlEx = $this->connection->query("SELECT * FROM pluginoptions WHERE pluginId='".$this->id."';");
+		foreach($sqlEx as $row){
+            
+        }
+    }
 	
 	
 	public function getInstancedPluginList($className){
@@ -448,5 +456,46 @@ class rawPlugin{
 		return dirname($path);
 	}
 	
+}
+
+class pluginOption {
+ private $key;
+ private $value;
+    
+public function __construct($key, $value){
+ $this->key = $key;
+$this->value=$value;
+}
+    
+    public function getKey(){
+        return $this->key;
+    }
+    
+    public function getValue(){
+        return $this->value;   
+    }
+    
+}
+
+class pluginMenuEntry{
+private $name;
+private $order;
+private $action;
+ public function __construct($name, $order, $action){
+     $this->name = $name;
+     $this->order = $order;
+     $this->action = $action;
+     }
+public function getName(){
+    
+ return $this->name;   
+}
+     
+     public function getOrder(){
+         return $this->order;
+     }
+     public function getAction(){
+        return $this->action;   
+     }
 }
 ?>
