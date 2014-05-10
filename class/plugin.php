@@ -198,6 +198,19 @@ class instancedPluginManager{
 		  `access` int(3) NOT NULL,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
+        $connection->query('CREATE TABLE IF NOT EXISTS `pluginoptions` (
+		  `id` int(16) NOT NULL AUTO_INCREMENT,
+		  `pluginId` int(11) NOT NULL,
+		  `key` varchar(11) NOT NULL,
+		  `value` varchar(3) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
+        $connection->query('CREATE TABLE IF NOT EXISTS `pluginmenu` (
+		  `id` int(16) NOT NULL AUTO_INCREMENT,
+		  `pluginId` int(11) NOT NULL,
+		  `action` varchar(200) NOT NULL,
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
         $this->connection = $connection;
         $this->user=$user;
         $this->template=$template;
