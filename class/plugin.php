@@ -42,25 +42,46 @@ abstract class plugin {
     public function getMessages(){
         return Null;
     }
-    
+    /* You don't have to use or implement this method basicly.
+    @return str classname
+    */
 	public function getClassName(){
 		return get_called_class();
 	}
 
+    /**
+    * Includes stuff like dojo.require(yourname).
+    * Eats a array.
+    */
 	public function getRequiredDojo(){
 		return Null;
-	}	
+	}
+    /* Includes a css-file. Result in header: <style href="foo.css" />
+    * Use the $folder-variable to stay dynamic!
+    * Eats a array
+    */
 	public function getRequiredCss(){
 		return Null;
 	}	
-	
+	/*
+    * Put some js-code with is executed onLoad.
+    * This one have to be direct! Look into sitePlugin for example.
+    * Eats array
+    */
 	public function getOnLoadCode(){
 		return Null;
 	}
-    
+    /*
+    * Load own js-files into header. Result: <script href="foo.js" />
+    * Don't forget $folder for dynamic paths!
+    * Eats array
+    */
     public function getJs(){
 		return Null;
 	}
+    /*
+    * Put whole, individual tag-lines into header. Result: foo = foo. So take care. Do <foo>foo</foo> !!
+    */
     public function getHeaderTags(){
 		return Null;
 	}
@@ -78,6 +99,11 @@ abstract class plugin {
 	**/
 	abstract function start();
 	
+    /**
+    * Implement this for using getDbPrefix. Important!
+    * Gets your instance plugin-id.
+    @return int id
+    */
 	public function getId() {
 		return $this -> id;
 	}
