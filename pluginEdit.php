@@ -73,6 +73,10 @@ if((isset($_GET['rawPluginName']))&&(isset($_GET['editPluginId']))){
 		}
 }
 
+if((!isset($_GET['rawPluginName']))&&($admin)){
+    $template->assign("instancedPluginList", $instancedPluginManager->getInstancedPlugins());
+}
+
 $template->assign("plugins", $pluginmanager->getPlugins());
 
 

@@ -22,15 +22,17 @@
         {foreach from=$instancedPluginList item=instPlugin}
         <li>
             <table>
-                <form action="pluginEdit.php?action=editPluginInstance&pluginId={$instPlugin->getId()}&rawPluginName={$rawPlugin->getName()}" method="post">
+                <form action="pluginEdit.php?action=editPluginInstance&pluginId={$instPlugin->getId()}&rawPluginName={$instPlugin->getClassName()}" method="post">
                     <tr>
                         <td><label for={$instPlugin->getName()}></label><label>Name</label><td>
                         <input type="text" name="instancePluginName" value="{$instPlugin->getName()}" class="dijitInputField"/>
                         </td>
                     </tr>
+                    {if $rawPlugin}
                         {if $rawPlugin->getPath()!=$instPlugin->getPath()}
-                           <tr><td><input type="hidden" value="{$rawPlugin->getPath()}" name="editPath" /><p>pluginPath seems to be changed, restore with                               save</p></td></tr>
+                           <tr><td><input type="hidden" value="{$instPlugin->getPath()}" name="editPath" /><p>pluginPath seems to be changed, restore with                               save</p></td></tr>
                         {/if}
+                    {/if}
                     <tr>
                         <td><label for="description">Description</label></td><td>                        <textarea class="dijitTextArea" height="40px" name="instancePluginDescription">{$instPlugin->getDescription()}</textarea></td>
                     </tr>
@@ -70,7 +72,7 @@
                         <td>
                         <input type="submit" class="button edit" value="Edit" />
                         </td>
-                        <td><a href="pluginEdit.php?action=pluginInstanceDelete&amp;plugId={$instPlugin->getId()}&amp;rawPluginName={$rawPlugin->getName()}" class="button delete">Delete</a></td>
+                        <td><a href="pluginEdit.php?action=pluginInstanceDelete&amp;plugId={$instPlugin->getId()}&amp;rawPluginName={$instPlugin->getPath()}" class="button delete">Delete</a></td>
                         <td><a href="plugin.php?plugin={$instPlugin->getId()}" class="button">Show Plug</a></td>
                     </tr>
                     <tr>
