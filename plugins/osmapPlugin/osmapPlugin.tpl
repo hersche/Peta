@@ -1,18 +1,26 @@
 <script type="text/javascript">
-    
+      function setPosition(pos,zoom){
+        alert(pos);
+          map.setView(pos,zoom);
+    }  
+    var map;
+    var mapController2;
     dojo.addOnLoad(function(){
 
     // create a map in the "map" div, set the view to a given place and zoom
         {if $startPoi}
-        var map = L.map('map').setView({$startPoi->position}, 6);
+        map = L.map('map').setView({$startPoi->position}, 6);
         {else}
-		var map = L.map('map').setView([51.505, -0.09], 4);
+		map = L.map('map').setView([51.505, -0.09], 4);
          {/if}
          
-
+        
+        
           
 {literal}
-         
+        
+          
+
     function generateZoomList(zoomValue) {
              var zoomList = '<select name="zoom">';
              var i = 0;
@@ -95,6 +103,7 @@
 <p>Just click into the map to create a POI. Call one "start" to set your start position.</p>
 {if $poiList}
 {foreach from=$poiList item=poi}
+
 <form action="plugin.php?plugin={$pluginId}" method="post">
     <input type="text" name="editPoiName" value="{$poi->name}" />
     <input type="hidden" name="editPoiId" value="{$poi->id}" />
@@ -108,8 +117,10 @@
                             {html_options values=range(1,18) output=range(1,18) selected=$poi->zoom}
                         </select>
     <input type="submit" value="Edit Poi" /></form>
+<button onclick="setPosition({$poi->position},{$poi->zoom});">Go to point</button> 
+{if $userid==$poi->ownerid}
  		<a href='plugin.php?plugin={$pluginId}&amp;delPoi={$poi->id}' class="button delete">Delete</a>
- 
+{/if}
  {/foreach}
 
 {/if}

@@ -106,6 +106,7 @@ class osmapPluginSkamster extends plugin{
 			`ownerid` int(11) NOT NULL,
 			PRIMARY KEY (`id`)
 		)");
+        $this->template->assign("userid",$this->user->getId());
         $messages = array();
         if((isset($_POST['createPoiName']))&&($_POST['createPoiPosition'])){
             $createPoiShared = (isset($_POST['createPoiShared'])) ? 1 : 0;
