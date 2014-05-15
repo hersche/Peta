@@ -65,17 +65,17 @@ class osmapPluginSkamster extends plugin{
 	}	
 	public function updatePois(){
 		$this->poiList = array();
-        $statement = $this->connection->query("SELECT * FROM `".$this->dbPrefix."pois` WHERE `ownerid`=".$this->user->getId().";");
+        $statement = $this->connection->query("SELECT * FROM `".$this->dbPrefix."pois` WHERE `ownerid`=".$this->user->getId()." OR `shared`=1;");
         if($statement===False){
             $statement = array();   
         }
 		foreach($statement as $row){
-			array_push($this->poiList,new poi($row['id'],$row['name'],$row['position'],$row['ownerid']));
+			array_push($this->poiList,new poi($row['id'],$row['name'],$row['position'],$row['zoom'],$row['shared'],$row['ownerid']));
 		}
 	}
     
-    	public function insertPoi($name, $position){
-		$this->connection->exec("INSERT INTO `".$this->dbPrefix."pois` (`name`, `position`, `ownerid`) VALUES ('" . $name . "', '" .$position."', '" .$this->user->getId()."');");
+    	public function insertPoi($name, $position,$zoom,$shared){
+		$this->connection->exec("INSERT INTO `".$this->dbPrefix."pois` (`name`, `position`,`zoom`,`shared`, `ownerid`) VALUES ('" . $name . "', '" .$position."','" .$zoom."','" .$shared."', '" .$this->user->getId()."');");
 		$this->updatePois();
 	}
 	
@@ -84,8 +84,8 @@ class osmapPluginSkamster extends plugin{
 		$this->updatePois();
 	}
 	
-	public function editPoi($id, $name, $position){
-		$this->connection->exec("UPDATE `".$this->dbPrefix."pois` SET `name` =  '" . $name . "',`position`='" .$position ."',`ownerid`='" .$this->user->getId(). "' WHERE `id`=".$id . " LIMIT 1 ;");
+	public function editPoi($id, $name, $position, $zoom, $shared){
+		$this->connection->exec("UPDATE `".$this->dbPrefix."pois` SET `name` =  '" . $name . "',`position`='" .$position ."',`zoom`='" .$zoom ."',`shared`='" .$shared ."',`ownerid`='" .$this->user->getId(). "' WHERE `id`=".$id . " LIMIT 1 ;");
 		$this->updatePois();
 	}
     
@@ -102,12 +102,14 @@ class osmapPluginSkamster extends plugin{
 			`name` text NOT NULL,
 			`position` text NOT NULL,
 			`zoom` int(3) NOT NULL,
+            `shared` int(3) NOT NULL,
 			`ownerid` int(11) NOT NULL,
 			PRIMARY KEY (`id`)
 		)");
         $messages = array();
         if((isset($_POST['createPoiName']))&&($_POST['createPoiPosition'])){
-            $this->insertPoi($_POST['createPoiName'], $_POST['createPoiPosition']);
+            $createPoiShared = (isset($_POST['createPoiShared'])) ? 1 : 0;
+            $this->insertPoi($_POST['createPoiName'], $_POST['createPoiPosition'],$_POST['zoom'],$createPoiShared);
             array_push($messages, "Poi ".$_POST['createPoiName']." is created");
         }
         elseif(isset($_GET['delPoi'])){
@@ -116,7 +118,8 @@ class osmapPluginSkamster extends plugin{
             array_push($messages, "Poi deleted");
         }
         elseif((isset($_POST['editPoiName']))&&(isset($_POST['editPoiPosition']))&&(isset($_POST['editPoiId']))){
-            $this->editPoi($_POST['editPoiId'], $_POST['editPoiName'], $_POST['editPoiPosition']);
+            $editPoiShared = (isset($_POST['editPoiShared'])) ? 1 : 0;
+            $this->editPoi($_POST['editPoiId'], $_POST['editPoiName'], $_POST['editPoiPosition'],$_POST['zoom'],$editPoiShared);
             array_push($messages, "Poi is edited as ".$_POST['editPoiName']);
         }
         $this->template->assign("startPoi", $this->getStartPoi());
@@ -136,11 +139,14 @@ class poi{
 	public $name;
     public $position;
     public $zoom;
+    public $shared;
     public $ownerId;
-	public function __construct($id,$name,$position,$ownerId){
+	public function __construct($id,$name,$position,$zoom,$shared,$ownerId){
 		$this->id = $id;
 		$this->name=$name;
 		$this->position=$position; 
+        $this->shared=$shared;
+        $this->zoom=$zoom;
         $this->ownerId = $ownerId; }
 }
 ?>

@@ -72,7 +72,7 @@
                         <td>
                         <input type="submit" class="button edit" value="Edit" />
                         </td>
-                        <td><a href="pluginEdit.php?action=pluginInstanceDelete&amp;plugId={$instPlugin->getId()}&amp;rawPluginName={$instPlugin->getPath()}" class="button delete">Delete</a></td>
+                        <td><a href="pluginEdit.php?action=pluginInstanceDelete&amp;plugId={$instPlugin->getId()}&amp;rawPluginName={$instPlugin->getClassName()}" class="button delete">Delete</a></td>
                         <td><a href="plugin.php?plugin={$instPlugin->getId()}" class="button">Show Plug</a></td>
                     </tr>
                     <tr>

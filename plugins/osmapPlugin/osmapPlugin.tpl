@@ -78,7 +78,7 @@
 				.setLatLng(e.latlng)
 				.setContent('<form action="plugin.php?plugin={$pluginId}" method="post"><table><tr><td>Name</td>'
                 +'<td><input type="text" name="createPoiName" /><input type="hidden" name="createPoiPosition" value="['+pos.lat+','+pos.lng+']" />'
-                +'</td></tr><tr><td>Zoom</td><td>'+generateZoomList(map.getZoom())+'</td></tr><tr><td><input type="submit" value="Create Poi" />'
+                +'</td></tr><tr><td>Zoom</td><td>'+generateZoomList(map.getZoom())+'</td></tr><tr><td>Shared</td><td><input value="1" name="createPoiShared" type="checkbox" /></td></tr><tr><td><input type="submit" value="Create Poi" />'
                 +'</td><td> ['+pos.lat+','+pos.lng+']</td></tr></table></form>') 
 				.openOn(map);
                 //alert(map.getZoom());
@@ -99,6 +99,14 @@
     <input type="text" name="editPoiName" value="{$poi->name}" />
     <input type="hidden" name="editPoiId" value="{$poi->id}" />
     <input type="text" readonly name="editPoiPosition" value="{$poi->position}" />
+    {if $poi->shared === "1"}
+    <input value="1" name="editPoiShared" type="checkbox" checked />
+    {else}
+    <input value="1" name="editPoiShared" type="checkbox" />
+    {/if}
+<select name="access_" class="dijitSelect">
+                            {html_options values=range(1,18) output=range(1,18) selected=$poi->zoom}
+                        </select>
     <input type="submit" value="Edit Poi" /></form>
  		<a href='plugin.php?plugin={$pluginId}&amp;delPoi={$poi->id}' class="button delete">Delete</a>
  
