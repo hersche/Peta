@@ -9,7 +9,7 @@
 
     // create a map in the "map" div, set the view to a given place and zoom
         {if $startPoi}
-        map = L.map('map').setView({$startPoi->position}, 6);
+        map = L.map('map').setView({$startPoi->position}, {$startPoi->zoom});
         {else}
 		map = L.map('map').setView([51.505, -0.09], 4);
          {/if}
