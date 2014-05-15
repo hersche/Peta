@@ -29,8 +29,20 @@
          }
           
           
+        /**
+          OSM 'standard' style 	http://[abc].tile.openstreetmap.org/zoom/x/y.png 	0-19
+          OpenCycleMap 	http://[abc].tile.opencyclemap.org/cycle/zoom/x/y.png 	0-18
+          OpenCycleMap Transport (experimental) 	http://[abc].tile2.opencyclemap.org/transport/zoom/x/y.png 	0-18
+          CloudMade (Web style) 	http://[abc].tile.cloudmade.com/your_CloudMade_API_key/1/256/zoom/x/y.png 	0-18
+          MapQuest 	http://otile[1234].mqcdn.com/tiles/1.0.0/osm/zoom/x/y.jpg 	0-19
+          MapQuest Open Aerial 	http://otile[1234].mqcdn.com/tiles/1.0.0/sat/zoom/x/y.jpg 	0-11 globally, 12+ in the U.S.
+          Migurski's Terrain 	http://tile.stamen.com/terrain-background/zoom/x/y.jpg 	4-18, US-only (for now) 
           
-		L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
+          http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+          http://tile.stamen.com/watercolor/{z}/{x}/{y}.jpg
+          http://tile.stamen.com/toner/{z}/{x}/{y}.jpg
+        **/
+		L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.jpg', {
 			maxZoom: 18,
 			attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 				'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
