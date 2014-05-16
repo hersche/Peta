@@ -113,7 +113,7 @@
     {else}
     <input value="1" name="editPoiShared" type="checkbox" />
     {/if}
-<select name="access_" class="dijitSelect">
+<select name="editZoom">
                             {html_options values=range(1,18) output=range(1,18) selected=$poi->zoom}
                         </select>
     <input type="submit" value="Edit Poi" /></form>

@@ -120,7 +120,7 @@ class osmapPluginSkamster extends plugin{
         }
         elseif((isset($_POST['editPoiName']))&&(isset($_POST['editPoiPosition']))&&(isset($_POST['editPoiId']))){
             $editPoiShared = (isset($_POST['editPoiShared'])) ? 1 : 0;
-            $this->editPoi($_POST['editPoiId'], $_POST['editPoiName'], $_POST['editPoiPosition'],$_POST['zoom'],$editPoiShared);
+            $this->editPoi($_POST['editPoiId'], $_POST['editPoiName'], $_POST['editPoiPosition'],$_POST['editZoom'],$editPoiShared);
             array_push($messages, "Poi is edited as ".$_POST['editPoiName']);
         }
         $this->template->assign("startPoi", $this->getStartPoi());
