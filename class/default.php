@@ -167,12 +167,18 @@ if ($user -> getUsername() == "Public") {
 	if ($allowed) {
 		//Hay!
 	} else {
-		array_push($messages, "You have no access to this plugin.");
-		$template -> assign('messages', $messages);
-		//$template->assign('errorTitle', "Plugin-Failure");
-		//$template->assign('errorDescription', "Permission denied. What are u trying, dude?");
-		//$template->display('error.tpl');
-		//die();
+        if($admin){
+		  array_push($messages, "You have basicly no access to this plugin, but it's ok, you're sys-admin");
+		  $template -> assign('messages', $messages);
+        }
+        else{
+            array_push($messages, "You have no access to this plugin!");
+            $template -> assign('messages', $messages);
+            $template->assign('errorTitle', "Plugin-Failure");
+            $template->assign('errorDescription', "Permission denied. What are u trying, dude?");
+            $template->display('error.tpl');
+            die();
+        }
 	}
 }
 if ((isset($_GET['plugin'])) && ($pluginInstance == Null) && ($fn != "login.php") && ($fn != "index.php") && ($fn != "profile.php")) {
