@@ -224,7 +224,7 @@ class instancedPluginManager{
 		  `access` int(3) NOT NULL,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
-        $connection->query('CREATE TABLE IF NOT EXISTS `pluginoptions` (
+        $connection->query('CREATE TABLE IF NOT EXISTS `pluginoption` (
 		  `id` int(16) NOT NULL AUTO_INCREMENT,
 		  `pluginId` int(11) NOT NULL,
 		  `key` varchar(11) NOT NULL,
@@ -235,6 +235,8 @@ class instancedPluginManager{
 		  `id` int(16) NOT NULL AUTO_INCREMENT,
 		  `pluginId` int(11) NOT NULL,
           `order` int(11) NOT NULL,
+          `name` varchar(200) NOT NULL,
+          `description` varchar(200) NOT NULL,
 		  `action` varchar(200) NOT NULL,
 		  PRIMARY KEY (`id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;');	
@@ -300,7 +302,8 @@ class instancedPlugin{
 	private $roles;
 	private $restRoles;
 	private $allRoles;
-	
+    private $pluginOptions;
+    private $pluginSites;
 	
 	public function __construct($id,$name, $description, $path, $className,$active,$connection,$template,$currentUser){
 		$this->id=$id;
@@ -353,6 +356,15 @@ class instancedPlugin{
 		$this->updateRoles();
 	}
 	
+    
+    	public function insertOption($key,$value){
+		$this->connection->exec('INSERT INTO pluginoption (pluginId, key,value) VALUES (' . $this -> id . ', ' . $key . ', ' . $value . ');');
+		$this->updateOptions();
+	}
+        	public function insertMenuEntry($key,$value){
+		$this->connection->exec('INSERT INTO pluginoption (pluginId, key,value) VALUES (' . $this -> id . ', ' . $key . ', ' . $value . ');');
+		// $this->updateRoles();
+	}
 	public function getUsedRoles(){
 		//var_dump(sizeof($this->roles));
 		return $this->roles;
@@ -400,13 +412,27 @@ class instancedPlugin{
             throw new Exception("Plugin is not there, deactivate it. When you move it, go to pluginconfig and re-activate it.");
 }
 	}
+    
 	public function removeRole($roleId){
 		if(isset($roleId)){
 			$this->connection -> exec('DELETE FROM `pluginrole` WHERE `roleId` = ' . $roleId . ' AND `pluginId` = ' . $this->id . ';');
 			$this->updateRoles();
 		}
 	}
-	public function edit(){
+    
+    
+    public function updateOptions(){
+        $this->pluginOptions = array();
+        $q=$this->connection->query("SELECT * FROM pluginoption WHERE pluginId = ".$this->id.";");
+        foreach($q as $PluginOptionRow){
+            array_push($this->pluginOptions, new pluginOption($PluginOptionRow['id'],$PluginOptionRow['key'],$PluginOptionRow['value'],$PluginOptionRow['pluginId']));
+        }
+    }
+    
+    /**
+        Edit the instanced plugin. Needs no arguments, cause it goes a alternative way - direct getting of post.
+    **/
+	public function edit() {
 		$this->setName($_POST['instancePluginName']);
 		$this->setDescription($_POST['instancePluginDescription']);
         $active = isset($_POST['editActive']) ? $_POST['editActive'] : 0 ;
@@ -455,6 +481,9 @@ class instancedPlugin{
 		}
 	}
 	
+    /**
+     Delete the instanced plugin
+    **/
 	public function delete(){
 		$inst = $this->getInstance();
 		$inst->deleteInstanceTables();
@@ -485,18 +514,18 @@ class rawPlugin{
 }
 
 class pluginOption {
- private $key;
- private $value;
+    private $key;
+    private $value;
+    private $pluginId;
     
-public function __construct($key, $value){
- $this->key = $key;
-$this->value=$value;
-}
-    
+    public function __construct($key, $value, $pluginId){
+        $this->key = $key;
+        $this->value=$value;
+        $this->pluginId=$pluginId;
+    }
     public function getKey(){
         return $this->key;
     }
-    
     public function getValue(){
         return $this->value;   
     }
@@ -504,18 +533,18 @@ $this->value=$value;
 }
 
 class pluginMenuEntry{
-private $name;
-private $order;
-private $action;
- public function __construct($name, $order, $action){
-     $this->name = $name;
-     $this->order = $order;
-     $this->action = $action;
-     }
-public function getName(){
-    
- return $this->name;   
-}
+    private $name;
+    private $description;
+    private $order;
+    private $action;
+    public function __construct($name,$description, $order, $action){
+        $this->name = $name;
+        $this->order = $order;
+        $this->action = $action;
+    }
+    public function getName(){    
+        return $this->name;   
+    }
      
      public function getOrder(){
          return $this->order;
