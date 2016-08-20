@@ -1,4 +1,15 @@
 {include file="header.tpl" title=Usermanagement} {include file="menu.tpl"} {include file="messagebox.tpl"}
+
+<h1>Options</h1>
+<ul>
+    <li>Startpage <form action="options.php?action=editStartpage" method="post"><select name="startpageEdit" size="1">
+      {section name=site loop=$allSites}
+    <option value="{$allSites[site]->getId()}">{$allSites[site]->getName()}</option>
+    {/section}      
+        
+        </select><input type="submit" value="Save" /></form></li>
+
+</ul>
 <h1>Allowed sites</h1>
 <p>This part of the configuration make it possible to allow sites for peoble who didn't got a login. But be carefull! We use here regular expressions, what could mean: you could enable simple a whole module by giving them a site. Examples for correct regex:
     <ul>

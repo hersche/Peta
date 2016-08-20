@@ -23,7 +23,7 @@ class user extends abstractUser {
 	private $messages = array();
 	private $roles = array();
 	private $customfields = array();
-	private $password;
+    private $password;
 	public $urow;
 	private $connection;
     private $admin;

@@ -26,6 +26,7 @@ class osmapPluginSkamster extends plugin{
 	 */
 	public function __construct($id, $currentUser, $templateObject, $folder, $connection) {
 		$this->id = $id;
+        
         $this -> user = $currentUser;
         // Workaround possible bug, may from php (5.5 never reached that!)
         // TODO further checking
@@ -54,16 +55,17 @@ class osmapPluginSkamster extends plugin{
 		This method will just be executed on instance plugins.
 	**/
 	public function getPluginDescription() {
-		return "This should work as a usual web/info-site .";
+		return "This plugin make pois view- and shareable";
 	}
     
     public function getHeaderTags(){
-		return array('<script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>');
+		return array('<script src="https://npmcdn.com/leaflet@0.7.7/dist/leaflet.js"></script>');
 	}
     	public function getRequiredCss(){
-		return array("http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css");
+		return array("https://npmcdn.com/leaflet@0.7.7/dist/leaflet.css");
 	}	
 	public function updatePois(){
+        //if($this->user->getPluginAccess()!="Read"){
 		$this->poiList = array();
         $statement = $this->connection->query("SELECT * FROM `".$this->dbPrefix."pois` WHERE `ownerid`=".$this->user->getId()." OR `shared`=1;");
         if($statement===False){
@@ -72,21 +74,27 @@ class osmapPluginSkamster extends plugin{
 		foreach($statement as $row){
 			array_push($this->poiList,new poi($row['id'],$row['name'],$row['position'],$row['zoom'],$row['shared'],$row['ownerid']));
 		}
+    //}
 	}
     
     	public function insertPoi($name, $position,$zoom,$shared){
+            if($this->user->getPluginAccess()!="Read"){
 		$this->connection->exec("INSERT INTO `".$this->dbPrefix."pois` (`name`, `position`,`zoom`,`shared`, `ownerid`) VALUES ('" . $name . "', '" .$position."','" .$zoom."','" .$shared."', '" .$this->user->getId()."');");
 		$this->updatePois();
+            }
 	}
 	
 	public function deletePoi($id){
+        if($this->user->getPluginAccess()!="Read"){
 		$this->connection->exec("DELETE FROM `".$this->dbPrefix."pois` WHERE `id` = " . $id . "; ");
 		$this->updatePois();
-	}
+	} }
 	
 	public function editPoi($id, $name, $position, $zoom, $shared){
+        if($this->user->getPluginAccess()!="Read"){
 		$this->connection->exec("UPDATE `".$this->dbPrefix."pois` SET `name` =  '" . $name . "',`position`='" .$position ."',`zoom`='" .$zoom ."',`shared`='" .$shared ."',`ownerid`='" .$this->user->getId(). "' WHERE `id`=".$id . " LIMIT 1 ;");
 		$this->updatePois();
+        }
 	}
     
     public function getStartPoi(){
@@ -115,13 +123,21 @@ class osmapPluginSkamster extends plugin{
         }
         elseif(isset($_GET['delPoi'])){
             // TODO such stuff is unprotected!
+            if($this->user->getPluginAccess()!="Read"){
             $this->deletePoi($_GET['delPoi']); 
             array_push($messages, "Poi deleted");
+            } else {
+                array_push($messages, "You have no rights to delete that Poi");
+            }
         }
         elseif((isset($_POST['editPoiName']))&&(isset($_POST['editPoiPosition']))&&(isset($_POST['editPoiId']))){
+            if($this->user->getPluginAccess()!="Read"){
             $editPoiShared = (isset($_POST['editPoiShared'])) ? 1 : 0;
             $this->editPoi($_POST['editPoiId'], $_POST['editPoiName'], $_POST['editPoiPosition'],$_POST['editZoom'],$editPoiShared);
             array_push($messages, "Poi is edited as ".$_POST['editPoiName']);
+            } else {
+                array_push($messages, "You have no rights to edit that Poi: ".$_POST['editPoiName']);
+            }
         }
         $this->template->assign("startPoi", $this->getStartPoi());
 

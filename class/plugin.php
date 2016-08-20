@@ -173,7 +173,7 @@ class rawIOPluginManager {
 				array_push($this->rawPluginList, $notInitClass);
 			} catch (Exception $e) {
 				echo $e;
-				continue;
+				//continue;
 			}
 		}
 	}

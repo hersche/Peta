@@ -12,12 +12,16 @@ class allowedSites{
 	 * @param unknown_type $connection
 	 */
 	public function __construct($connection){
-		foreach($connection->query('SELECT * FROM `config_loginneedlesssites`') as $siterow){
+        $query = $connection->query('SELECT * FROM `config_loginneedlesssites`');
+        echo($query);
+        if($query!=""){
+		foreach($query as $siterow){
 			$allowedSite = new allowedSite();
 			$allowedSite->setId($siterow['id']);
 			$allowedSite->setName($siterow['site']);
 			array_push($this->allAllowedSites, $allowedSite);
 		}
+        }
 	}
 	/**
 	 * Get the list of allowed sites..

@@ -85,8 +85,9 @@ class wikittenPluginSkamster extends plugin{
         
 
         require_once $this->folder."wiki.php";
-        return Wiki::instance()->dispatch();
-		//$this->templateObject->display($this->folder.'wikittenPlugin.tpl');
+        // return Wiki::instance()->dispatch();
+        //return $this->templateObject->fetch($this->folder.'wikittenPlugin.tpl');
+		//$this->templateObject->fetch($this->folder.'wikittenPlugin.tpl');
 	}
 }
 
