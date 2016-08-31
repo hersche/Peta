@@ -59,10 +59,10 @@ class osmapPluginSkamster extends plugin{
 	}
     
     public function getHeaderTags(){
-		return array('<script src="https://npmcdn.com/leaflet@0.7.7/dist/leaflet.js"></script>');
+		return array('<script src="https://unpkg.com/leaflet@0.7.7/dist/leaflet.js"></script>');
 	}
     	public function getRequiredCss(){
-		return array("https://npmcdn.com/leaflet@0.7.7/dist/leaflet.css");
+		return array("https://unpkg.com/leaflet@0.7.7/dist/leaflet.css");
 	}	
 	public function updatePois(){
         //if($this->user->getPluginAccess()!="Read"){
