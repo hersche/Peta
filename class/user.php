@@ -512,7 +512,6 @@ class usertools {
 			if (($post['registerPassword'] == $post['registerPassword2']) && (!empty($post['registerEmail'])) && (usertools::passwordRequirements($post['registerPassword'], $GLOBALS["min_password_length"], $GLOBALS["password_need_specialchars"]))) {
 				if (!usertools::userExists($post['registerUsername'], $connection)) {
 					try {
-
 						$password = hash($GLOBALS["password_hash"], $post['registerPassword']);
 						// TODO check for specialchars!
 						$datetime = new DateTime($GLOBALS["timezone"]);

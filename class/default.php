@@ -60,7 +60,25 @@ if ($connection -> query("SHOW TABLES LIKE 'role'") -> rowCount() == 0) {
 }
 
 		if((!empty($_POST['loginUsername']))&&(!empty($_POST['loginPassword']))){
+            try {
 			$user = new user($_POST['loginUsername'], $_POST['loginPassword'], $connection);
+            } catch (Exception $e) {
+                $messages[] = "Wrong Password or user";
+                	$user = new alienuser();
+	$user -> setId(-1);
+	$user -> setUsername("Public");
+	$role = new role();
+	$role -> setId(-1);
+	$role -> setRole("Public");
+	$user -> addRoleToRam($role);
+	$_SESSION["user"] = $user;
+	$template -> assign("user", $user);
+	   $template -> assign('messages', $messages);
+	   $template -> assign('errorTitle', "Login-Failure");
+	   $template -> assign('errorDescription', "Looks like your name or password is not correct...");
+	   $template -> display('error.tpl');
+	   die();
+    }
 			$template -> assign("allowedPluginInstances", $allowedPluginInstances);
 			
 			if((isset($_SESSION["user"]))&&($user->isValid())){
