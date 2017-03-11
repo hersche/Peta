@@ -35,9 +35,34 @@ foreach ($_GET as $key => $value) {
 	$_GET[$key] = sqlsec($value);
 }
 
+if(!file_exists ("js/dojo/dojo/dojo.js")){
+                    	$user = new alienuser();
+	$user -> setId(-1);
+	$user -> setUsername("Public");
+	$role = new role();
+	$role -> setId(-1);
+	$role -> setRole("Public");
+	$user -> addRoleToRam($role);
+	$_SESSION["user"] = $user;
+	$template -> assign("user", $user);
+    	$template -> assign('messages', $messages);
+	$template -> assign('errorTitle', "Setup-Failure");
+	$template -> assign('errorDescription', "Looks like dojo is missing, js/dojo/dojo/dojo.js was not found. Please contact your admin and tell her/him to read <a href=\"js/dojo/README\">the README-file.</a> ");
+	$template -> display('error.tpl');
+    die();
+}
 try {
 	$connection = new PDO($GLOBALS["db_type"] . ':dbname=' . $GLOBALS["db_dbname"] . ';host=' . $GLOBALS["db_host"] . '', $GLOBALS["db_loginname"], $GLOBALS["db_loginpassword"]);
 } catch (PDOException $e) {
+                    	$user = new alienuser();
+	$user -> setId(-1);
+	$user -> setUsername("Public");
+	$role = new role();
+	$role -> setId(-1);
+	$role -> setRole("Public");
+	$user -> addRoleToRam($role);
+	$_SESSION["user"] = $user;
+	$template -> assign("user", $user);
 	array_push($messages, $e -> getMessage());
 	$template -> assign('messages', $messages);
 	$template -> assign('errorTitle', "DB-Failure");
@@ -63,8 +88,7 @@ if ($connection -> query("SHOW TABLES LIKE 'role'") -> rowCount() == 0) {
             try {
 			$user = new user($_POST['loginUsername'], $_POST['loginPassword'], $connection);
             } catch (Exception $e) {
-                $messages[] = "Wrong Password or user";
-                	$user = new alienuser();
+                                	$user = new alienuser();
 	$user -> setId(-1);
 	$user -> setUsername("Public");
 	$role = new role();
@@ -73,6 +97,8 @@ if ($connection -> query("SHOW TABLES LIKE 'role'") -> rowCount() == 0) {
 	$user -> addRoleToRam($role);
 	$_SESSION["user"] = $user;
 	$template -> assign("user", $user);
+                $messages[] = "Wrong Password or user";
+
 	   $template -> assign('messages', $messages);
 	   $template -> assign('errorTitle', "Login-Failure");
 	   $template -> assign('errorDescription', "Looks like your name or password is not correct...");
