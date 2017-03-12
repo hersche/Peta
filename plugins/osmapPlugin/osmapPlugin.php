@@ -65,23 +65,34 @@ class osmapPluginSkamster extends plugin{
 		return array("https://unpkg.com/leaflet@0.7.7/dist/leaflet.css");
 	}	
 	public function updatePois(){
-        //if($this->user->getPluginAccess()!="Read"){
+        
+      //  if($this->user->getPluginAccess()!="Read"){
 		$this->poiList = array();
         $statement = $this->connection->query("SELECT * FROM `".$this->dbPrefix."pois` WHERE `ownerid`=".$this->user->getId()." OR `shared`=1;");
         if($statement===False){
             $statement = array();   
         }
 		foreach($statement as $row){
-			array_push($this->poiList,new poi($row['id'],$row['name'],$row['position'],$row['zoom'],$row['shared'],$row['ownerid']));
+			array_push($this->poiList,new poi($row['id'],$row['name'],$row['position'],$row['zoom'],$row['shared'],$row['type'],$row['typeparameter'],$row['ownerid']));
 		}
     //}
 	}
     
     	public function insertPoi($name, $position,$zoom,$shared){
             if($this->user->getPluginAccess()!="Read"){
+                $poiAlreadyExist=false;
+                foreach($this->poiList as $singlePoi){
+                    if($singlePoi->name==$name){
+                        $poiAlreadyExist=true;
+                        return false;
+                    }
+                }
+                if($poiAlreadyExist==false){
 		$this->connection->exec("INSERT INTO `".$this->dbPrefix."pois` (`name`, `position`,`zoom`,`shared`, `ownerid`) VALUES ('" . $name . "', '" .$position."','" .$zoom."','" .$shared."', '" .$this->user->getId()."');");
 		$this->updatePois();
-            }
+                    return true;
+                }
+            } 
 	}
 	
 	public function deletePoi($id){
@@ -111,6 +122,8 @@ class osmapPluginSkamster extends plugin{
 			`position` text NOT NULL,
 			`zoom` int(3) NOT NULL,
             `shared` int(3) NOT NULL,
+            `type` int(3) NOT NULL,
+            `typeparameter` int(20) NOT NULL,
 			`ownerid` int(11) NOT NULL,
 			PRIMARY KEY (`id`)
 		)");
@@ -118,8 +131,16 @@ class osmapPluginSkamster extends plugin{
         $messages = array();
         if((isset($_POST['createPoiName']))&&($_POST['createPoiPosition'])){
             $createPoiShared = (isset($_POST['createPoiShared'])) ? 1 : 0;
-            $this->insertPoi($_POST['createPoiName'], $_POST['createPoiPosition'],$_POST['zoom'],$createPoiShared);
-            array_push($messages, "Poi ".$_POST['createPoiName']." is created");
+            if($this->user->getPluginAccess()!="Read"){
+                if($this->insertPoi($_POST['createPoiName'], $_POST['createPoiPosition'],$_POST['zoom'],$createPoiShared)){
+                array_push($messages, "Poi ".$_POST['createPoiName']." is created");
+            } else {
+                array_push($messages, "Poi ".$_POST['createPoiName']." is already exist");
+            }
+            } else {
+               array_push($messages, "No rights for creating a POI"); 
+            }
+            
         }
         elseif(isset($_GET['delPoi'])){
             // TODO such stuff is unprotected!
@@ -156,14 +177,18 @@ class poi{
 	public $name;
     public $position;
     public $zoom;
+    public $type;
+    public $typeParam;
     public $shared;
     public $ownerId;
-	public function __construct($id,$name,$position,$zoom,$shared,$ownerId){
+	public function __construct($id,$name,$position,$zoom,$shared,$type,$typeparam,$ownerId){
 		$this->id = $id;
 		$this->name=$name;
 		$this->position=$position; 
         $this->shared=$shared;
         $this->zoom=$zoom;
+        $this->type=type;
+        $this->typeparam=$typeparam;
         $this->ownerId = $ownerId; }
 }
 ?>

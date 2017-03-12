@@ -1,6 +1,6 @@
 <script type="text/javascript">
       function setPosition(pos,zoom){
-        alert(pos);
+        //alert(pos);
           map.setView(pos,zoom);
     }  
     var map;
@@ -86,9 +86,7 @@
 				.setLatLng(e.latlng)
 				.setContent('<form action="plugin.php?plugin={$pluginId}" method="post"><table><tr><td>Name</td>'
                 +'<td><input type="text" name="createPoiName" /><input type="hidden" name="createPoiPosition" value="['+pos.lat+','+pos.lng+']" />'
-                +'</td></tr><tr><td>Zoom</td><td>'+generateZoomList(map.getZoom())+'</td></tr><tr><td>Shared</td><td><input value="1" name="createPoiShared" type="checkbox" /></td></tr><tr><td><input type="submit" value="Create Poi" />'
-                +'</td><td> ['+pos.lat+','+pos.lng+']</td></tr></table></form>') 
-				.openOn(map);
+                +'</td></tr><tr><td>Zoom</td><td>'+generateZoomList(map.getZoom())+'</td></tr></tr><tr><td>Type</td><td><select name="type"><option>Cyrcle</option><option>POI</option></select></td></tr><tr><td>Shared</td><td><input value="1" name="createPoiShared" type="checkbox" /></td></tr><tr><td><input type="submit" value="Create Poi" />'+'</td><td> ['+pos.lat+','+pos.lng+']</td></tr></table></form>') .openOn(map);
                 //alert(map.getZoom());
 		}
 
@@ -97,7 +95,7 @@
     });
 </script>
 
-<div id="map" style="width: 600px; height: 400px"></div>
+<div id="map" style="width: 100%; height: 500px;"></div>
 
 <h2>Your Pois</h2>
 <p>Just click into the map to create a POI. Call one "start" to set your start position.</p>
